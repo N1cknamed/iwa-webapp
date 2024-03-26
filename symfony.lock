@@ -1,11 +1,11 @@
 {
     "doctrine/doctrine-bundle": {
-        "version": "2.11",
+        "version": "2.12",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.10",
-            "ref": "c170ded8fc587d6bd670550c43dafcf093762245"
+            "version": "2.12",
+            "ref": "ed5e0ed0b451d6ade844d3a28e21fe70d20daee7"
         },
         "files": [
             "./config/packages/doctrine.yaml",
@@ -61,7 +61,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "5.3",
-            "ref": "da0c8be8157600ad34f10ff0c9cc91232522e047"
+            "ref": "1781ff40d8a17d87cf53f8d4cf0c8346ed2bb461"
         },
         "files": [
             "./bin/console"
@@ -123,7 +123,7 @@
         ]
     },
     "symfony/maker-bundle": {
-        "version": "1.56",
+        "version": "1.57",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -275,9 +275,6 @@
             "./config/packages/web_profiler.yaml",
             "./config/routes/web_profiler.yaml"
         ]
-    },
-    "symfonycasts/verify-email-bundle": {
-        "version": "v1.17.0"
     },
     "twig/extra-bundle": {
         "version": "v3.8.0"
