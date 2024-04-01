@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class AdministratieController extends AbstractController
 {
@@ -71,5 +73,44 @@ class AdministratieController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('app_administratie');
+    }
+
+    #[Route("/edit/{id}", name: "app_edit_user")]
+    public function editUser($id, EntityManagerInterface $entityManager, Request $request)
+    {
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException(
+                'No user found for id '.$id
+            );
+        }
+
+        $form = $this->createFormBuilder($user)
+            ->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'Administrator' => 'ROLE_ADMIN',
+                    'Data Acquisition' => 'ROLE_DATA',
+                    'Contractbeheerder' => 'ROLE_CONTRACT',
+                ],
+                'multiple' => true,
+                'expanded' => true,
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Update Account'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_administratie');
+        }
+
+        return $this->render('administratie/edit.html.twig', [
+            'controller_name' => 'AdministratieController',
+            'editForm' => $form->createView(),
+            'userEmail' => $user->getEmail(),
+        ]);
     }
 }

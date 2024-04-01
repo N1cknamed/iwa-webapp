@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .checkbox-vertical .form-check {
+            display: block;
+            margin-bottom: 10px;  /* Add this line */
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Rollen bewerken voor {{ userEmail }}</h1>
+
+        {{ form_start(editForm, {'attr': {'class': 'bg-light p-4 rounded'}}) }}
+        <div class="mb-3 checkbox-vertical">
+            {{ form_label(editForm.roles, 'Rollen', {'label_attr': {'class': 'form-label'}}) }}
+            {% for role in editForm.roles %}
+                <div class="form-check">
+                    {{ form_widget(role, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(role, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form_widget(editForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
+        </div>
+        {{ form_end(editForm) }}
+    </div>
+{% endblock %}
