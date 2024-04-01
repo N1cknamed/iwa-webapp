@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ContractBeheerController extends AbstractController
 {
-    #[Route('/contract/beheer', name: 'app_contract_beheer')]
+    #[Route('/contractbeheer', name: 'app_contract_beheer')]
     public function index(): Response
     {
         return $this->render('contract_beheer/index.html.twig', [

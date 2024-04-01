@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DataAcquisitionController extends AbstractController
 {
-    #[Route('/data/acquisition', name: 'app_data_acquisition')]
+    #[Route('/dataacquisition', name: 'app_data_acquisition')]
     public function index(): Response
     {
         return $this->render('data_acquisition/index.html.twig', [
