@@ -11,7 +11,7 @@ class ContractBeheerController extends AbstractController
     #[Route('/contractbeheer', name: 'app_contract_beheer')]
     public function index(): Response
     {
-        return $this->render('contract_beheer/register.html.twig', [
+        return $this->render('contract_beheer/index.html.twig', [
             'controller_name' => 'ContractBeheerController',
         ]);
     }
