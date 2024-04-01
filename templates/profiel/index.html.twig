@@ -7,12 +7,20 @@
 {% endblock %}
 
 {% block body %}
-
-
     <div class="container">
         <h1>Profiel</h1>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <p>Email: {{ app.user.email }}</p>
+            <p>Rollen:
+                {% set roleNames = [] %}
+                {% for role in app.user.roles %}
+                    {%  if role != 'ROLE_USER' %}
+                        {% set roleName = role|replace({'ROLE_ADMIN': 'Administrator', 'ROLE_DATA': 'Data Acquisition', 'ROLE_CONTRACT': 'Contractbeheerder'}) %}
+                        {% set roleNames = roleNames|merge([roleName]) %}
+                    {% endif %}
+                {% endfor %}
+                {{ roleNames|join(', ') }}
+            </p>
         {% endif %}
     </div>
 {% endblock %}
