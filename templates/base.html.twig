@@ -27,15 +27,21 @@
                         <li class="nav-item">
                             <a class="nav-link {{ controller_name == 'HomeController' ? 'active' : '' }}" aria-current="page" href="{{ path('app_home') }}">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ controller_name == 'DataAcquisitionController' ? 'active' : '' }}" href="{{ path('app_data_acquisition') }}">Data Acquisition</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ controller_name == 'ContractBeheerController' ? 'active' : '' }}" href="{{ path('app_contract_beheer') }}">Contractbeheer</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ controller_name == 'AdministratieController' ? 'active' : '' }}" href="{{  path('app_administratie') }}">Administratie</a>
-                        </li>
+                        {% if is_granted('ROLE_DATA') %}
+                            <li class="nav-item">
+                                <a class="nav-link {{ controller_name == 'DataAcquisitionController' ? 'active' : '' }}" href="{{ path('app_data_acquisition') }}">Data Acquisition</a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_CONTRACT') %}
+                            <li class="nav-item">
+                                <a class="nav-link {{ controller_name == 'ContractBeheerController' ? 'active' : '' }}" href="{{ path('app_contract_beheer') }}">Contractbeheer</a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link {{ controller_name == 'AdministratieController' ? 'active' : '' }}" href="{{  path('app_administratie') }}">Administratie</a>
+                            </li>
+                        {% endif %}
                     </ul>
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
