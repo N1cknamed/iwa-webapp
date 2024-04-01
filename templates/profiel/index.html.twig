@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfielController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Profiel</h1>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <p>Email: {{ app.user.email }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

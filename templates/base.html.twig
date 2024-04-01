@@ -25,28 +25,29 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Home</a>
+                            <a class="nav-link {{ controller_name == 'HomeController' ? 'active' : '' }}" aria-current="page" href="{{ path('app_home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_data_acquisition') }}">Data Acquisition</a>
+                            <a class="nav-link {{ controller_name == 'DataAcquisitionController' ? 'active' : '' }}" href="{{ path('app_data_acquisition') }}">Data Acquisition</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_contract_beheer') }}">Contractbeheer</a>
+                            <a class="nav-link {{ controller_name == 'ContractBeheerController' ? 'active' : '' }}" href="{{ path('app_contract_beheer') }}">Contractbeheer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Administratie</a>
+                            <a class="nav-link {{ controller_name == 'AdministratieController' ? 'active' : '' }}" href="{{  path('app_administratie') }}">Administratie</a>
                         </li>
                     </ul>
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Profiel
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ path('_logout_main') }}">Log uit</a></li>
-                    </ul>
-
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ path('app_profiel') }}">Profiel</a></li>
+                            <li><a class="dropdown-item" href="#">Instellingen</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ path('_logout_main') }}">Log uit</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
