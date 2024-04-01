@@ -1,22 +1,33 @@
-{# templates/login/register.html.twig #}
 {% extends 'base.html.twig' %}
 
-{# ... #}
-
 {% block body %}
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <div class="container mt-5">
+        <img src="{{ asset('images/logoIWAfull.jpg') }}" alt="IWA" class="d-block mx-auto">
 
-    <form action="{{ path('app_login') }}" method="post">
-        <label for="username">Email:</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}">
+        <h1 class="mb-4">Login</h1>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password">
+        <div class="card">
+            <div class="card-body">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
 
-        <input type="hidden" name="_target_path" value="/">
+                <form action="{{ path('app_login') }}" method="post" class="form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Email:</label>
+                        <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control">
+                    </div>
 
-        <button type="submit">login</button>
-    </form>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" id="password" name="_password" class="form-control">
+                    </div>
+
+                    <input type="hidden" name="_target_path" value="/">
+
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
