@@ -54,4 +54,22 @@ class AdministratieController extends AbstractController
             'registrationForm' => $form,
         ]);
     }
+
+
+    #[Route("/remove/{id}", name: "app_remove_user")]
+    public function removeUser($id, EntityManagerInterface $entityManager)
+    {
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException(
+                'No user found for id '.$id
+            );
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_administratie');
+    }
 }
