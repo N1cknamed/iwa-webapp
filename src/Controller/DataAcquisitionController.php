@@ -11,7 +11,7 @@ class DataAcquisitionController extends AbstractController
     #[Route('/dataacquisition', name: 'app_data_acquisition')]
     public function index(): Response
     {
-        return $this->render('data_acquisition/index.html.twig', [
+        return $this->render('data_acquisition/register.html.twig', [
             'controller_name' => 'DataAcquisitionController',
         ]);
     }

@@ -1,24 +1,41 @@
-{% extends 'base.html.twig' %}
+{%  extends 'base.html.twig' %}
 
-{% block title %}Hello AdministratieController!{% endblock %}
+{% block title %}Administratie{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container">
+        <a href="{{ path('app_register') }}" class="btn btn-outline-primary">Registreer nieuw account</a>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/Projects/iwa-webapp/src/Controller/AdministratieController.php</code></li>
-        <li>Your template at <code>D:/Projects/iwa-webapp/templates/administratie/index.html.twig</code></li>
-    </ul>
-</div>
+        <h2>Bestaande accounts</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Email</th>
+                <th>Accounttype</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% for role in user.roles %}
+                            {%  if role != 'ROLE_USER' %}
+                                {{ role|replace({'ROLE_ADMIN': 'Administrator'})|replace({'ROLE_DATA': 'Data Acquisition'})|replace({'ROLE_CONTRACT': 'Contractbeheerder'}) }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">Geen gebruikers gevonden</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -11,7 +11,7 @@ class ProfielController extends AbstractController
     #[Route('/profiel', name: 'app_profiel')]
     public function index(): Response
     {
-        return $this->render('profiel/index.html.twig', [
+        return $this->render('profiel/register.html.twig', [
             'controller_name' => 'ProfielController',
         ]);
     }

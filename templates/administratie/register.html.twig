@@ -1,0 +1,22 @@
+{% extends 'administratie/index.html.twig' %}
+
+{% block title %}Administratie{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <h1>Registreer Account</h1>
+
+    {{ form_errors(registrationForm) }}
+
+    {{ form_start(registrationForm) }}
+    {{ form_row(registrationForm.email) }}
+    {{ form_row(registrationForm.plainPassword, {
+        label: 'Password'
+    }) }}
+
+    <button type="submit" class="btn">Register</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}
