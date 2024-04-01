@@ -2,7 +2,13 @@
 
 {% block title %}Hello ProfielController!{% endblock %}
 
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
 {% block body %}
+
+
     <div class="container">
         <h1>Profiel</h1>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
