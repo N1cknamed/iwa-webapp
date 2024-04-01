@@ -15,10 +15,13 @@ class Contract
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name_holder = null;
+    private ?string $contractHolder = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeInterface $creationDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $afloopdatum = null;
+    private ?\DateTimeInterface $expirationDate = null;
 
     #[ORM\Column(length: 255)]
     private ?string $station = null;
@@ -38,26 +41,31 @@ class Contract
         return $this;
     }
 
-    public function getNameHolder(): ?string
+    public function getContractHolder(): ?string
     {
-        return $this->name_holder;
+        return $this->contractHolder;
     }
 
-    public function setNameHolder(string $name_holder): static
+    public function setNameHolder(string $contractHolder): static
     {
-        $this->name_holder = $name_holder;
+        $this->contractHolder = $contractHolder;
 
         return $this;
     }
 
-    public function getAfloopdatum(): ?\DateTimeInterface
+    public function getCreationDate(): ?\DateTimeInterface
     {
-        return $this->afloopdatum;
+        return $this->creationDate;
     }
 
-    public function setAfloopdatum(\DateTimeInterface $afloopdatum): static
+    public function getExpirationDate(): ?\DateTimeInterface
     {
-        $this->afloopdatum = $afloopdatum;
+        return $this->expirationDate;
+    }
+
+    public function setExpirationDate(\DateTimeInterface $expirationDate): static
+    {
+        $this->expirationDate = $expirationDate;
 
         return $this;
     }
