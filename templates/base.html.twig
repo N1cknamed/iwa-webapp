@@ -17,7 +17,7 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ path('app_home') }}">
-                    <img src="/assets/LogoIWA.jpg" alt="IWA" width="30" height="24" class="d-inline-block align-top">
+                    <img src="{{ asset('images/logoIWA.png') }}" alt="IWA" height="50" class="d-inline-block align-top">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -45,7 +45,9 @@
                     </ul>
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i>
+                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                {{ app.user.email }}
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ path('app_profiel') }}">Profiel</a></li>
