@@ -1,24 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DataAcquisitionController!{% endblock %}
+{% block title %}Data Acquisition{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/Projects/iwa-webapp/src/Controller/DataAcquisitionController.php</code></li>
-        <li>Your template at <code>D:/Projects/iwa-webapp/templates/data_acquisition/index.html.twig</code></li>
-    </ul>
-</div>
+    <div class="container">
+        <h1>Stations</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+                <th>Elevation</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for station in stations %}
+                <tr>
+                    <td>{{ station.name }}</td>
+                    <td>{{ station.longitude }}</td>
+                    <td>{{ station.latitude }}</td>
+                    <td>{{ station.elevation }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">No stations found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
