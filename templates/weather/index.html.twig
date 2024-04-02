@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Weather Data{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Weather Data</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Station</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Tijd</th>
+                <th scope="col">Temperatuur</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for weather in weatherData %}
+                <tr>
+                    <td>{{ weather.STN }}</td>
+                    <td>{{ weather.date|date('Y-m-d') }}</td>
+                    <td>{{ weather.time|date('H:i:s') }}</td>
+                    <td>{{ weather.TEMP }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
