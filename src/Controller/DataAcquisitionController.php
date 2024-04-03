@@ -23,7 +23,7 @@ class DataAcquisitionController extends AbstractController
     public function index(Request $request): Response
     {
         $currentPage = $request->query->getInt('page', 1);
-        $limit = 25;
+        $limit = 15; // hoeveel resultaten per pagina
 
         $query = $this->entityManager
             ->getRepository(Station::class)
@@ -32,8 +32,8 @@ class DataAcquisitionController extends AbstractController
 
         $paginator = new Paginator($query);
         $paginator->getQuery()
-            ->setFirstResult($limit * ($currentPage - 1)) // Offset
-            ->setMaxResults($limit); // Limit
+            ->setFirstResult($limit * ($currentPage - 1))
+            ->setMaxResults($limit);
 
         return $this->render('data_acquisition/index.html.twig', [
             'stations' => $paginator,
