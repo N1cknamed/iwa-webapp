@@ -14,20 +14,35 @@ class Contract
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $contractHolder = null;
-
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?\DateTimeInterface $creationDate = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $date_start = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $expirationDate = null;
+    private ?\DateTimeInterface $date_end = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $station = null;
+    private ?string $name_holder = null;
 
-    #[ORM\Column]
-    private array $data = [];
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $country_code = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $region = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coordinates = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $longitude = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $elevation = null;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $data = null;
 
     public function getId(): ?int
     {
@@ -41,53 +56,120 @@ class Contract
         return $this;
     }
 
-    public function getContractHolder(): ?string
+    public function getDateStart(): ?\DateTimeInterface
     {
-        return $this->contractHolder;
+        return $this->date_start;
     }
 
-    public function setNameHolder(string $contractHolder): static
+    public function setDateStart(\DateTimeInterface $date_start): static
     {
-        $this->contractHolder = $contractHolder;
+        $this->date_start = $date_start;
 
         return $this;
     }
 
-    public function getCreationDate(): ?\DateTimeInterface
+    public function getDateEnd(): ?\DateTimeInterface
     {
-        return $this->creationDate;
+        return $this->date_end;
     }
 
-    public function getExpirationDate(): ?\DateTimeInterface
+    public function setDateEnd(\DateTimeInterface $date_end): static
     {
-        return $this->expirationDate;
-    }
-
-    public function setExpirationDate(\DateTimeInterface $expirationDate): static
-    {
-        $this->expirationDate = $expirationDate;
+        $this->date_end = $date_end;
 
         return $this;
     }
 
-    public function getStation(): ?string
+    public function getNameHolder(): ?string
     {
-        return $this->station;
+        return $this->name_holder;
     }
 
-    public function setStation(string $station): static
+    public function setNameHolder(string $name_holder): static
     {
-        $this->station = $station;
+        $this->name_holder = $name_holder;
 
         return $this;
     }
 
-    public function getData(): array
+    public function getCountryCode(): ?string
+    {
+        return $this->country_code;
+    }
+
+    public function setCountryCode(?string $country_code): static
+    {
+        $this->country_code = $country_code;
+
+        return $this;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?string $region): static
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+
+    public function getCoordinates(): ?string
+    {
+        return $this->coordinates;
+    }
+
+    public function setCoordinates(?string $coordinates): static
+    {
+        $this->coordinates = $coordinates;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getElevation(): ?float
+    {
+        return $this->elevation;
+    }
+
+    public function setElevation(?float $elevation): static
+    {
+        $this->elevation = $elevation;
+
+        return $this;
+    }
+
+    public function getData(): ?array
     {
         return $this->data;
     }
 
-    public function setData(array $data): static
+    public function setData(?array $data): static
     {
         $this->data = $data;
 
