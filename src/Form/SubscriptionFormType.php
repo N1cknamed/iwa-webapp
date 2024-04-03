@@ -16,11 +16,11 @@ class SubscriptionFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name_holder', TextType::class, ['required' => true])
+            ->add('name_holder', TextType::class)
             ->add('date_start', HiddenType::class)
-            ->add('date_end', DateType::class, ['required' => true])
-            ->add('station', TextType::class, ['required' => true])
-            ->add('save', SubmitType::class, ['required' => true])
+            ->add('date_end', DateType::class)
+            ->add('station', TextType::class)
+            ->add('save', SubmitType::class)
         ;
     }
 

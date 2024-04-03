@@ -50,24 +50,24 @@ class Subscription
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getDateStart(): ?\DateTimeInterface
     {
         return $this->date_start;
     }
 
-    public function setStartDate(\DateTimeInterface $date_start): static
+    public function setDateStart(\DateTimeInterface $date_start): static
     {
         $this->date_start = $date_start;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getDateEnd(): ?\DateTimeInterface
     {
         return $this->date_end;
     }
 
-    public function setEndDate(\DateTimeInterface $date_end): static
+    public function setDateEnd(\DateTimeInterface $date_end): static
     {
         $this->date_end = $date_end;
 
