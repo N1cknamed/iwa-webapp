@@ -23,11 +23,14 @@ class DataAcquisitionController extends AbstractController
     public function index(Request $request): Response
     {
         $currentPage = $request->query->getInt('page', 1);
-        $limit = 15; // hoeveel resultaten per pagina
+        $limit = 15; // how many results per page
 
         $query = $this->entityManager
             ->getRepository(Station::class)
             ->createQueryBuilder('s')
+            ->leftJoin('s.geolocation', 'g') // join with Geolocation entity
+            ->leftJoin('g.countryEntity', 'c') // join with Country entity
+            ->select('s', 'g', 'c') // select all fields from Station, Geolocation, and Country entities
             ->getQuery();
 
         $paginator = new Paginator($query);

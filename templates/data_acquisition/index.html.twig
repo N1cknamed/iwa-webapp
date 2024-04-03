@@ -16,6 +16,8 @@
                 <th>Longitude</th>
                 <th>Latitude</th>
                 <th>Elevation</th>
+                <th>Country</th>
+                <th>State</th>
             </tr>
             </thead>
             <tbody>
@@ -25,10 +27,12 @@
                     <td>{{ station.longitude }}</td>
                     <td>{{ station.latitude }}</td>
                     <td>{{ station.elevation }}</td>
+                    <td>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</td>
+                    <td>{{ station.geolocation ? station.geolocation.state : 'N/A' }}</td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="4">No stations found</td>
+                    <td colspan="6">No stations found</td>
                 </tr>
             {% endfor %}
             </tbody>
