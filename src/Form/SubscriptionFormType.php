@@ -17,7 +17,7 @@ class SubscriptionFormType extends AbstractType
     {
         $builder
             ->add('name_holder', TextType::class)
-            ->add('date_start', HiddenType::class)
+            ->add('date_start', DateType::class)
             ->add('date_end', DateType::class)
             ->add('station', TextType::class)
             ->add('save', SubmitType::class)

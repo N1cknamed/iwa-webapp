@@ -24,7 +24,6 @@ class ContractBeheerController extends AbstractController
     public function addSubscription(Request $request, EntityManagerInterface $entityManager): Response
     {
         $subscription = new Subscription();
-        $subscription->setDateStart(new \DateTime('today'));
         $form = $this->createForm(SubscriptionFormType::class, $subscription);
         $form->handleRequest($request);
 
@@ -36,7 +35,7 @@ class ContractBeheerController extends AbstractController
             return $this->redirectToRoute('app_contract_beheer');
         }
         
-    return $this->render('contract_beheer/index.html.twig', [
+    return $this->render('contract_beheer/addsubscription.html.twig', [
         'controller_name' => 'ContractBeheerController',
         'SubscriptionForm' => $form
     ]);
