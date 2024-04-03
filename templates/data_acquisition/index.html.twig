@@ -33,5 +33,31 @@
             {% endfor %}
             </tbody>
         </table>
+
+        <nav>
+            <ul class="pagination">
+                {# "Previous" button #}
+                <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                    <a class="page-link" href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
+                </li>
+
+                {# Calculate start and end page numbers for the 5-page range #}
+                {% set start_page = max(1, current_page - 2) %}
+                {% set end_page = min(total_pages, start_page + 4) %}
+                {% set start_page = max(1, end_page - 4) %}
+
+                {# Page number buttons #}
+                {% for page in start_page..end_page %}
+                    <li class="page-item{% if page == current_page %} active{% endif %}">
+                        <a class="page-link" href="{{ path('app_data_acquisition', {'page': page}) }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+
+                {# "Next" button #}
+                <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                    <a class="page-link" href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 {% endblock %}
