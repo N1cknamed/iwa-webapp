@@ -15,10 +15,16 @@ use Symfony\Component\Routing\Attribute\Route;
 class ContractBeheerController extends AbstractController
 {
     #[Route('/contractbeheer', name: 'app_contract_beheer')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
+        $subscriptions = $entityManager->getRepository(Subscription::class)->findAll();
+        $contracts = $entityManager->getRepository(Contract::class)->findAll();
+ 
+
         return $this->render('contract_beheer/index.html.twig', [
             'controller_name' => 'ContractBeheerController',
+            'subscriptions' => $subscriptions,
+            'contracts' => $contracts
         ]);
     }
 

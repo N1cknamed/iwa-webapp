@@ -1,24 +1,80 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ContractBeheerController!{% endblock %}
+{% block title %}Contractbeheer{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container">
+        <h2>Bestaande Abbonementen</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Naam</th>
+                <th>End Date</th>
+                <th>Station</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for subscription in subscriptions %}
+                <tr>
+                    <td>{{ subscription.nameholder }}</td>
+                    <td>{{ subscription.dateend|date('Y-m-d') }}</td>
+                    <td>{{ subscription.station }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">Geen Subscriptions gevonden</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('app_add_subscription') }}" class="btn btn-outline-primary">Add new subscription</a>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/Projects/iwa-webapp/src/Controller/ContractBeheerController.php</code></li>
-        <li>Your template at <code>D:/Projects/iwa-webapp/templates/contract_beheer/index.html.twig</code></li>
-    </ul>
-</div>
+    <div class="container">
+        <h2>Bestaande contracten</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Naam</th>
+                <th>End Date</th>
+                <th>Country code</th>
+                <th>Region</th>
+                <th>Coordinates</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+                <th>Elevation</th>
+                <th>Data</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for contract in contracts %}
+                <tr>
+                    <td>{{ contract.nameholder }}</td>
+                    <td>{{ contract.dateend|date('Y-m-d') }}</td>
+                    <td>{{ contract.countrycode }}</td>
+                    <td>{{ contract.region }}</td>
+                    <td>{{ contract.coordinates }}</td>
+                    <td>{{ contract.longitude }}</td>
+                    <td>{{ contract.latitude }}</td>
+                    <td>{{ contract.elevation }}</td>
+                    <td>
+                        {% set data = [] %}
+                        {% for d in contract.data%}
+                            {% set data = data|merge([d]) %}
+                        {% endfor %}
+                        {{ data|join(', ') }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">Geen contracten gevonden</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('app_add_contract') }}" class="btn btn-outline-primary">Add new contract</a>
+    </div>
 {% endblock %}
