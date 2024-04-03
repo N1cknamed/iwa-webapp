@@ -7,8 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SubscriptionFormType extends AbstractType
@@ -20,7 +18,6 @@ class SubscriptionFormType extends AbstractType
             ->add('date_start', DateType::class)
             ->add('date_end', DateType::class)
             ->add('station', TextType::class)
-            ->add('save', SubmitType::class)
         ;
     }
 

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Subscription;
+use App\Entity\Contract;
 use App\Form\SubscriptionFormType;
+use App\Form\ContractFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,4 +42,26 @@ class ContractBeheerController extends AbstractController
         'SubscriptionForm' => $form
     ]);
     }
+
+    #[Route('/contractbeheer/addcontract', name: 'app_add_contract')]
+    public function addContract(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $contract = new Contract();
+        $form = $this->createForm(ContractFormType::class, $contract);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($contract);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+        
+    return $this->render('contract_beheer/addcontract.html.twig', [
+        'controller_name' => 'ContractBeheerController',
+        'ContractForm' => $form
+    ]);
+    }
+
 }

@@ -1,0 +1,64 @@
+{% extends 'contract_beheer/index.html.twig' %}
+
+{% block title %}AddContract{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Add Contract</h1>
+
+        <div class="card">
+            <div class="card-body">
+                {{ form_errors(ContractForm) }}
+
+                {{ form_start(ContractForm, {'attr': {'class': 'form'}}) }}
+                <div class="mb-3">
+                    {{ form_label(ContractForm.name_holder, 'Contract holder name', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.name_holder, {'attr': {'class': 'form-control'} }) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.date_end, 'Activation date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.date_start, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.date_end, 'Expiration date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.date_end, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.country_code, 'Country code', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.country_code, {'attr': {'class': 'form-control', 'novalidate': 'novalidate'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.region, 'Region', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.region, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.coordinates, 'Coordinates', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.coordinates, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.longitude, 'Longitude', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.longitude, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.latitude, 'Latitude', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.latitude, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.elevation, 'Elevation', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.elevation, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.data, 'Data', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.data, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add</button>
+                {{ form_end(ContractForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
