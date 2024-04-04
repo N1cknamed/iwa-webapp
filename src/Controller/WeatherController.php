@@ -42,8 +42,8 @@ class WeatherController extends AbstractController
         foreach ($data['WEATHERDATA'] as $weatherData) {
             $weather = new Weather();
             $weather->setSTN($weatherData['STN'] !== 'None' ? (int)$weatherData['STN'] : null);
-            $weather->setDate(isset($weatherData['DATE']) ? new \DateTime($weatherData['DATE']) : null);
-            $weather->setTime(isset($weatherData['TIME']) ? new \DateTime($weatherData['TIME']) : null);
+            $weather->setDate(isset($weatherData['DATE']) !== 'None' ? new \DateTime($weatherData['DATE']) : null);
+            $weather->setTime(isset($weatherData['TIME']) !== 'None' ? new \DateTime($weatherData['TIME']) : null);
             $weather->setTEMP($weatherData['TEMP'] !== 'None' ? (float)$weatherData['TEMP'] : null);
             $weather->setDEWP($weatherData['DEWP'] !== 'None' ? (float)$weatherData['DEWP'] : null);
             $weather->setSTP($weatherData['STP'] !== 'None' ? (float)$weatherData['STP'] : null);
