@@ -23,10 +23,10 @@ class Weather
     private ?int $STN;
 
     #[ORM\Column(type: "date", nullable: true)]
-    private ?\DateTimeInterface $date;
+    private ?\DateTimeInterface $DATE;
 
     #[ORM\Column(type: "time", nullable: true)]
-    private ?\DateTimeInterface $time;
+    private ?\DateTimeInterface $TIME;
 
     #[ORM\Column(type: "float", nullable: true)]
     private ?float $TEMP;
@@ -73,25 +73,25 @@ class Weather
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDATE(): ?\DateTimeInterface
     {
-        return $this->date;
+        return $this->DATE;
     }
 
-    public function setDate(?\DateTimeInterface $date): self
+    public function setDATE(?\DateTimeInterface $DATE): self
     {
-        $this->date = $date;
+        $this->DATE = $DATE;
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTIME(): ?\DateTimeInterface
     {
-        return $this->time;
+        return $this->TIME;
     }
 
-    public function setTime(?\DateTimeInterface $time): self
+    public function setTIME(?\DateTimeInterface $TIME): self
     {
-        $this->time = $time;
+        $this->TIME = $TIME;
         return $this;
     }
 

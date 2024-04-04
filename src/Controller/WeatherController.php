@@ -35,27 +35,27 @@ class WeatherController extends AbstractController
     public function receiveWeatherData(Request $request): Response
     {
         $jsonData = $request->getContent();
-
         $data = json_decode($jsonData, true);
+        $entityManager = $this->doctrine->getManager();
+
 
         foreach ($data['WEATHERDATA'] as $weatherData) {
             $weather = new Weather();
-            $weather->setSTN($weatherData['STN']);
-            $weather->setDate(new \DateTime($weatherData['DATE']));
-            $weather->setTime(new \DateTime($weatherData['TIME']));
-            $weather->setTemp($weatherData['TEMP']);
-            $weather->setDEWP($weatherData['DEWP']);
-            $weather->setSTP($weatherData['STP']);
-            $weather->setSLP($weatherData['SLP']);
-            $weather->setWDSP($weatherData['WDSP']);
-            $weather->setVISIB($weatherData['VISIB']);
-            $weather->setPRCP($weatherData['PRCP']);
-            $weather->setFRSHTT($weatherData['FRSHTT']);
-            $weather->setCLDC($weatherData['CLDC']);
-            $weather->setSNDP($weatherData['SNDP']);
-            $weather->setWNDDIR($weatherData['WNDDIR']);
+            $weather->setSTN($weatherData['STN'] !== 'None' ? (int)$weatherData['STN'] : null);
+            $weather->setDate(isset($weatherData['DATE']) ? new \DateTime($weatherData['DATE']) : null);
+            $weather->setTime(isset($weatherData['TIME']) ? new \DateTime($weatherData['TIME']) : null);
+            $weather->setTEMP($weatherData['TEMP'] !== 'None' ? (float)$weatherData['TEMP'] : null);
+            $weather->setDEWP($weatherData['DEWP'] !== 'None' ? (float)$weatherData['DEWP'] : null);
+            $weather->setSTP($weatherData['STP'] !== 'None' ? (float)$weatherData['STP'] : null);
+            $weather->setSLP($weatherData['SLP'] !== 'None' ? (float)$weatherData['SLP'] : null);
+            $weather->setWDSP($weatherData['WDSP'] !== 'None' ? (float)$weatherData['WDSP'] : null);
+            $weather->setVISIB($weatherData['VISIB'] !== 'None' ? (float)$weatherData['VISIB'] : null);
+            $weather->setPRCP($weatherData['PRCP'] !== 'None' ? (float)$weatherData['PRCP'] : null);
+            $weather->setFRSHTT($weatherData['FRSHTT'] !== 'None' ? (string)$weatherData['FRSHTT'] : null);
+            $weather->setCLDC($weatherData['CLDC'] !== 'None' ? (float)$weatherData['CLDC'] : null);
+            $weather->setSNDP($weatherData['SNDP'] !== 'None' ? (float)$weatherData['SNDP'] : null);
+            $weather->setWNDDIR($weatherData['WNDDIR'] !== 'None' ? (int)$weatherData['WNDDIR'] : null);
 
-            $entityManager = $this->doctrine->getManager();
             $entityManager->persist($weather);
         }
 
