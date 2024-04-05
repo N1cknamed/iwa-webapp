@@ -21,6 +21,42 @@ class ContractRepository extends ServiceEntityRepository
         parent::__construct($registry, Contract::class);
     }
 
+    public function getActiveContracts():array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->where('c.date_end >= CURRENT_DATE()')
+            ->orderBy('c.name_holder', 'ASC');
+            # ->groupBy('c.name_hodler');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
+    public function getContracts(string $name): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->where('c.name_holder = :name')
+            ->orderBy('c.date_end', 'ASC')
+            ->setParameter('name', $name);
+
+        $query = $qb->getQuery();
+        
+        return $query->execute();
+    }
+
+    public function getActiveData(string $name): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->where('c.name_holder = :name')
+            ->andWhere('c.date_end >= CURRENT_DATE()')
+            ->setParameter('name', $name);
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
     //    /**
     //     * @return Contract[] Returns an array of Contract objects
     //     */

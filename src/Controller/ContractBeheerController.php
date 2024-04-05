@@ -17,8 +17,8 @@ class ContractBeheerController extends AbstractController
     #[Route('/contractbeheer', name: 'app_contract_beheer')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $subscriptions = $entityManager->getRepository(Subscription::class)->findAll();
-        $contracts = $entityManager->getRepository(Contract::class)->findAll();
+        $subscriptions = $entityManager->getRepository(Subscription::class)->getActiveSubscriptions();
+        $contracts = $entityManager->getRepository(Contract::class)->getActiveContracts();
  
 
         return $this->render('contract_beheer/index.html.twig', [
@@ -49,6 +49,24 @@ class ContractBeheerController extends AbstractController
     ]);
     }
 
+    #[Route('/contractbeheer/subscription/{name}', name: 'app_subscriptions')]
+    public function seeSubscriptions(EntityManagerInterface $entityManager, string $name): Response
+    {
+        $subscriptions = $entityManager->getRepository(Subscription::class)->getSubscriptions($name);
+
+        if (!$subscriptions) {
+            throw $this->createNotFoundException(
+                'No subscriptions found for '.$name
+            );
+        }
+
+        return $this->render('contract_beheer/subscriptions.html.twig', [
+            'controller_name' => 'ConractBeheerController',
+            'name' => $name,
+            'subscriptions' => $subscriptions
+    ]);
+    }
+
     #[Route('/contractbeheer/addcontract', name: 'app_add_contract')]
     public function addContract(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -67,6 +85,24 @@ class ContractBeheerController extends AbstractController
     return $this->render('contract_beheer/addcontract.html.twig', [
         'controller_name' => 'ContractBeheerController',
         'ContractForm' => $form
+    ]);
+    }
+
+    #[Route('/contractbeheer/contract/{name}', name: 'app_contracts')]
+    public function seeContracts(EntityManagerInterface $entityManager, string $name): Response
+    {
+        $contracts = $entityManager->getRepository(Contract::class)->getContracts($name);
+
+        if (!$contracts) {
+            throw $this->createNotFoundException(
+                'No subscriptions found for '.$name
+            );
+        }
+
+        return $this->render('contract_beheer/contracts.html.twig', [
+            'controller_name' => 'ConractBeheerController',
+            'name' => $name,
+            'contracts' => $contracts
     ]);
     }
 

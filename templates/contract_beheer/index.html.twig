@@ -8,25 +8,23 @@
 
 {% block body %}
     <div class="container">
-        <h2>Bestaande Abbonementen</h2>
+        <h2>Active Subscriptions</h2>
         <table class="table">
             <thead>
             <tr>
-                <th>Naam</th>
-                <th>End Date</th>
-                <th>Station</th>
+                <th>Name</th>
             </tr>
             </thead>
             <tbody>
             {% for subscription in subscriptions %}
                 <tr>
-                    <td>{{ subscription.nameholder }}</td>
-                    <td>{{ subscription.dateend|date('Y-m-d') }}</td>
-                    <td>{{ subscription.station }}</td>
+                    <td>
+                        <a href='{{ path('app_subscriptions', {'name': subscription.nameholder}) }}'>{{ subscription.nameholder }}</a>
+                    </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="2">Geen Subscriptions gevonden</td>
+                    <td colspan="2">No subscriptions found</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -35,42 +33,23 @@
     </div>
 
     <div class="container">
-        <h2>Bestaande contracten</h2>
+        <h2>Active Contracts</h2>
         <table class="table">
             <thead>
             <tr>
                 <th>Naam</th>
-                <th>End Date</th>
-                <th>Country code</th>
-                <th>Region</th>
-                <th>Coordinates</th>
-                <th>Longitude</th>
-                <th>Latitude</th>
-                <th>Elevation</th>
-                <th>Data</th>
             </tr>
             </thead>
             <tbody>
             {% for contract in contracts %}
                 <tr>
-                    <td>{{ contract.nameholder }}</td>
-                    <td>{{ contract.dateend|date('Y-m-d') }}</td>
-                    <td>{{ contract.countrycode }}</td>
-                    <td>{{ contract.region }}</td>
-                    <td>{{ contract.coordinates }}</td>
-                    <td>{{ contract.longitude }}</td>
-                    <td>{{ contract.latitude }}</td>
-                    <td>{{ contract.elevation }}</td>
                     <td>
-                        {% set data = [] %}
-                        {% for d in contract.data%}
-                            {% set data = data|merge([d]) %}
-                        {% endfor %}
-                        {{ data|join(', ') }}</td>
+                        <a href='{{ path('app_contracts', {'name': contract.nameholder}) }}'>{{ contract.nameholder }}</a>
+                    </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="2">Geen contracten gevonden</td>
+                    <td colspan="2">No Contracts found</td>
                 </tr>
             {% endfor %}
             </tbody>

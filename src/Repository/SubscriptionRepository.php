@@ -21,6 +21,42 @@ class SubscriptionRepository extends ServiceEntityRepository
         parent::__construct($registry, Subscription::class);
     }
 
+    public function getActiveSubscriptions():array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.date_end >= CURRENT_DATE()')
+            ->orderBy('s.name_holder', 'ASC');
+            # ->groupBy('s.name_holder');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
+    public function getSubscriptions(string $name): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.name_holder = :name')
+            ->orderBy('s.date_end', 'ASC')
+            ->setParameter('name', $name);
+
+        $query = $qb->getQuery();
+        
+        return $query->execute();
+    }
+
+    public function getActiveStations(string $name): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.name_holder = :name')
+            ->andWhere('s.date_end >= CURRENT_DATE()')
+            ->setParameter('name', $name);
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
     //    /**
     //     * @return Subscription[] Returns an array of Subscription objects
     //     */
