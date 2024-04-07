@@ -38,11 +38,14 @@
                 <div class="card text-center">
                     <div id="mapid" class="card-img-top" style="height: 300px;"></div>
                     <div class="card-body">
-                        <h1 class="card-title">{{ station.name }}</h1>
-                        <p class="card-text">{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
+                        <h3 class="card-title">
                         {% if station.geolocation and station.geolocation.state %}
+                            {{ station.geolocation.state }},
                         {% endif %}
-                        <p class="card-text">Staat: {{ station.geolocation.state }}</p>
+                            {{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}
+                            ({{ station.geolocation.countryEntity.getCountryCode}})
+                        </h3>
+                        <p class="card-text">Station ID: {{ station.name }}</p>
                         <p class="card-text">Hoogte: {{ station.elevation }}</p>
                     </div>
                     <ul class="list-group list-group-flush">
