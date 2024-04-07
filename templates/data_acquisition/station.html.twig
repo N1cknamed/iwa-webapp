@@ -190,14 +190,14 @@
                         data: tempData,
                         borderColor: 'rgb(75, 192, 192)',
                         tension: 0.1,
-                        yAxisID: 'y'
+                        yAxisID: 'y2'
                     },
                         {
                             label: 'Dauwpunt',
                             data: dauwpuntData,
                             borderColor: 'rgb(255, 99, 132)',
                             tension: 0.1,
-                            yAxisID: 'y'
+                            yAxisID: 'y2'
                         },
                         {
                             label: 'Luchtdruk',
@@ -218,49 +218,55 @@
                             data: zichtData,
                             borderColor: 'rgb(255, 205, 86)',
                             tension: 0.1,
-                            yAxisID: 'y1'
+                            yAxisID: 'y5'
                         },
                         {
-                            label: 'Wind',
+                            label: 'Windsnelheid',
                             data: windData,
                             borderColor: 'rgb(75, 192, 192)',
                             tension: 0.1,
-                            yAxisID: 'y1'
+                            yAxisID: 'y4'
                         },
-                        {
-                            label: 'Richting',
-                            data: richtingData,
-                            borderColor: 'rgb(54, 162, 235)',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        },
+                        // {
+                        //     label: 'Windrichting', //TODO; windrichting op slimmere manier weergeven
+                        //     data: richtingData,
+                        //     borderColor: 'rgb(54, 162, 235)',
+                        //     tension: 0.1,
+                        //     yAxisID: 'y1'
+                        // },
                         {
                             label: 'Neerslag',
                             data: neerslagData,
                             borderColor: 'rgb(153, 102, 255)',
                             tension: 0.1,
-                            yAxisID: 'y1'
+                            yAxisID: 'y3'
                         },
                         {
                             label: 'Sneeuw',
                             data: sneeuwData,
                             borderColor: 'rgb(201, 203, 207)',
                             tension: 0.1,
-                            yAxisID: 'y1'
+                            yAxisID: 'y3'
                         },
                         {
                             label: 'Bewolking',
                             data: bewolkingData,
                             borderColor: 'rgb(255, 99, 132)',
                             tension: 0.1,
-                            yAxisID: 'y2'
+                            yAxisID: 'y0'
                         }]
                 },
                 options: {
                     animation: false,
                     scales: {
-                        y: {
-                            beginAtZero: true
+                        y0: {
+                            beginAtZero: true,
+                            display: true,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return value + '%';
+                                }
+                            }
                         },
                         y1: {
                             position: 'right',
@@ -268,6 +274,12 @@
                             grid: {
                                 drawOnChartArea: false,
                             },
+                            display: true,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return value + ' hPa';
+                                }
+                            }
                         },
                         y2: {
                             position: 'right',
@@ -275,23 +287,90 @@
                             grid: {
                                 drawOnChartArea: false,
                             },
+                            display: true,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return value + '°C';
+                                }
+                            }
+                        },
+                        y3: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            display: true,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return value + 'cm';
+                                }
+                            }
+                        },
+                        y4: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            display: true,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return value + 'm/s';
+                                }
+                            }
+                        },
+                        y5: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            display: true,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return value + 'km';
+                                }
+                            }
                         }
                     },
                     plugins: {
-                        legend: {
-                            position: 'left', // Change the position of the legend
-                            labels: {
-                                font: {
-                                    size: 14, // Adjust the font size
-                                },
-                                color: '#333' // Adjust the font color
-                            }
+                        legend: getChartLegendConfig(),
                         }
                     }
-                }
+
             });
         });
+        function getChartLegendConfig() {
+            return {
+                onClick: function(event, legendItem) {
+                    var chart = this.chart;
+                    var datasetIndex = legendItem.datasetIndex;
 
+                    // Toggle the visibility of the dataset
+                    var meta = chart.getDatasetMeta(datasetIndex);
+                    meta.hidden = meta.hidden === null ? !chart.data.datasets[datasetIndex].hidden : null;
+
+                    // Get the yAxisID of the clicked dataset
+                    var yAxisID = chart.data.datasets[datasetIndex].yAxisID;
+
+                    // Check if all datasets that use the same yAxisID are hidden
+                    var allHidden = true;
+                    for (var i = 0; i < chart.data.datasets.length; i++) {
+                        var otherMeta = chart.getDatasetMeta(i);
+                        if (chart.data.datasets[i].yAxisID === yAxisID && otherMeta.hidden === null) {
+                            allHidden = false;
+                            break;
+                        }
+                    }
+
+                    // If all datasets that use the same yAxisID are hidden, hide the y-axis. Otherwise, show it.
+                    chart.options.scales[yAxisID].display = !allHidden;
+
+                    chart.update();
+                }
+            };
+        }
     </script>
     {{ parent() }}
 {% endblock %}
