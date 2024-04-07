@@ -1,3 +1,28 @@
+{% macro weatherIcons(frshtt) %}
+    {% set icons = [] %}
+    {% if frshtt|slice(0, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-thermometer-snow" title="Vorst"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(1, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-rain" title="Regen"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(2, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-snow" title="Sneeuw"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(3, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-hail" title="Hagel"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(4, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-lightning" title="Onweer"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(5, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-tornado" title="Tornado"></i>']) %}
+    {% endif %}
+    {{ icons|join(' ')|raw }}
+{% endmacro %}
+
+{% import _self as macros %}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Station Details{% endblock %}
@@ -9,9 +34,9 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <h1>{{ station.name }}</h1>
-                <div id="mapid" style="height: 250px; width: 500px;"></div>
+                <div id="mapid" style="height: 250px; width: 250px;"></div>
                 <p>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
                 {% if station.geolocation and station.geolocation.state %}
                 {% endif %}
@@ -19,16 +44,24 @@
                 <p>Hoogte: {{ station.elevation }}</p>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <h2>Weerdata</h2>
                 <table>
                     <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Temperature</th>
-                        <th>Dew Point</th>
-                        <!-- Add more columns as needed -->
+                        <th>Datum</th>
+                        <th>Tijd</th>
+                        <th>Temperatuur</th>
+                        <th>Dauwpunt</th>
+                        <th>Luchtdruk</th>
+                        <th>Luchtdruk op zeeniveau</th>
+                        <th>Zicht</th>
+                        <th>Wind</th>
+                        <th>Richting</th>
+                        <th>Neerslag</th>
+                        <th>Sneeuw</th>
+                        <th>Bewolking</th>
+                        <th>Evenement</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,13 +69,21 @@
                         <tr>
                             <td>{{ weather.DATE|date('Y-m-d') }}</td>
                             <td>{{ weather.TIME|date('H:i') }}</td>
-                            <td>{{ weather.TEMP }}</td>
-                            <td>{{ weather.DEWP }}</td>
-                            <!-- Add more data as needed -->
+                            <td>{{ weather.TEMP }}℃</td>
+                            <td>{{ weather.DEWP }}℃</td>
+                            <td>{{ weather.STP }}</td>
+                            <td>{{ weather.SLP }}</td>
+                            <td>{{ weather.VISIB }}</td>
+                            <td>{{ weather.WDSP }}</td>
+                            <td>{{ weather.WNDDIR }}</td>
+                            <td>{{ weather.PRCP }}</td>
+                            <td>{{ weather.SNDP }}</td>
+                            <td>{{ weather.CLDC }}%</td>
+                            <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="4">No weather data available for this station.</td>
+                            <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
                         </tr>
                     {% endfor %}
                     </tbody>
