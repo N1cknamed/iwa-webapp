@@ -263,7 +263,7 @@
                             beginAtZero: true,
                             display: true,
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: function (value, index, ticks) {
                                     return value + '%';
                                 }
                             }
@@ -276,7 +276,7 @@
                             },
                             display: true,
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: function (value, index, ticks) {
                                     return value + ' hPa';
                                 }
                             }
@@ -289,7 +289,7 @@
                             },
                             display: true,
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: function (value, index, ticks) {
                                     return value + '°C';
                                 }
                             }
@@ -302,7 +302,7 @@
                             },
                             display: true,
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: function (value, index, ticks) {
                                     return value + 'cm';
                                 }
                             }
@@ -315,7 +315,7 @@
                             },
                             display: true,
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: function (value, index, ticks) {
                                     return value + 'm/s';
                                 }
                             }
@@ -328,16 +328,25 @@
                             },
                             display: true,
                             ticks: {
-                                callback: function(value, index, ticks) {
+                                callback: function (value, index, ticks) {
                                     return value + 'km';
                                 }
                             }
                         }
                     },
                     plugins: {
-                        legend: getChartLegendConfig(),
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 15,
+                                font: {
+                                    size: 13 // Change the font size to 14
+                                }
+                            },
+                            onClick: getChartLegendConfig().onClick
                         }
                     }
+                }
 
             });
         });
