@@ -50,48 +50,50 @@
                 <div id="chartView" style="display: none;">
                     <canvas id="weatherChart"></canvas>
                 </div>
-                <table class="table-view">
-                    <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Tijd</th>
-                        <th>Temperatuur</th>
-                        <th>Dauwpunt</th>
-                        <th>Luchtdruk</th>
-                        <th>Luchtdruk op zeeniveau</th>
-                        <th>Zicht</th>
-                        <th>Wind</th>
-                        <th>Richting</th>
-                        <th>Neerslag</th>
-                        <th>Sneeuw</th>
-                        <th>Bewolking</th>
-                        <th>Evenement</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for weather in station.weather %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
                         <tr>
-                            <td>{{ weather.DATE|date('Y-m-d') }}</td>
-                            <td>{{ weather.TIME|date('H:i') }}</td>
-                            <td>{{ weather.TEMP }}℃</td>
-                            <td>{{ weather.DEWP }}℃</td>
-                            <td>{{ weather.STP }}</td>
-                            <td>{{ weather.SLP }}</td>
-                            <td>{{ weather.VISIB }}</td>
-                            <td>{{ weather.WDSP }}</td>
-                            <td>{{ weather.WNDDIR }}</td>
-                            <td>{{ weather.PRCP }}</td>
-                            <td>{{ weather.SNDP }}</td>
-                            <td>{{ weather.CLDC }}%</td>
-                            <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
+                            <th>Datum</th>
+                            <th>Tijd</th>
+                            <th>Temperatuur</th>
+                            <th>Dauwpunt</th>
+                            <th>Luchtdruk</th>
+                            <th>Luchtdruk op zeeniveau</th>
+                            <th>Zicht</th>
+                            <th>Wind</th>
+                            <th>Richting</th>
+                            <th>Neerslag</th>
+                            <th>Sneeuw</th>
+                            <th>Bewolking</th>
+                            <th>Evenement</th>
                         </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for weather in station.weather %}
+                            <tr>
+                                <td>{{ weather.DATE|date('Y-m-d') }}</td>
+                                <td>{{ weather.TIME|date('H:i') }}</td>
+                                <td>{{ weather.TEMP }}℃</td>
+                                <td>{{ weather.DEWP }}℃</td>
+                                <td>{{ weather.STP }}</td>
+                                <td>{{ weather.SLP }}</td>
+                                <td>{{ weather.VISIB }}</td>
+                                <td>{{ weather.WDSP }}</td>
+                                <td>{{ weather.WNDDIR }}</td>
+                                <td>{{ weather.PRCP }}</td>
+                                <td>{{ weather.SNDP }}</td>
+                                <td>{{ weather.CLDC }}%</td>
+                                <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -136,7 +138,7 @@
         {% endfor %}
 
         document.getElementById('switchViewButton').addEventListener('click', function() {
-            var tableView = document.querySelector('.table-view');
+            var tableView = document.querySelector('.table-responsive');
             var chartView = document.getElementById('chartView');
 
             if (tableView.style.display === 'none') {
