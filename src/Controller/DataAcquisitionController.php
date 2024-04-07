@@ -9,6 +9,7 @@ use App\Entity\Station;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\StationRepository;
 
 class DataAcquisitionController extends AbstractController
 {
@@ -47,11 +48,9 @@ class DataAcquisitionController extends AbstractController
     }
 
     #[Route('/dataacquisition/station/{name}', name: 'app_station_detail')]
-    public function detail(string $name): Response
+    public function detail(string $name, StationRepository $stationRepository): Response
     {
-        $station = $this->entityManager
-            ->getRepository(Station::class)
-            ->findOneBy(['name' => $name]);
+        $station = $stationRepository->findWithWeatherData($name);
 
         if (!$station) {
             throw $this->createNotFoundException('The station does not exist');

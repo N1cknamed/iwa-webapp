@@ -8,13 +8,47 @@
 
 {% block body %}
     <div class="container">
-        <h1>{{ station.name }}</h1>
-        <div id="mapid" style="height: 180px; width: 360px;"></div>
-        <p>Longitude: {{ station.longitude }}</p>
-        <p>Latitude: {{ station.latitude }}</p>
-        <p>Elevation: {{ station.elevation }}</p>
-        <p>Country: {{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
-        <p>State: {{ station.geolocation ? station.geolocation.state : 'N/A' }}</p>
+        <div class="row">
+            <div class="col-md-6">
+                <h1>{{ station.name }}</h1>
+                <div id="mapid" style="height: 250px; width: 500px;"></div>
+                <p>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
+                {% if station.geolocation and station.geolocation.state %}
+                {% endif %}
+                <p>Staat: {{ station.geolocation.state }}</p>
+                <p>Hoogte: {{ station.elevation }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <h2>Weerdata</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Temperature</th>
+                        <th>Dew Point</th>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for weather in station.weather %}
+                        <tr>
+                            <td>{{ weather.DATE|date('Y-m-d') }}</td>
+                            <td>{{ weather.TIME|date('H:i') }}</td>
+                            <td>{{ weather.TEMP }}</td>
+                            <td>{{ weather.DEWP }}</td>
+                            <!-- Add more data as needed -->
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No weather data available for this station.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

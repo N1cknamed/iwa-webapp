@@ -21,6 +21,17 @@ class StationRepository extends ServiceEntityRepository
         parent::__construct($registry, Station::class);
     }
 
+    public function findWithWeatherData($stationName)
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.weather', 'w')
+            ->addSelect('w')
+            ->where('s.name = :name')
+            ->setParameter('name', $stationName)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 //    /**
 //     * @return Station[] Returns an array of Station objects
 //     */

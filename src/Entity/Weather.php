@@ -14,6 +14,10 @@ class Weather
     #[ORM\Column(type: "integer")]
     private ?int $id;
 
+    #[ORM\ManyToOne(targetEntity: Station::class, inversedBy: "weather")]
+    #[ORM\JoinColumn(name: "STN", referencedColumnName: "name", nullable: false)]
+    private ?Station $station;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -213,6 +217,18 @@ class Weather
     public function setWNDDIR(?int $WNDDIR): self
     {
         $this->WNDDIR = $WNDDIR;
+        return $this;
+    }
+
+    public function getStation(): ?Station
+    {
+        return $this->station;
+    }
+
+    public function setStation(?Station $station): self
+    {
+        $this->station = $station;
+
         return $this;
     }
 }

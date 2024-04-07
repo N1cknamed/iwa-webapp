@@ -30,9 +30,13 @@ class Station
     #[ORM\OneToMany(targetEntity: NearestLocation::class, mappedBy: "station")]
     private Collection $nearestLocations;
 
+    #[ORM\OneToMany(targetEntity: Weather::class, mappedBy: "station")]
+    private Collection $weather;
+
     public function __construct()
     {
         $this->nearestLocations = new ArrayCollection();
+        $this->weather = new ArrayCollection();
     }
 
     public function getName(): string
@@ -129,6 +133,36 @@ class Station
             // set the owning side to null (unless already changed)
             if ($nearestLocation->getStation() === $this) {
                 $nearestLocation->setStation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Weather[]
+     */
+    public function getWeather(): Collection
+    {
+        return $this->weather;
+    }
+
+    public function addWeather(Weather $weather): self
+    {
+        if (!$this->weather->contains($weather)) {
+            $this->weather[] = $weather;
+            $weather->setStation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWeather(Weather $weather): self
+    {
+        if ($this->weather->removeElement($weather)) {
+            // set the owning side to null (unless already changed)
+            if ($weather->getStation() === $this) {
+                $weather->setStation(null);
             }
         }
 
