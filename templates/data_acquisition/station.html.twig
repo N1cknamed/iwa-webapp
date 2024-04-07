@@ -32,34 +32,47 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-3">
-                <h1>{{ station.name }}</h1>
-                <div id="mapid" style="height: 250px; width: 250px;"></div>
-                <p>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
-                {% if station.geolocation and station.geolocation.state %}
-                {% endif %}
-                <p>Staat: {{ station.geolocation.state }}</p>
-                <p>Hoogte: {{ station.elevation }}</p>
+                <div class="card text-center">
+                    <div id="mapid" class="card-img-top" style="height: 300px;"></div>
+                    <div class="card-body">
+                        <h1 class="card-title">{{ station.name }}</h1>
+                        <p class="card-text">{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
+                        {% if station.geolocation and station.geolocation.state %}
+                        {% endif %}
+                        <p class="card-text">Staat: {{ station.geolocation.state }}</p>
+                        <p class="card-text">Hoogte: {{ station.elevation }}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <a href="#" id="switchToTableViewButton" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+                            <i class="bi bi-caret-right-fill invisible"></i>
+                            Tabelweergave
+                            <i class="bi bi-caret-right-fill"></i>
+                        </a>
+                        <a href="#" id="switchToChartViewButton" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <i class="bi bi-caret-right-fill invisible"></i>
+                            Grafiekweergave
+                            <i class="bi bi-caret-right-fill"></i>
+                        </a>
+                    </ul>
+                </div>
             </div>
 
-            <div class="col-md-9">
-                <h2>Weerdata</h2>
-                <button id="switchViewButton" class="btn btn-primary">Switch to Chart View</button>
+            <div class="col-md-8">
                 <div id="chartView" style="display: none;">
                     <canvas id="weatherChart"></canvas>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover text-center">
                         <thead>
                         <tr>
                             <th>Datum</th>
                             <th>Tijd</th>
-                            <th>Temperatuur</th>
-                            <th>Dauwpunt</th>
+                            <th>Temperatuur + Dauwpunt</th>
                             <th>Luchtdruk</th>
-                            <th>Luchtdruk op zeeniveau</th>
+                            <th>~Zeeniveau</th>
                             <th>Zicht</th>
                             <th>Wind</th>
                             <th>Richting</th>
@@ -70,26 +83,31 @@
                         </tr>
                         </thead>
                         <tbody>
+                        {% set currentDate = '' %}
                         {% for weather in station.weather %}
                             <tr>
-                                <td>{{ weather.DATE|date('Y-m-d') }}</td>
-                                <td>{{ weather.TIME|date('H:i') }}</td>
-                                <td>{{ weather.TEMP }}℃</td>
-                                <td>{{ weather.DEWP }}℃</td>
+                                <td>
+                                    {% if currentDate != weather.DATE|date('Y-m-d') %}
+                                        {% set currentDate = weather.DATE|date('Y-m-d') %}
+                                        {{ currentDate }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ weather.TIME|date('H:i:s') }}</td>
+                                <td>{{ weather.TEMP }}℃ {{ weather.DEWP }}℃</td>
                                 <td>{{ weather.STP }}</td>
                                 <td>{{ weather.SLP }}</td>
                                 <td>{{ weather.VISIB }}</td>
                                 <td>{{ weather.WDSP }}</td>
-                                <td>{{ weather.WNDDIR }}</td>
-                                <td>{{ weather.PRCP }}</td>
-                                <td>{{ weather.SNDP }}</td>
+                                <td>{{ weather.WNDDIR }}°</td>
+                                <td>{{ weather.PRCP }}cm</td>
+                                <td>{{ weather.SNDP }}cm</td>
                                 <td>{{ weather.CLDC }}%</td>
                                 <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
                             </tr>
                         {% else %}
-                            <tr>
-                                <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
+                        </tr>
                         {% endfor %}
                         </tbody>
                     </table>
@@ -137,112 +155,143 @@
         bewolkingData.push({{ weather.CLDC }});
         {% endfor %}
 
-        document.getElementById('switchViewButton').addEventListener('click', function() {
+        document.getElementById('switchToTableViewButton').addEventListener('click', function(event) {
+            event.preventDefault();
             var tableView = document.querySelector('.table-responsive');
             var chartView = document.getElementById('chartView');
 
-            if (tableView.style.display === 'none') {
-                tableView.style.display = 'block';
-                chartView.style.display = 'none';
-                this.textContent = 'Switch to Chart View';
-            } else {
-                tableView.style.display = 'none';
-                chartView.style.display = 'block';
-                this.textContent = 'Switch to Table View';
+            tableView.style.display = 'block';
+            chartView.style.display = 'none';
 
-                var ctx = document.getElementById('weatherChart').getContext('2d');
-                var chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Temperature',
-                            data: tempData,
-                            borderColor: 'rgb(75, 192, 192)',
+            // Add active class to table view button and remove from chart view button
+            this.classList.add('active');
+            document.getElementById('switchToChartViewButton').classList.remove('active');
+        });
+
+        document.getElementById('switchToChartViewButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            var tableView = document.querySelector('.table-responsive');
+            var chartView = document.getElementById('chartView');
+
+            tableView.style.display = 'none';
+            chartView.style.display = 'block';
+
+            // Add active class to chart view button and remove from table view button
+            this.classList.add('active');
+            document.getElementById('switchToTableViewButton').classList.remove('active');
+
+            var ctx = document.getElementById('weatherChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatuur',
+                        data: tempData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        yAxisID: 'y'
+                    },
+                        {
+                            label: 'Dauwpunt',
+                            data: dauwpuntData,
+                            borderColor: 'rgb(255, 99, 132)',
                             tension: 0.1,
                             yAxisID: 'y'
                         },
-                            {
-                                label: 'Dauwpunt',
-                                data: dauwpuntData,
-                                borderColor: 'rgb(255, 99, 132)',
-                                tension: 0.1,
-                                yAxisID: 'y'
+                        {
+                            label: 'Luchtdruk',
+                            data: luchtdrukData,
+                            borderColor: 'rgb(153, 102, 255)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Luchtdruk op zeeniveau',
+                            data: luchtdrukZeeData,
+                            borderColor: 'rgb(255, 159, 64)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Zicht',
+                            data: zichtData,
+                            borderColor: 'rgb(255, 205, 86)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Wind',
+                            data: windData,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Richting',
+                            data: richtingData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Neerslag',
+                            data: neerslagData,
+                            borderColor: 'rgb(153, 102, 255)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Sneeuw',
+                            data: sneeuwData,
+                            borderColor: 'rgb(201, 203, 207)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Bewolking',
+                            data: bewolkingData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.1,
+                            yAxisID: 'y2'
+                        }]
+                },
+                options: {
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        y1: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false,
                             },
-                            {
-                                label: 'Luchtdruk',
-                                data: luchtdrukData,
-                                borderColor: 'rgb(153, 102, 255)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Luchtdruk op zeeniveau',
-                                data: luchtdrukZeeData,
-                                borderColor: 'rgb(255, 159, 64)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Zicht',
-                                data: zichtData,
-                                borderColor: 'rgb(255, 205, 86)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Wind',
-                                data: windData,
-                                borderColor: 'rgb(75, 192, 192)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Richting',
-                                data: richtingData,
-                                borderColor: 'rgb(54, 162, 235)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Neerslag',
-                                data: neerslagData,
-                                borderColor: 'rgb(153, 102, 255)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Sneeuw',
-                                data: sneeuwData,
-                                borderColor: 'rgb(201, 203, 207)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Bewolking',
-                                data: bewolkingData,
-                                borderColor: 'rgb(255, 99, 132)',
-                                tension: 0.1,
-                                yAxisID: 'y1'
-                            }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            },
-                            y1: {
-                                position: 'right',
-                                beginAtZero: true,
-                                grid: {
-                                    drawOnChartArea: false, // only want the grid lines for one axis to show up
-                                },
+                        },
+                        y2: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false,
                             },
                         }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'left', // Change the position of the legend
+                            labels: {
+                                font: {
+                                    size: 14, // Adjust the font size
+                                },
+                                color: '#333' // Adjust the font color
+                            }
+                        }
                     }
-                });
-            }
+                }
+            });
         });
+
     </script>
     {{ parent() }}
 {% endblock %}
