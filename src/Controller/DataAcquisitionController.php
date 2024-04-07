@@ -45,4 +45,21 @@ class DataAcquisitionController extends AbstractController
             'total_pages' => ceil(count($paginator) / $limit),
         ]);
     }
+
+    #[Route('/dataacquisition/station/{name}', name: 'app_station_detail')]
+    public function detail(string $name): Response
+    {
+        $station = $this->entityManager
+            ->getRepository(Station::class)
+            ->findOneBy(['name' => $name]);
+
+        if (!$station) {
+            throw $this->createNotFoundException('The station does not exist');
+        }
+
+        return $this->render('data_acquisition/station.html.twig', [
+            'station' => $station,
+            'controller_name' => 'DataAcquisitionController',
+        ]);
+    }
 }

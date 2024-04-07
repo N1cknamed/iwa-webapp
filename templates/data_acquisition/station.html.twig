@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Station Details{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ station.name }}</h1>
+        <div id="mapid" style="height: 180px; width: 360px;"></div>
+        <p>Longitude: {{ station.longitude }}</p>
+        <p>Latitude: {{ station.latitude }}</p>
+        <p>Elevation: {{ station.elevation }}</p>
+        <p>Country: {{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}</p>
+        <p>State: {{ station.geolocation ? station.geolocation.state : 'N/A' }}</p>
+    </div>
+{% endblock %}
+
+{% block body_scripts %}
+    <script>
+        var mymap = L.map('mapid').setView([{{ station.latitude }}, {{ station.longitude }}], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(mymap);
+
+        L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(mymap)
+            .bindPopup("<b>" + "{{ station.name }}" + "</b><br />" + "{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}").openPopup();
+    </script>
+    {{ parent() }}
+{% endblock %}

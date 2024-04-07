@@ -23,7 +23,7 @@
             <tbody>
             {% for station in stations %}
                 <tr>
-                    <td>{{ station.name }}</td>
+                    <td><a href="{{ path('app_station_detail', {'name': station.name}) }}">{{ station.name }}</a></td>
                     <td>{{ station.longitude }}</td>
                     <td>{{ station.latitude }}</td>
                     <td>{{ station.elevation }}</td>
