@@ -47,6 +47,28 @@ class DataAcquisitionController extends AbstractController
         ]);
     }
 
+    #[Route('/dataacquisition/locations', name: 'app_station_locations')]
+    public function getAllStations(): Response
+    {
+        $stations = $this->entityManager
+            ->getRepository(Station::class)
+            ->createQueryBuilder('s')
+            ->select('s.name', 's.latitude', 's.longitude') // select only necessary fields
+            ->getQuery()
+            ->getResult();
+
+        $data = [];
+        foreach ($stations as $station) {
+            $data[] = [
+                'name' => $station['name'],
+                'latitude' => $station['latitude'],
+                'longitude' => $station['longitude'],
+            ];
+        }
+
+        return $this->json($data);
+    }
+
     #[Route('/dataacquisition/station/{name}', name: 'app_station_detail')]
     public function detail(string $name, StationRepository $stationRepository): Response
     {
