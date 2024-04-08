@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Subscription{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Edit subscription for {{ name }}</h1>
+        
+        {{ form_start(editForm, {'attr': {'class': 'form'}}) }}
+        <div class='mb-3'>
+            {{ form_label(editForm.station, 'station', {'label_attr': {'class': 'form-label'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_widget(editForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
+        </div>
+        {{ form_end(editForm) }}
+    </div>
+{% endblock %}

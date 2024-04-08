@@ -1,0 +1,40 @@
+{% extends 'contract_beheer/index.html.twig' %}
+
+{% block title %}AddSubscription{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Add Subscription</h1>
+
+        <div class="card">
+            <div class="card-body">
+                {{ form_errors(SubscriptionForm) }}
+
+                {{ form_start(SubscriptionForm, {'attr': {'class': 'form'}}) }}
+                <div class="mb-3">
+                    {{ form_label(SubscriptionForm.name_holder, 'Subscription holder name', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(SubscriptionForm.name_holder, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(SubscriptionForm.date_end, 'Activation date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(SubscriptionForm.date_start, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(SubscriptionForm.date_end, 'Expiration date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(SubscriptionForm.date_end, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(SubscriptionForm.station, 'Station', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(SubscriptionForm.station, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add</button>
+                {{ form_end(SubscriptionForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

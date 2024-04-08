@@ -1,0 +1,53 @@
+{% extends 'contract_beheer/index.html.twig' %}
+
+{% block title %}Contracts{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2>{{ name }}</h2>
+        <table class="table">
+            <thread>
+                <tr>
+                    <th>Start date</th>
+                    <th>End date</th>
+                    <th>Country code</th>
+                    <th>Region</th>
+                    <th>Coordinates</th>
+                    <th>Longitude</th>
+                    <th>Latitude</th>
+                    <th>Elevation</th>
+                    <th>Data</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for contract in contracts %}
+                    <tr>
+                        <td>{{ contract.datestart|date('Y-m-d') }}</td>
+                        <td>{{ contract.dateend|date('Y-m-d') }}</td>
+                        <td>{{ contract.countrycode }}</td>
+                        <td>{{ contract.region }}</td>
+                        <td>{{ contract.coordinates }}</td>
+                        <td>{{ contract.longitude }}</td>
+                        <td>{{ contract.latitude }}</td>
+                        <td>{{ contract.elevation }}</td>
+                        <td>
+                            {% set data = [] %}
+                            {% for d in contract.data %}
+                                {% set data = data|merge([d]) %}
+                            {% endfor %}
+                            {{ data|join(', ') }}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">No contracts found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
