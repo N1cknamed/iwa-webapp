@@ -33,7 +33,7 @@
 
 {% block body %}
     <div class="container-fluid">
-        <div class="row">
+        <div class="row mt-3 gx-5 justify-content-center">
             <div class="col-md-3">
                 <div class="card text-center">
                     <div id="mapid" class="card-img-top" style="height: 300px;"></div>
@@ -68,20 +68,20 @@
                     <canvas id="weatherChart"></canvas>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover text-center">
-                        <thead>
+                    <table class="table table-sm table-borderless table-hover text-center">
+                        <thead class="border-bottom">
                         <tr>
                             <th>Datum</th>
                             <th>Tijd</th>
-                            <th>Temperatuur + Dauwpunt</th>
-                            <th>Luchtdruk</th>
-                            <th>~Zeeniveau</th>
+                            <th>Temperatuur</th>
+                            <th>Dauwpunt</th>
+                            <th>Luchtdruk (Station / Zee)</th>
+                            <th>Bewolking</th>
                             <th>Zicht</th>
                             <th>Wind</th>
-                            <th>Richting</th>
+                            <th>Windrichting</th>
                             <th>Neerslag</th>
                             <th>Sneeuw</th>
-                            <th>Bewolking</th>
                             <th>Evenement</th>
                         </tr>
                         </thead>
@@ -96,15 +96,23 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ weather.TIME|date('H:i:s') }}</td>
-                                <td>{{ weather.TEMP }}℃ {{ weather.DEWP }}℃</td>
-                                <td>{{ weather.STP }}</td>
-                                <td>{{ weather.SLP }}</td>
+                                <td>{{ weather.TEMP }}℃</td>
+                                <td>{{ weather.DEWP }}℃</td>
+                                <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
+                                <td>{{ weather.CLDC }}%</td>
                                 <td>{{ weather.VISIB }}</td>
                                 <td>{{ weather.WDSP }}</td>
                                 <td>{{ weather.WNDDIR }}°</td>
-                                <td>{{ weather.PRCP }}cm</td>
-                                <td>{{ weather.SNDP }}cm</td>
-                                <td>{{ weather.CLDC }}%</td>
+                                {% if weather.PRCP is null %}
+                                    <td></td>
+                                {% else %}
+                                    <td>{{ weather.PRCP }}cm</td>
+                                {% endif %}
+                                {% if weather.SNDP is null %}
+                                    <td></td>
+                                {% else %}
+                                    <td>{{ weather.SNDP }}cm</td>
+                                {% endif %}
                                 <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
                             </tr>
                         {% else %}
