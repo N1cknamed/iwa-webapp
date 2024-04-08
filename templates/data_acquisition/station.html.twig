@@ -31,6 +31,11 @@
     {% include 'header.html.twig' %}
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css"/>
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid">
         <div class="row mt-3 gx-5 justify-content-center">
@@ -129,6 +134,7 @@
 {% endblock %}
 
 {% block body_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var mymap = L.map('mapid').setView([{{ station.latitude }}, {{ station.longitude }}], 5);
@@ -139,7 +145,8 @@
 
         L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(mymap)
             .bindPopup("<b>" + "{{ station.name }}" + "</b><br />" + "{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}").openPopup();
-
+    </script>
+    <script>
         var labels = [];
         var tempData = [];
         var dauwpuntData = [];
@@ -153,17 +160,17 @@
         var bewolkingData = [];
 
         {% for weather in station.weather %}
-        labels.push('{{ weather.DATE|date('Y-m-d') }}');
-        tempData.push({{ weather.TEMP }});
-        dauwpuntData.push({{ weather.DEWP }});
-        luchtdrukData.push({{ weather.STP }});
-        luchtdrukZeeData.push({{ weather.SLP }});
-        zichtData.push({{ weather.VISIB }});
-        windData.push({{ weather.WDSP }});
-        richtingData.push({{ weather.WNDDIR }});
-        neerslagData.push({{ weather.PRCP }});
-        sneeuwData.push({{ weather.SNDP }});
-        bewolkingData.push({{ weather.CLDC }});
+            labels.push('{{ weather.DATE|date('Y-m-d') }}');
+            tempData.push({{ weather.TEMP }});
+            dauwpuntData.push({{ weather.DEWP }});
+            luchtdrukData.push({{ weather.STP }});
+            luchtdrukZeeData.push({{ weather.SLP }});
+            zichtData.push({{ weather.VISIB }});
+            windData.push({{ weather.WDSP }});
+            richtingData.push({{ weather.WNDDIR }});
+            neerslagData.push({{ weather.PRCP }});
+            sneeuwData.push({{ weather.SNDP }});
+            bewolkingData.push({{ weather.CLDC }});
         {% endfor %}
 
         document.getElementById('switchToTableViewButton').addEventListener('click', function(event) {
@@ -203,69 +210,69 @@
                         tension: 0.1,
                         yAxisID: 'y2'
                     },
-                        {
-                            label: 'Dauwpunt',
-                            data: dauwpuntData,
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1,
-                            yAxisID: 'y2'
-                        },
-                        {
-                            label: 'Luchtdruk',
-                            data: luchtdrukData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        },
-                        {
-                            label: 'Luchtdruk op zeeniveau',
-                            data: luchtdrukZeeData,
-                            borderColor: 'rgb(255, 159, 64)',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        },
-                        {
-                            label: 'Zicht',
-                            data: zichtData,
-                            borderColor: 'rgb(255, 205, 86)',
-                            tension: 0.1,
-                            yAxisID: 'y5'
-                        },
-                        {
-                            label: 'Windsnelheid',
-                            data: windData,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.1,
-                            yAxisID: 'y4'
-                        },
-                        // {
-                        //     label: 'Windrichting', //TODO; windrichting op slimmere manier weergeven
-                        //     data: richtingData,
-                        //     borderColor: 'rgb(54, 162, 235)',
-                        //     tension: 0.1,
-                        //     yAxisID: 'y1'
-                        // },
-                        {
-                            label: 'Neerslag',
-                            data: neerslagData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.1,
-                            yAxisID: 'y3'
-                        },
-                        {
-                            label: 'Sneeuw',
-                            data: sneeuwData,
-                            borderColor: 'rgb(201, 203, 207)',
-                            tension: 0.1,
-                            yAxisID: 'y3'
-                        },
-                        {
-                            label: 'Bewolking',
-                            data: bewolkingData,
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1,
-                            yAxisID: 'y0'
-                        }]
+                    {
+                        label: 'Dauwpunt',
+                        data: dauwpuntData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1,
+                        yAxisID: 'y2'
+                    },
+                    {
+                        label: 'Luchtdruk',
+                        data: luchtdrukData,
+                        borderColor: 'rgb(153, 102, 255)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Luchtdruk op zeeniveau',
+                        data: luchtdrukZeeData,
+                        borderColor: 'rgb(255, 159, 64)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Zicht',
+                        data: zichtData,
+                        borderColor: 'rgb(255, 205, 86)',
+                        tension: 0.1,
+                        yAxisID: 'y5'
+                    },
+                    {
+                        label: 'Windsnelheid',
+                        data: windData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        yAxisID: 'y4'
+                    },
+                    // {
+                        // label: 'Windrichting', //TODO; windrichting op slimmere manier weergeven
+                        // data: richtingData,
+                        // borderColor: 'rgb(54, 162, 235)',
+                        // tension: 0.1,
+                        // yAxisID: 'y1'
+                    // },
+                    {
+                        label: 'Neerslag',
+                        data: neerslagData,
+                        borderColor: 'rgb(153, 102, 255)',
+                        tension: 0.1,
+                        yAxisID: 'y3'
+                    },
+                    {
+                        label: 'Sneeuw',
+                        data: sneeuwData,
+                        borderColor: 'rgb(201, 203, 207)',
+                        tension: 0.1,
+                        yAxisID: 'y3'
+                    },
+                    {
+                        label: 'Bewolking',
+                        data: bewolkingData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1,
+                        yAxisID: 'y0'
+                    }]
                 },
                 options: {
                     animation: false,
@@ -358,7 +365,6 @@
                         }
                     }
                 }
-
             });
         });
         function getChartLegendConfig() {

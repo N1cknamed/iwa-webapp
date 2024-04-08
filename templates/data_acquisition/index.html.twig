@@ -6,6 +6,18 @@
     {% include 'header.html.twig' %}
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="row">
@@ -64,59 +76,55 @@
                 </nav>
             </div>
             <div class="col-md-7">
-                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-                <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-                <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-                <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css"/>
-                <link rel="stylesheet"
-                      href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"/>
-
                 <div id="map" style="height: 600px;"></div>
-
-                <script>
-                    // Create a new Leaflet map
-                    var map = L.map('map').setView([0, 0], 2);  // Set initial view to [0, 0] and zoom level 2
-
-                    // Set the maximum bounds
-                    var bounds = L.latLngBounds(
-                        L.latLng(-90, -180),  // South-west corner
-                        L.latLng(90, 180)     // North-east corner
-                    );
-
-                    // Extend the bounds by 10%
-                    var paddedBounds = bounds.pad(0.1);
-
-                    // Apply the padded bounds
-                    map.setMaxBounds(paddedBounds);
-
-                    // Add a tile layer to the map (OpenStreetMap)
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 15,
-                        minZoom: 2,
-                    }).addTo(map);
-
-                    // Create a new MarkerClusterGroup
-                    var markers = L.markerClusterGroup({
-                        showCoverageOnHover: false,
-                    });
-
-                    // Fetch the station data
-                    fetch('/dataacquisition/locations')
-                        .then(response => response.json())
-                        .then(data => {
-                            // Add a marker for each station
-                            data.forEach(station => {
-                                var marker = L.marker([station.latitude, station.longitude])
-                                    .bindPopup("<b><a href='/dataacquisition/station/" + station.name + "'>" + station.name + "</a></b>");
-                                markers.addLayer(marker);  // Add the marker to the MarkerClusterGroup
-                            });
-
-                            map.addLayer(markers);  // Add the MarkerClusterGroup to the map
-                        });
-                </script>
             </div>
         </div>
-
     </div>
+{% endblock %}
+
+{% block body_scripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script>
+        // Create a new Leaflet map
+        var map = L.map('map').setView([0, 0], 2);  // Set initial view to [0, 0] and zoom level 2
+
+        // Set the maximum bounds
+        var bounds = L.latLngBounds(
+            L.latLng(-90, -180),  // South-west corner
+            L.latLng(90, 180)     // North-east corner
+        );
+
+        // Extend the bounds by 10%
+        var paddedBounds = bounds.pad(0.1);
+
+        // Apply the padded bounds
+        map.setMaxBounds(paddedBounds);
+
+        // Add a tile layer to the map (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            minZoom: 2,
+        }).addTo(map);
+
+        // Create a new MarkerClusterGroup
+        var markers = L.markerClusterGroup({
+            showCoverageOnHover: false,
+        });
+
+        // Fetch the station data
+        fetch('/dataacquisition/locations')
+            .then(response => response.json())
+            .then(data => {
+                // Add a marker for each station
+                data.forEach(station => {
+                    var marker = L.marker([station.latitude, station.longitude])
+                        .bindPopup("<b><a href='/dataacquisition/station/" + station.name + "'>" + station.name + "</a></b>");
+                    markers.addLayer(marker);  // Add the marker to the MarkerClusterGroup
+                });
+
+                map.addLayer(markers);  // Add the MarkerClusterGroup to the map
+            });
+    </script>
 {% endblock %}
