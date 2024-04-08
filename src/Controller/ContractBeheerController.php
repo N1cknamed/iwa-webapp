@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ContractBeheerController extends AbstractController
 {
@@ -28,7 +31,7 @@ class ContractBeheerController extends AbstractController
         ]);
     }
 
-    #[Route('/contractbeheer/addsubscription', name: 'app_add_subscription')]
+    #[Route('/contractbeheer/subscription/add', name: 'app_add_subscription')]
     public function addSubscription(Request $request, EntityManagerInterface $entityManager): Response
     {
         $subscription = new Subscription();
@@ -42,11 +45,55 @@ class ContractBeheerController extends AbstractController
 
             return $this->redirectToRoute('app_contract_beheer');
         }
-        
+
     return $this->render('contract_beheer/addsubscription.html.twig', [
         'controller_name' => 'ContractBeheerController',
         'SubscriptionForm' => $form
     ]);
+    }
+
+    #[Route('/contractbeheer/subscription/edit/{id}', name: 'app_edit_subscription')]
+    public function editSubscription($id, EntityManagerInterface $entityManager, Request $request)
+    {
+        $subscription = $entityManager->getRepository(Subscription::class)->find($id);
+
+        if (!$subscription) {
+            throw $this->createNotFoundException('No subscription found for id '.$id);
+        }
+
+        $form = $this->createFormBuilder($subscription)
+            ->add('station', TextType::class)
+            ->add('save', SubmitType::class, ['label' => 'Update subscription'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+        return $this->render('contract_beheer/editsubscription.html.twig', [
+            'controller_name' => 'ContractBeheerController',
+            'editForm' => $form->createView(),
+            'name' => $subscription->getHolderName()
+        ]);
+    }
+
+    #[Route('/contractbeheer/subscription/remove/{id}', name: 'app_remove_subscription')]
+    public function removeSubscription($id, EntityManagerInterface $entityManager)
+    {
+        $subscription = $entityManager->getRepository(Subscription::class)->find($id);
+
+        if (!$subscription) {
+            throw $this->createNotFoundException('No subscription found for id '.$id);
+        }
+
+        $entityManager->remove($subscription);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_contract_beheer');
     }
 
     #[Route('/contractbeheer/subscription/{name}', name: 'app_subscriptions')]
@@ -67,7 +114,7 @@ class ContractBeheerController extends AbstractController
     ]);
     }
 
-    #[Route('/contractbeheer/addcontract', name: 'app_add_contract')]
+    #[Route('/contractbeheer/contract/add', name: 'app_add_contract')]
     public function addContract(Request $request, EntityManagerInterface $entityManager): Response
     {
         $contract = new Contract();
@@ -86,6 +133,21 @@ class ContractBeheerController extends AbstractController
         'controller_name' => 'ContractBeheerController',
         'ContractForm' => $form
     ]);
+    }
+
+    #[Route('/contractbeheer/contract/remove/{id}', name: 'app_remove_contract')]
+    public function removeContract($id, EntityManagerInterface $entityManager)
+    {
+        $contract = $entityManager->getRepository(Contract::class)->find($id);
+
+        if (!$contract) {
+            throw $this->createNotFoundException('No contract found for id '.$id);
+        }
+
+        $entityManager->remove($contract);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_contract_beheer');
     }
 
     #[Route('/contractbeheer/contract/{name}', name: 'app_contracts')]
