@@ -32,6 +32,9 @@ class DataAcquisitionController extends AbstractController
             ->leftJoin('s.geolocation', 'g')
             ->leftJoin('g.countryEntity', 'c')
             ->select('s', 'g', 'c')
+            //->orderBy('c.country') //disable this for now
+            ->addSelect('s.name+0 as HIDDEN int_name') //hack to convert name string to integers, since doctrine does not support casting
+            ->orderBy('int_name')
             ->getQuery();
 
         $paginator = new Paginator($query);
