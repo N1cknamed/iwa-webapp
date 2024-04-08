@@ -23,15 +23,15 @@
         <div class="row">
             <h1>Stations</h1>
             <div class="col-md-5">
-                <table class="table">
+                <table class="table table-sm">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Land</th>
-                        <th>Staat</th>
+                        <th class="col-md-2">ID</th>
+                        <th class="col-md-4">Land</th>
+                        <th class="col-md-6">Staat / Provincie</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="station-table-body">
                     {% for station in stations %}
                         <tr>
                             <td>
@@ -49,18 +49,19 @@
                 </table>
 
                 <nav>
-                    <ul class="pagination">
-                        {# "Previous" button #}
+                    <ul class="pagination justify-content-center" id="pagination-links">
+                        <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': 1}) }}">Eerste</a>
+                        </li>
+
                         <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
                             <a class="page-link" href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
                         </li>
 
-                        {# Calculate start and end page numbers for the 5-page range #}
                         {% set start_page = max(1, current_page - 2) %}
                         {% set end_page = min(total_pages, start_page + 4) %}
                         {% set start_page = max(1, end_page - 4) %}
 
-                        {# Page number buttons #}
                         {% for page in start_page..end_page %}
                             <li class="page-item{% if page == current_page %} active{% endif %}">
                                 <a class="page-link"
@@ -68,9 +69,12 @@
                             </li>
                         {% endfor %}
 
-                        {# "Next" button #}
                         <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
                             <a class="page-link" href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
+                        </li>
+
+                        <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': total_pages}) }}">Laatste</a>
                         </li>
                     </ul>
                 </nav>
@@ -86,45 +90,68 @@
     {{ parent() }}
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script>
-        // Create a new Leaflet map
-        var map = L.map('map').setView([0, 0], 2);  // Set initial view to [0, 0] and zoom level 2
-
-        // Set the maximum bounds
-        var bounds = L.latLngBounds(
-            L.latLng(-90, -180),  // South-west corner
-            L.latLng(90, 180)     // North-east corner
-        );
-
-        // Extend the bounds by 10%
-        var paddedBounds = bounds.pad(0.1);
-
-        // Apply the padded bounds
-        map.setMaxBounds(paddedBounds);
-
-        // Add a tile layer to the map (OpenStreetMap)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 15,
-            minZoom: 2,
-        }).addTo(map);
-
-        // Create a new MarkerClusterGroup
-        var markers = L.markerClusterGroup({
-            showCoverageOnHover: false,
-        });
-
-        // Fetch the station data
-        fetch('/dataacquisition/locations')
-            .then(response => response.json())
-            .then(data => {
-                // Add a marker for each station
-                data.forEach(station => {
-                    var marker = L.marker([station.latitude, station.longitude])
-                        .bindPopup("<b><a href='/dataacquisition/station/" + station.name + "'>" + station.name + "</a></b>");
-                    markers.addLayer(marker);  // Add the marker to the MarkerClusterGroup
+    <script> // Leaflet map
+        var data = localStorage.getItem('stationData');
+        if (data) {
+            initializeMap(JSON.parse(data));
+        } else {
+            // If the data is not in local storage, fetch it
+            fetch('/dataacquisition/locations')
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem('stationData', JSON.stringify(data));
+                    initializeMap(data);
                 });
+        }
 
-                map.addLayer(markers);  // Add the MarkerClusterGroup to the map
+        function initializeMap(data) {
+            var map = L.map('map').setView([0, 0], 2);
+
+            // set bounds so you can't pan outside the world
+            var bounds = L.latLngBounds(
+                L.latLng(-90, -180),
+                L.latLng(90, 180)
+            );
+            var paddedBounds = bounds.pad(0.1);
+            map.setMaxBounds(paddedBounds);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 15,
+                minZoom: 2,
+            }).addTo(map);
+
+            var markers = L.markerClusterGroup({
+                showCoverageOnHover: false,
             });
+            data.forEach(station => {
+                var marker = L.marker([station.latitude, station.longitude])
+                    .bindPopup("<b><a href='/dataacquisition/station/" + station.name + "'>" + station.name + "</a></b>");
+                markers.addLayer(marker);
+            });
+            map.addLayer(markers);
+        }
+    </script>
+    <script> // Pagination AJAX
+        document.getElementById('pagination-links').addEventListener('click', function(event) {
+            event.preventDefault();
+
+            var target = event.target;
+            if (target.tagName.toLowerCase() === 'a') {
+                var url = target.getAttribute('href');
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        var parser = new DOMParser();
+                        var doc = parser.parseFromString(html, 'text/html');
+
+                        var newTableBody = doc.getElementById('station-table-body');
+                        document.getElementById('station-table-body').innerHTML = newTableBody.innerHTML;
+
+                        var newPaginationLinks = doc.getElementById('pagination-links');
+                        document.getElementById('pagination-links').innerHTML = newPaginationLinks.innerHTML;
+                    });
+            }
+        });
     </script>
 {% endblock %}
