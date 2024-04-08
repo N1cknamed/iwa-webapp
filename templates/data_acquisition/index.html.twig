@@ -97,7 +97,9 @@
                     }).addTo(map);
 
                     // Create a new MarkerClusterGroup
-                    var markers = L.markerClusterGroup();
+                    var markers = L.markerClusterGroup({
+                        showCoverageOnHover: false,
+                    });
 
                     // Fetch the station data
                     fetch('/dataacquisition/locations')
