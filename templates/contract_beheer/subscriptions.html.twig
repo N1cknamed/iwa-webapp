@@ -1,0 +1,42 @@
+{% extends 'contract_beheer/index.html.twig' %}
+
+{% block title %}Subscriptions{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2>{{ name }}</h2>
+        <table class="table">
+            <thread>
+                <tr>
+                    <th>Start date</th>
+                    <th>End date</th>
+                    <th>Station</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for subscription in subscriptions %}
+                    <tr>
+                        <td>{{ subscription.datestart|date('Y-m-d') }}</td>
+                        <td>{{ subscription.dateend|date('Y-m-d') }}</td>
+                        <td>{{ subscription.station }}</td>
+                        <td>
+                            <a href="{{ path('app_edit_subscription', {'id': subscription.id}) }}" class:'btn btn-outline-primary'>
+                                <i class='bi bi-pencil-fill'></i>
+                            </a>
+                            <a href='{{ path('app_remove_subscription', {'id': subscription.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Are you sure you want to remove the following subscription?');'>
+                                <i class='bi bi-trash-fill'></i>
+                            </a>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">No subscriptions found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

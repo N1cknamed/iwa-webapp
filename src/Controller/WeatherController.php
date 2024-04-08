@@ -24,43 +24,58 @@ class WeatherController extends AbstractController
     public function index()
     {
         // Haal de opgeslagen gegevens op uit de database
-        $weatherData = $this->doctrine->getRepository(Weather::class)->findAll();
-
+        $weatherData = $this->doctrine
+            ->getRepository(Weather::class)
+            ->findAll();
         return $this->render('weather/index.html.twig', [
             'weatherData' => $weatherData,
         ]);
     }
 
-    #[Route('/weather', name: 'weather_data', methods: ['POST'])]
+    #[Route('/weather/data', name: 'weather_data', methods: ['POST'])]
     public function receiveWeatherData(Request $request): Response
     {
         $jsonData = $request->getContent();
-
         $data = json_decode($jsonData, true);
+        $entityManager = $this->doctrine->getManager();
 
-        foreach ($data['WEATHERDATA'] as $weatherData) {
-            $weather = new Weather();
-            $weather->setSTN($weatherData['STN']);
-            $weather->setDate(new \DateTime($weatherData['DATE']));
-            $weather->setTime(new \DateTime($weatherData['TIME']));
-            $weather->setTemp($weatherData['TEMP']);
-            $weather->setDEWP($weatherData['DEWP']);
-            $weather->setSTP($weatherData['STP']);
-            $weather->setSLP($weatherData['SLP']);
-            $weather->setWDSP($weatherData['WDSP']);
-            $weather->setVISIB($weatherData['VISIB']);
-            $weather->setPRCP($weatherData['PRCP']);
-            $weather->setFRSHTT($weatherData['FRSHTT']);
-            $weather->setCLDC($weatherData['CLDC']);
-            $weather->setSNDP($weatherData['SNDP']);
-            $weather->setWNDDIR($weatherData['WNDDIR']);
-
-            $entityManager = $this->doctrine->getManager();
-            $entityManager->persist($weather);
+        if ($data === null || !isset($data['WEATHERDATA']) || !is_array($data['WEATHERDATA'])) {
+            return new Response('Invalid JSON format.', Response::HTTP_BAD_REQUEST);
         }
+        try {
 
-        $entityManager->flush();
+            foreach ($data['WEATHERDATA'] as $weatherData) {
+                $weather = new Weather();
+                $weather->setSTN(!empty($weatherData['STN']) ? (int)$weatherData['STN'] : null);
+                $weather->setDATE(!empty($weatherData['DATE']) ? new \DateTime($weatherData['DATE']) : null);
+                $weather->setTIME(!empty($weatherData['TIME']) ? new \DateTime($weatherData['TIME']) : null);
+                $weather->setTEMP(!empty($weatherData['TEMP']) ? (float)$weatherData['TEMP'] : null);
+                $weather->setDEWP(!empty($weatherData['DEWP']) ? (float)$weatherData['DEWP'] : null);
+                $weather->setSTP(!empty($weatherData['STP']) ? (float)$weatherData['STP'] : null);
+                $weather->setSLP(!empty($weatherData['SLP']) ? (float)$weatherData['SLP'] : null);
+                $weather->setWDSP(!empty($weatherData['WDSP']) ? (float)$weatherData['WDSP'] : null);
+                $weather->setVISIB(!empty($weatherData['VISIB']) ? (float)$weatherData['VISIB'] : null);
+                $weather->setPRCP(!empty($weatherData['PRCP']) ? (float)$weatherData['PRCP'] : null);
+                $weather->setFRSHTT(!empty($weatherData['FRSHTT']) ? (string)$weatherData['FRSHTT'] : null);
+                $weather->setCLDC(!empty($weatherData['CLDC']) ? (float)$weatherData['CLDC'] : null);
+                $weather->setSNDP(!empty($weatherData['SNDP']) ? (float)$weatherData['SNDP'] : null);
+                $weather->setWNDDIR(!empty($weatherData['WNDDIR']) ? (int)$weatherData['WNDDIR'] : null);
 
-        return new Response('Succes.');
+                $entityManager->persist($weather);
+            }
+
+            $entityManager->flush();
+
+            return new Response('Success.', Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an exception
+            $entityManager->rollback();
+
+            // Log the exception
+            $this->get('logger')->error('Error occurred while saving weather data: ' . $e->getMessage());
+
+            // Return an error response
+            return new Response('An error occurred while saving weather data.', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
