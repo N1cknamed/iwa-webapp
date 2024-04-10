@@ -2,22 +2,16 @@
 
 namespace App\Entity;
 
+use App\Repository\MissingValuesRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\WeatherRepository;
 
-#[ORM\Entity(repositoryClass: WeatherRepository::class)]
-
-class Weather
+#[ORM\Entity(repositoryClass: MissingValuesRepository::class)]
+class MissingValues
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(type: "integer", nullable: true)]
     private ?int $STN;
@@ -61,6 +55,11 @@ class Weather
     #[ORM\Column(type: "integer", nullable: true)]
     private ?int $WNDDIR;
 
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     public function getSTN(): ?int
     {
@@ -215,4 +214,5 @@ class Weather
         $this->WNDDIR = $WNDDIR;
         return $this;
     }
+    
 }
