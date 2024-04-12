@@ -2,6 +2,7 @@
 // src/Controller/WeatherController.php
 namespace App\Controller;
 
+use App\Entity\Station;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,10 @@ class WeatherController extends AbstractController
 
             foreach ($data['WEATHERDATA'] as $weatherData) {
                 $weather = new Weather();
-                $weather->setSTN(!empty($weatherData['STN']) ? (int)$weatherData['STN'] : null);
+                $stn = !empty($weatherData['STN']) ? (int)$weatherData['STN'] : null;
+                $stnString = (string) $stn;
+                $station = $entityManager->getRepository(Station::class)->findOneBy(['name' => $stnString]);
+                $weather->setStation($station);
                 $weather->setDATE(!empty($weatherData['DATE']) ? new \DateTime($weatherData['DATE']) : null);
                 $weather->setTIME(!empty($weatherData['TIME']) ? new \DateTime($weatherData['TIME']) : null);
                 $weather->setTEMP(!empty($weatherData['TEMP']) ? (float)$weatherData['TEMP'] : null);
@@ -89,12 +93,18 @@ class WeatherController extends AbstractController
 
     private function extrapolateMissingValues(Weather $weather, $entityManager): void
     {
-        $station = $weather->getSTN();
+        $station = $weather->getStation(); // Het station waarvoor we gegevens willen extrapoleren
 
         $historicalData = $entityManager
             ->getRepository(Weather::class)
-            ->findBy(['STN' => $station], ['DATE' => 'DESC', 'TIME' => 'DESC'], 30);
-            print_r($historicalData);
+            ->createQueryBuilder('w')
+            ->where('w.station = :station')
+            ->setParameter('station', $station)
+            ->orderBy('w.DATE', 'DESC')
+            ->orderBy('w.TIME', 'DESC')
+            ->setMaxResults(30) // Laatste 30 records
+            ->getQuery()
+            ->getResult();
 
         $valuesToExtrapolate = ['TEMP', 'DEWP', 'STP', 'SLP', 'VISIB', 'WDSP', 'PRCP', 'SNDP', 'CLDC', 'WNDDIR'];
 
@@ -123,7 +133,8 @@ class WeatherController extends AbstractController
             }
         }
         if ($extrapolations > 0) {
-            $missingValue->setSTN($weather->getSTN());
+            $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+            $missingValue->setSTN($stationId);
             $missingValue->setDATE($weather->getDATE());
             $missingValue->setTIME($weather->getTIME());
             $entityManager->persist($missingValue);
@@ -135,11 +146,18 @@ class WeatherController extends AbstractController
 
     private function correctTemperature(Weather $weather, $entityManager): void
     {
-        $station = $weather->getSTN();
+        $station = $weather->getStation(); // Het station waarvoor we gegevens willen extrapoleren
 
         $historicalData = $entityManager
             ->getRepository(Weather::class)
-            ->findBy(['STN' => $station], ['DATE' => 'DESC', 'TIME' => 'DESC'], 30);
+            ->createQueryBuilder('w')
+            ->where('w.station = :station')
+            ->setParameter('station', $station)
+            ->orderBy('w.DATE', 'DESC')
+            ->orderBy('w.TIME', 'DESC')
+            ->setMaxResults(30) // Laatste 30 records
+            ->getQuery()
+            ->getResult();
 
         if ($weather->getTEMP() !== null) {
             $sum = 0;
@@ -159,7 +177,8 @@ class WeatherController extends AbstractController
                     $weather->setTEMP($correctedTemp);
 
                     $tempcorrection = new TempCorrection();
-                    $tempcorrection->setSTN($weather->getSTN());
+                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+                    $tempcorrection->setSTN($stationId);
                     $tempcorrection->setDATE($weather->getDATE());
                     $tempcorrection->setTIME($weather->getTIME());
                     $tempcorrection->setCorrectedTEMP($weather->getTEMP());
@@ -172,7 +191,8 @@ class WeatherController extends AbstractController
                     $weather->setTEMP($correctedTemp);
 
                     $tempcorrection = new TempCorrection();
-                    $tempcorrection->setSTN($weather->getSTN());
+                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+                    $tempcorrection->setSTN($stationId);
                     $tempcorrection->setDATE($weather->getDATE());
                     $tempcorrection->setTIME($weather->getTIME());
                     $tempcorrection->setCorrectedTEMP($weather->getTEMP());
