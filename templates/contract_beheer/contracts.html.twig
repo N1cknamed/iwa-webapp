@@ -41,6 +41,14 @@
                             {% endfor %}
                             {{ data|join(', ') }}
                         </td>
+                        <td>
+                            <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class:'btn btn-outline-primary'>
+                                <i class='bi bi-pencil-fill'></i>
+                            </a>
+                            <a href='{{ path('app_remove_contract', {'id': contract.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Are you sure you want to remove the following contract?');'>
+                                <i class='bi bi-trash-fill'></i>
+                            </a>
+                        </td>
                     </tr>
                 {% else %}
                     <tr>

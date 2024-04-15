@@ -20,6 +20,7 @@
                     {{ form_widget(SubscriptionForm.name_holder, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
+                    {{ form_label(SubscriptionForm.date_start, 'Start date', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(SubscriptionForm.date_start, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">

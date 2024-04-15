@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Contract{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Edit contract for {{ name }}</h1>        
+        {{ form_start(editForm, {'attr': {'class': 'form'}}) }}
+         <div class='mb-3'>
+            {{ form_label(editForm.name_holder, 'Name', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.name_holder, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.date_start, 'Start date', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.date_start, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.date_end, 'End date', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.date_end, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.country_code, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.country_code, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.region, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.region, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.coordinates, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.coordinates, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.longitude, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.longitude, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.latitude, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.latitude, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='mb-3'>
+            {{ form_label(editForm.elevation, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.elevation, {'attr': {'class': 'form-control'}}) }}
+        </div>       
+        <div class='mb-3'>
+            {{ form_label(editForm.data, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(editForm.data, {'attr': {'class': 'form-control'}}) }}
+        </div>       
+        <div class='mb-3'>
+            {{ form_widget(editForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
+        </div>
+        {{ form_end(editForm) }}
+    </div>
+{% endblock %}

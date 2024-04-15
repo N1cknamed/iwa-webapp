@@ -17,7 +17,7 @@ class ContractFormType extends AbstractType
     {
         $builder
             ->add('name_holder', TextType::class)
-            ->add('date_start', DateType::class, ['attr' => ['hidden' => 'hidden', 'disabled' => 'disabled', ]], ['data' => new \DateTime() ], ['required' => false])
+            ->add('date_start', DateType::class, ['data' => new \DateTime() ])
             ->add('date_end', DateType::class)
             ->add('country_code', TextType::class, ['required' => false])
             ->add('region', TextType::class, ['required' => false])

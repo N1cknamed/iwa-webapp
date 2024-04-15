@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ContractBeheerController extends AbstractController
@@ -62,7 +64,10 @@ class ContractBeheerController extends AbstractController
         }
 
         $form = $this->createFormBuilder($subscription)
-            ->add('station', TextType::class)
+            ->add('name_holder', TextType::class, ['data' => $subscription->getNameHolder()])
+            ->add('date_start', DateType::class, ['data' => $subscription->getDateStart()])
+            ->add('date_end', DateType::class, ['data' => $subscription->getDateEnd()])
+            ->add('station', TextType::class, ['data' => $subscription->getStation()])
             ->add('save', SubmitType::class, ['label' => 'Update subscription'])
             ->getForm();
 
@@ -77,7 +82,7 @@ class ContractBeheerController extends AbstractController
         return $this->render('contract_beheer/editsubscription.html.twig', [
             'controller_name' => 'ContractBeheerController',
             'editForm' => $form->createView(),
-            'name' => $subscription->getHolderName()
+            'name' => $subscription->getNameHolder()
         ]);
     }
 
@@ -133,6 +138,44 @@ class ContractBeheerController extends AbstractController
         'controller_name' => 'ContractBeheerController',
         'ContractForm' => $form
     ]);
+    }
+
+    #[Route('/contractbeheer/contract/edit/{id}', name: 'app_edit_contract')]
+    public function editContract($id, EntityManagerInterface $entityManager, Request $request)
+    {
+        $contract = $entityManager->getRepository(Contract::class)->find($id);
+
+        if (!$contract) {
+            throw $this->createNotFoundException('No contract found for id '.$id);
+        }
+
+        $form = $this->createFormBuilder($contract)
+            ->add('name_holder', TextType::class, ['data' => $contract->getNameHolder()])
+            ->add('date_start', DateType::class, ['data' => $contract->getStartDate()])
+            ->add('date_end', DateType::class, ['data' => $contract->getDateEnd()])
+            ->add('country_code', TextType::class, ['data' => $contract->getCountrycode()])
+            ->add('region', TextType::class, ['data' => $contract->getRegion()])
+            ->add('coordinates', TextType::class, ['data' => $contract->getCoordinates()])
+            ->add('longitude', NumberType::class, ['data' => $contract->getLongitude()])
+            ->add('latitude', NumberType::class, ['data' => $contract->getLatitude()])
+            ->add('elevation', NumberType::class, ['data' => $contract->getElevation()])
+            ->add('data', CollectionType::class, ['data' => $contract->getData()])
+            ->add('save', SubmitType::class, ['label' => 'Update contract'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+        return $this->render('contract_beheer/editcontract.html.twig', [
+            'controller_name' => 'ContractBeheerController',
+            'editForm' => $form->createView(),
+            'name' => $contract->getNameHolder()
+        ]);
     }
 
     #[Route('/contractbeheer/contract/remove/{id}', name: 'app_remove_contract')]
