@@ -8,17 +8,22 @@
 
 {% block body %}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; text-align: center; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .image-container { margin-bottom: 50px; }
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/Projects/iwa-webapp/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>D:/Projects/iwa-webapp/templates/home/index.html.twig</code></li>
-    </ul>
+    <div class="image-container">
+        <img src="{{ asset('images/logoIWA.png') }}" height="150" width="250">
+    </div>
+
+    Here at IWA we strive to collect as much weather data as possible, to create a clear picture of the changing climate.
+    By doing this, we hope to increase the safety of people and businesses living and working in areas that are prone to extreme
+    weather conditions. By monitoring the climate we hope to achieve an age where we're able to accurately predict when and where 
+    extreme weather conditions or distasters might occur. Are you a company who could benefit from our data or a weather station 
+    that could help us by sending your collected data? Don't hesitate and contact our offices to make the world a safer place!
+
 </div>
 {% endblock %}
