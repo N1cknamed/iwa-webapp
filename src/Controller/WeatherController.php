@@ -2,14 +2,15 @@
 // src/Controller/WeatherController.php
 namespace App\Controller;
 
+use App\Entity\Station;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Weather;
-
-
+use App\Entity\MissingValues;
+use App\Entity\TempCorrection;
 
 class WeatherController extends AbstractController
 {
@@ -44,9 +45,14 @@ class WeatherController extends AbstractController
         }
         try {
 
+            $entityManager->beginTransaction();
+
             foreach ($data['WEATHERDATA'] as $weatherData) {
                 $weather = new Weather();
-                $weather->setSTN(!empty($weatherData['STN']) ? (int)$weatherData['STN'] : null);
+                $stn = !empty($weatherData['STN']) ? (int)$weatherData['STN'] : null;
+                $stnString = (string) $stn;
+                $station = $entityManager->getRepository(Station::class)->findOneBy(['name' => $stnString]);
+                $weather->setStation($station);
                 $weather->setDATE(!empty($weatherData['DATE']) ? new \DateTime($weatherData['DATE']) : null);
                 $weather->setTIME(!empty($weatherData['TIME']) ? new \DateTime($weatherData['TIME']) : null);
                 $weather->setTEMP(!empty($weatherData['TEMP']) ? (float)$weatherData['TEMP'] : null);
@@ -62,9 +68,15 @@ class WeatherController extends AbstractController
                 $weather->setWNDDIR(!empty($weatherData['WNDDIR']) ? (int)$weatherData['WNDDIR'] : null);
 
                 $entityManager->persist($weather);
+
+                $this->extrapolateMissingValues($weather, $entityManager);
+
+                $this->correctTemperature($weather, $entityManager);
+
             }
 
             $entityManager->flush();
+            $entityManager->commit();
 
             return new Response('Success.', Response::HTTP_CREATED);
         } catch (\Exception $e) {
@@ -72,10 +84,122 @@ class WeatherController extends AbstractController
             $entityManager->rollback();
 
             // Log the exception
-            $this->get('logger')->error('Error occurred while saving weather data: ' . $e->getMessage());
+            //$this->get('logger')->error('Error occurred while saving weather data: ' . $e->getMessage());
 
             // Return an error response
             return new Response('An error occurred while saving weather data.', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private function extrapolateMissingValues(Weather $weather, $entityManager): void
+    {
+        $station = $weather->getStation(); // Het station waarvoor we gegevens willen extrapoleren
+
+        $historicalData = $entityManager
+            ->getRepository(Weather::class)
+            ->createQueryBuilder('w')
+            ->where('w.station = :station')
+            ->setParameter('station', $station)
+            ->orderBy('w.DATE', 'DESC')
+            ->orderBy('w.TIME', 'DESC')
+            ->setMaxResults(30) // Laatste 30 records
+            ->getQuery()
+            ->getResult();
+
+        $valuesToExtrapolate = ['TEMP', 'DEWP', 'STP', 'SLP', 'VISIB', 'WDSP', 'PRCP', 'SNDP', 'CLDC', 'WNDDIR'];
+
+        $missingValue = new MissingValues();
+        $extrapolations = 0;
+
+        foreach ($valuesToExtrapolate as $value) {
+            if ($weather->{'get'.$value}() === null) {
+                $sum = 0;
+                $validCount = 0;
+                foreach ($historicalData as $entry) {
+                    $val = $entry->{'get'.$value}();
+                    if ($val !== null) {
+                        $sum += $val;
+                        $validCount++;
+                    }
+                }
+                if ($validCount > 0) {
+                    $extrapolatedValue = $sum / $validCount;
+                    $weather->{'set'.$value}($extrapolatedValue);
+                    $missingValue->{'set'.$value}($extrapolatedValue);
+                    $entityManager->persist($missingValue);
+                    $extrapolations++;
+
+                }
+            }
+        }
+        if ($extrapolations > 0) {
+            $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+            $missingValue->setSTN($stationId);
+            $missingValue->setDATE($weather->getDATE());
+            $missingValue->setTIME($weather->getTIME());
+            $entityManager->persist($missingValue);
+
+        }
+
+        
+    }
+
+    private function correctTemperature(Weather $weather, $entityManager): void
+    {
+        $station = $weather->getStation(); // Het station waarvoor we gegevens willen extrapoleren
+
+        $historicalData = $entityManager
+            ->getRepository(Weather::class)
+            ->createQueryBuilder('w')
+            ->where('w.station = :station')
+            ->setParameter('station', $station)
+            ->orderBy('w.DATE', 'DESC')
+            ->orderBy('w.TIME', 'DESC')
+            ->setMaxResults(30) // Laatste 30 records
+            ->getQuery()
+            ->getResult();
+
+        if ($weather->getTEMP() !== null) {
+            $sum = 0;
+            $validCount = 0;
+            $originalTemp = $weather->getTEMP();
+            foreach ($historicalData as $entry) {
+                $temp = $entry->getTEMP();
+                if ($temp !== null) {
+                    $sum += $temp;
+                    $validCount++;
+                }
+            }
+            if ($validCount > 0) {
+                $averageTemp = $sum / $validCount;
+                if ($weather->getTEMP() < 0.8 * $averageTemp) {
+                    $correctedTemp = 0.8 * $averageTemp;
+                    $weather->setTEMP($correctedTemp);
+
+                    $tempcorrection = new TempCorrection();
+                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+                    $tempcorrection->setSTN($stationId);
+                    $tempcorrection->setDATE($weather->getDATE());
+                    $tempcorrection->setTIME($weather->getTIME());
+                    $tempcorrection->setCorrectedTEMP($weather->getTEMP());
+                    $tempcorrection->setOriginalTEMP($originalTemp);
+                    $entityManager->persist($tempcorrection);
+
+
+                } elseif ($weather->getTEMP() > 1.2 * $averageTemp) {
+                    $correctedTemp = 1.2 * $averageTemp;
+                    $weather->setTEMP($correctedTemp);
+
+                    $tempcorrection = new TempCorrection();
+                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+                    $tempcorrection->setSTN($stationId);
+                    $tempcorrection->setDATE($weather->getDATE());
+                    $tempcorrection->setTIME($weather->getTIME());
+                    $tempcorrection->setCorrectedTEMP($weather->getTEMP());
+                    $tempcorrection->setOriginalTEMP($originalTemp);
+                    $entityManager->persist($tempcorrection);
+                }
+            }
         }
     }
 }
