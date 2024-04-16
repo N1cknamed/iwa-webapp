@@ -2,6 +2,7 @@
 // src/Controller/WeatherController.php
 namespace App\Controller;
 
+use App\Entity\Malfunction;
 use App\Entity\Station;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ use App\Entity\TempCorrection;
 class WeatherController extends AbstractController
 {
     private $doctrine;
+    private $errorCount = [];
 
     public function __construct(ManagerRegistry $doctrine)
     {
@@ -129,11 +131,15 @@ class WeatherController extends AbstractController
                     $entityManager->persist($missingValue);
                     $extrapolations++;
 
+                    // Increment error count
+                    $stationId = $weather->getStation()?->getName();
+                    $hour = $weather->getDATE()->format('Y-m-d H'); // Round to the nearest hour
+                    $this->incrementErrorCount($stationId, $hour, $entityManager);
                 }
             }
         }
         if ($extrapolations > 0) {
-            $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+            $stationId = $weather->getStation()?->getName();
             $missingValue->setSTN($stationId);
             $missingValue->setDATE($weather->getDATE());
             $missingValue->setTIME($weather->getTIME());
@@ -172,12 +178,15 @@ class WeatherController extends AbstractController
             }
             if ($validCount > 0) {
                 $averageTemp = $sum / $validCount;
-                if ($weather->getTEMP() < 0.8 * $averageTemp) {
-                    $correctedTemp = 0.8 * $averageTemp;
+                $averageTempLowerBound = 0.8 * $averageTemp;
+                $averageTempUpperBound = 1.2 * $averageTemp;
+
+                if ($weather->getTEMP() < $averageTempLowerBound || $weather->getTEMP() > $averageTempUpperBound) {
+                    $correctedTemp = $weather->getTEMP() < $averageTempLowerBound ? $averageTempLowerBound : $averageTempUpperBound;
                     $weather->setTEMP($correctedTemp);
 
                     $tempcorrection = new TempCorrection();
-                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+                    $stationId = $weather->getStation()?->getName();
                     $tempcorrection->setSTN($stationId);
                     $tempcorrection->setDATE($weather->getDATE());
                     $tempcorrection->setTIME($weather->getTIME());
@@ -185,21 +194,33 @@ class WeatherController extends AbstractController
                     $tempcorrection->setOriginalTEMP($originalTemp);
                     $entityManager->persist($tempcorrection);
 
-
-                } elseif ($weather->getTEMP() > 1.2 * $averageTemp) {
-                    $correctedTemp = 1.2 * $averageTemp;
-                    $weather->setTEMP($correctedTemp);
-
-                    $tempcorrection = new TempCorrection();
-                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
-                    $tempcorrection->setSTN($stationId);
-                    $tempcorrection->setDATE($weather->getDATE());
-                    $tempcorrection->setTIME($weather->getTIME());
-                    $tempcorrection->setCorrectedTEMP($weather->getTEMP());
-                    $tempcorrection->setOriginalTEMP($originalTemp);
-                    $entityManager->persist($tempcorrection);
+                    // Increment error count
+                    $stationId = $weather->getStation()?->getName();
+                    $hour = $weather->getDATE()->format('Y-m-d H'); // Round to the nearest hour
+                    $this->incrementErrorCount($stationId, $hour, $entityManager);
                 }
             }
+        }
+    }
+
+    private function incrementErrorCount(string $stationId, string $hour, $entityManager)
+    {
+        // Increment error count
+        if (!isset($this->errorCount[$stationId])) {
+            $this->errorCount[$stationId] = [];
+        }
+        if (!isset($this->errorCount[$stationId][$hour])) {
+            $this->errorCount[$stationId][$hour] = 0;
+        }
+        $this->errorCount[$stationId][$hour]++;
+
+        // Check if error count has reached 10
+        if ($this->errorCount[$stationId][$hour] >= 10) {
+            $malfunction = new Malfunction();
+            $malfunction->setStation($stationId);
+            $malfunction->setStatus('unresolved');
+            $malfunction->setDATE(new \DateTime($hour . ':00:00')); // Start of the hour
+            $entityManager->persist($malfunction);
         }
     }
 }

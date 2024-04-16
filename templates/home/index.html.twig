@@ -13,17 +13,37 @@
     .image-container { margin-bottom: 50px; }
 </style>
 
-<div class="example-wrapper">
-
-    <div class="image-container">
-        <img src="{{ asset('images/logoIWA.png') }}" height="150" width="250">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Storingen</h3>
+                </div>
+                <div class="card-body">
+                    {% if malfunctions is empty %}
+                        <p>Geen actieve storingen.</p>
+                    {% else %}
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Station</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for malfunction in malfunctions %}
+                                <tr>
+                                    <td>{{ malfunction.getStation() }}</td>
+                                    <td>{{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-
-    Here at IWA we strive to collect as much weather data as possible, to create a clear picture of the changing climate.
-    By doing this, we hope to increase the safety of people and businesses living and working in areas that are prone to extreme
-    weather conditions. By monitoring the climate we hope to achieve an age where we're able to accurately predict when and where 
-    extreme weather conditions or distasters might occur. Are you a company who could benefit from our data or a weather station 
-    that could help us by sending your collected data? Don't hesitate and contact our offices to make the world a safer place!
-
 </div>
 {% endblock %}

@@ -13,8 +13,10 @@ class TempCorrection
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "integer", nullable: true)]
-    private ?int $STN;
+    #[ORM\ManyToOne(targetEntity: Station::class)]
+    #[ORM\JoinColumn(name: "STN", referencedColumnName: "name", nullable: true)]
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    private ?string $STN;
 
     #[ORM\Column(type: "date", nullable: true)]
     private ?\DateTimeInterface $DATE;
