@@ -50,7 +50,8 @@ class ContractBeheerController extends AbstractController
 
     return $this->render('contract_beheer/addsubscription.html.twig', [
         'controller_name' => 'ContractBeheerController',
-        'SubscriptionForm' => $form
+        'SubscriptionForm' => $form,
+        'name' => ''
     ]);
     }
 
@@ -119,6 +120,28 @@ class ContractBeheerController extends AbstractController
     ]);
     }
 
+    #[Route('/contractbeheer/subscription/{name}/add', name: 'app_add_subscription_to_name')]
+    public function addSubscriptionToName(Request $request, EntityManagerInterface $entityManager, string $name): Response
+    {
+        $subscription = new Subscription();
+        $form = $this->createForm(SubscriptionFormType::class, $subscription);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($subscription);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+    return $this->render('contract_beheer/addsubscription.html.twig', [
+        'controller_name' => 'ContractBeheerController',
+        'SubscriptionForm' => $form,
+        'name' => $name
+    ]);
+    }
+
     #[Route('/contractbeheer/contract/add', name: 'app_add_contract')]
     public function addContract(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -136,7 +159,8 @@ class ContractBeheerController extends AbstractController
         
     return $this->render('contract_beheer/addcontract.html.twig', [
         'controller_name' => 'ContractBeheerController',
-        'ContractForm' => $form
+        'ContractForm' => $form,
+        'name' => ''
     ]);
     }
 
@@ -208,6 +232,28 @@ class ContractBeheerController extends AbstractController
             'controller_name' => 'ConractBeheerController',
             'name' => $name,
             'contracts' => $contracts
+    ]);
+    }
+    
+    #[Route('/contractbeheer/contract/{name}/add', name: 'app_add_contract_to_name')]
+    public function addContractToName(Request $request, EntityManagerInterface $entityManager, string $name): Response
+    {
+        $contract = new Contract();
+        $form = $this->createForm(ContractFormType::class, $contract);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($contract);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+    return $this->render('contract_beheer/addcontract.html.twig', [
+        'controller_name' => 'ContractBeheerController',
+        'ContractForm' => $form,
+        'name' => $name
     ]);
     }
 
