@@ -224,4 +224,53 @@ class WeatherController extends AbstractController
             $entityManager->persist($malfunction);
         }
     }
+
+    #[Route('/weather/detect-malfunctions', name: 'app_detect_malfunctions')]
+    public function detectMalfunctionsInOldData(): Response
+    {
+        $entityManager = $this->doctrine->getManager();
+        $weatherRepository = $entityManager->getRepository(Weather::class);
+        $stationRepository = $entityManager->getRepository(Station::class);
+
+        $batchSize = 500; // Adjust this value based on your server's capabilities
+        $offset = 0;
+
+        while (($weatherData = $weatherRepository->findBy([], ['DATE' => 'DESC', 'TIME' => 'DESC'], $batchSize, $offset)) !== [] && $offset < 10000) {
+            $errorCount = [];
+
+            foreach ($weatherData as $weather) {
+                $stationId = $weather->getStation()?->getName();
+                $hour = $weather->getDATE()->format('Y-m-d H');
+
+                // Increment error count
+                if (!isset($errorCount[$stationId])) {
+                    $errorCount[$stationId] = [];
+                }
+                if (!isset($errorCount[$stationId][$hour])) {
+                    $errorCount[$stationId][$hour] = 0;
+                }
+                $errorCount[$stationId][$hour]++;
+
+                // Check if error count has reached 10
+                if ($errorCount[$stationId][$hour] >= 3) {
+                    $malfunction = new Malfunction();
+                    $station = $stationRepository->findOneBy(['name' => $stationId]);
+                    $malfunction->setStation($station);
+                    $malfunction->setStatus('unresolved');
+                    $malfunction->setDATE(new \DateTime($hour . ':00:00')); // Start of the hour
+                    $entityManager->persist($malfunction);
+
+                    // Reset error count for this station and hour
+                    $errorCount[$stationId][$hour] = 0;
+                }
+            }
+
+            $entityManager->flush(); // Persist changes to the database
+            $entityManager->clear(); // Detach all entities from the entity manager
+
+            $offset += $batchSize; // Move the offset for the next batch
+        }
+
+        return new Response('Malfunction detection in old data completed.', Response::HTTP_OK);
+    }
 }

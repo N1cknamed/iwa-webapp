@@ -15,7 +15,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-5">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Storingen</h3>
@@ -24,18 +24,24 @@
                     {% if malfunctions is empty %}
                         <p>Geen actieve storingen.</p>
                     {% else %}
-                        <table>
+                        <table class="table table-sm">
                             <thead>
                             <tr>
-                                <th>Station</th>
-                                <th>Date</th>
+                                <th class="col-md-2">Station</th>
+                                <th class="col-md-4">Date</th>
+                                <th class="col-md-4">Status</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for malfunction in malfunctions %}
                                 <tr>
-                                    <td>{{ malfunction.getStation() }}</td>
+                                    <td>{{ malfunction.getStation().getName() }}</td>
                                     <td>{{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</td>
+                                    <td>{{ malfunction.getStatus() }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="2">No malfunctions found</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -43,6 +49,7 @@
                     {% endif %}
                 </div>
             </div>
+            <a href="{{ path('app_detect_malfunctions') }}" class="btn btn-danger">Detect Malfunctions in Old Data</a>
         </div>
     </div>
 </div>

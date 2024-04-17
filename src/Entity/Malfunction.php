@@ -15,11 +15,17 @@ class Malfunction
 
     #[ORM\ManyToOne(targetEntity: Station::class)]
     #[ORM\JoinColumn(name: "station_name", referencedColumnName: "name", nullable: false)]
-    #[ORM\Column(type: "string", length: 10)]
     private Station $station;
 
     #[ORM\Column(type: "string", length: 255)]
     private string $status;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="DATE", type="datetime", nullable=true)
+     */
+    private $DATE;
 
     public function getId(): ?int
     {
@@ -45,6 +51,17 @@ class Malfunction
     public function setStatus(string $status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getDATE(): ?\DateTime
+    {
+        return $this->DATE;
+    }
+
+    public function setDATE(?\DateTime $DATE): self
+    {
+        $this->DATE = $DATE;
         return $this;
     }
 }
