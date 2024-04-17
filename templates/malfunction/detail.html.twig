@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Malfunction Details{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row mt-3 gx-5 justify-content-center">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ malfunction.getStation().getName() }}</h3>
+                        <p class="card-text">Date: {{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</p>
+                        <p class="card-text">Status: {{ malfunction.getStatus() }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <!-- Add more details about the malfunction here -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
