@@ -10,7 +10,7 @@ class ContractData
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\OneToOne(targetEntity: Contract::class)]
     private ?int $id = null;
 
     #[ORM\Column]

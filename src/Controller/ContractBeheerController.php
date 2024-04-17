@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
@@ -179,10 +178,7 @@ class ContractBeheerController extends AbstractController
             ->add('date_end', DateType::class, ['data' => $contract->getDateEnd()])
             ->add('country_code', TextType::class, ['data' => $contract->getCountrycode()])
             ->add('region', TextType::class, ['data' => $contract->getRegion()])
-            ->add('coordinates', TextType::class, ['data' => $contract->getCoordinates()])
-            ->add('longitude', NumberType::class, ['data' => $contract->getLongitude()])
-            ->add('latitude', NumberType::class, ['data' => $contract->getLatitude()])
-            ->add('elevation', NumberType::class, ['data' => $contract->getElevation()])
+            ->add('coordinates', CollectionType::class, ['data' => $contract->getCoordinates()])
             ->add('data', CollectionType::class, ['data' => $contract->getData()])
             ->add('save', SubmitType::class, ['label' => 'Update contract'])
             ->getForm();

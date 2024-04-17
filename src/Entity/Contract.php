@@ -12,37 +12,30 @@ class Contract
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date_start = null;
+    private ?\DateTimeInterface $date_start;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date_end = null;
+    private ?\DateTimeInterface $date_end;
 
     #[ORM\Column(length: 255)]
-    private ?string $name_holder = null;
+    private ?string $name_holder;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $country_code = null;
+    private ?string $country_code;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $region = null;
+    private ?string $region;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $coordinates = null;
+    #[ORM\OneToOne(targetEntity: ContractCoordinates::class)]
+    #[ORM\JoinColumn(name: 'ContractCoordinates', referencedColumnName: 'id', nullable: true)]
+    private ?ContractCoordinates $coordinates;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $longitude = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?float $latitude = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?float $elevation = null;
-
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private ?array $data = null;
+    #[ORM\OneToOne(targetEntity: ContractData::class)]
+    #[ORM\JoinColumn(name: 'ContractData', referencedColumnName: 'id', nullable: true)]
+    private ?ContractData $data;
 
     public function getId(): ?int
     {
@@ -116,60 +109,24 @@ class Contract
         return $this;
     }
 
-    public function getCoordinates(): ?string
+    public function getCoordinates(): ?ContractCoordinates
     {
         return $this->coordinates;
     }
 
-    public function setCoordinates(?string $coordinates): static
+    public function setCoordinates(?ContractCoordinates $coordinates): self
     {
         $this->coordinates = $coordinates;
 
         return $this;
     }
 
-    public function getLongitude(): ?float
-    {
-        return $this->longitude;
-    }
-
-    public function setLongitude(?float $longitude): static
-    {
-        $this->longitude = $longitude;
-
-        return $this;
-    }
-
-    public function getLatitude(): ?float
-    {
-        return $this->latitude;
-    }
-
-    public function setLatitude(?float $latitude): static
-    {
-        $this->latitude = $latitude;
-
-        return $this;
-    }
-
-    public function getElevation(): ?float
-    {
-        return $this->elevation;
-    }
-
-    public function setElevation(?float $elevation): static
-    {
-        $this->elevation = $elevation;
-
-        return $this;
-    }
-
-    public function getData(): ?array
+    public function getData(): ?ContractData
     {
         return $this->data;
     }
 
-    public function setData(?array $data): static
+    public function setData(?ContractData $data): self
     {
         $this->data = $data;
 
