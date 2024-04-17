@@ -133,7 +133,7 @@ class WeatherController extends AbstractController
 
                     // Increment error count
                     $stationId = $weather->getStation()?->getName();
-                    $hour = $weather->getDATE()->format('Y-m-d H'); // Round to the nearest hour
+                    $hour = $weather->getDATE()->format('Y-m-d H');
                     $this->incrementErrorCount($stationId, $hour, $entityManager);
                 }
             }
@@ -183,6 +183,7 @@ class WeatherController extends AbstractController
 
                 if ($weather->getTEMP() < $averageTempLowerBound || $weather->getTEMP() > $averageTempUpperBound) {
                     $correctedTemp = $weather->getTEMP() < $averageTempLowerBound ? $averageTempLowerBound : $averageTempUpperBound;
+                    $correctedTemp = round($correctedTemp, 1); // rond resultaat af op 1 decimaal
                     $weather->setTEMP($correctedTemp);
 
                     $tempcorrection = new TempCorrection();
@@ -196,7 +197,7 @@ class WeatherController extends AbstractController
 
                     // Increment error count
                     $stationId = $weather->getStation()?->getName();
-                    $hour = $weather->getDATE()->format('Y-m-d H'); // Round to the nearest hour
+                    $hour = $weather->getDATE()->format('Y-m-d H');
                     $this->incrementErrorCount($stationId, $hour, $entityManager);
                 }
             }

@@ -93,6 +93,14 @@
                         <tbody>
                         {% set currentDate = '' %}
                         {% for weather in station.weather %}
+                            {% set isCorrected = false %}
+                            {% set originalTemp = '' %}
+                            {% for correctedTemp in correctedTemps %}
+                                {% if correctedTemp.DATE == weather.DATE and correctedTemp.TIME == weather.TIME %}
+                                    {% set isCorrected = true %}
+                                    {% set originalTemp = correctedTemp.getOriginalTEMP() %}
+                                {% endif %}
+                            {% endfor %}
                             <tr>
                                 <td>
                                     {% if currentDate != weather.DATE|date('Y-m-d') %}
@@ -101,7 +109,7 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ weather.TIME|date('H:i:s') }}</td>
-                                <td>{{ weather.TEMP }}℃</td>
+                                <td class="{{ isCorrected ? 'text-success' : '' }}" title="{{ isCorrected ? 'Originele waarde: ' ~ originalTemp ~ '℃' : '' }}">{{ weather.TEMP }}℃</td>
                                 <td>{{ weather.DEWP }}℃</td>
                                 <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
                                 <td>{{ weather.CLDC }}%</td>
