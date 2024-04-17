@@ -1,20 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MalfunctionController!{% endblock %}
+{% block title %}Hello MalfunctionController{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
 
 {% block body %}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; text-align: center; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .image-container { margin-bottom: 50px; }
 </style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/Projects/iwa-webapp/src/Controller/MalfunctionController.php</code></li>
-        <li>Your template at <code>D:/Projects/iwa-webapp/templates/malfunction/index.html.twig</code></li>
-    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Storingen</h3>
+                </div>
+                <div class="card-body">
+                    {% if malfunctions is empty %}
+                        <p>Geen actieve storingen.</p>
+                    {% else %}
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th class="col-md-2">Station</th>
+                                <th class="col-md-4">Date</th>
+                                <th class="col-md-4">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for malfunction in malfunctions %}
+                                <tr>
+                                    <td><a href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">{{ malfunction.getStation().getName() }}</a></td>
+                                    <td>{{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</td>
+                                    <td>{{ malfunction.getStatus() }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="2">No malfunctions found</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="{{ path('app_detect_malfunctions') }}" class="btn btn-danger">Detect Malfunctions in Old Data</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

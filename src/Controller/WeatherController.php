@@ -206,6 +206,7 @@ class WeatherController extends AbstractController
 
     private function incrementErrorCount(string $stationId, string $hour, $entityManager)
     {
+        $stationRepository = $entityManager->getRepository(Station::class);
         // Increment error count
         if (!isset($this->errorCount[$stationId])) {
             $this->errorCount[$stationId] = [];
@@ -218,7 +219,8 @@ class WeatherController extends AbstractController
         // Check if error count has reached 10
         if ($this->errorCount[$stationId][$hour] >= 10) {
             $malfunction = new Malfunction();
-            $malfunction->setStation($stationId);
+            $station = $stationRepository->findOneBy(['name' => $stationId]);
+            $malfunction->setStation($station);
             $malfunction->setStatus('unresolved');
             $malfunction->setDATE(new \DateTime($hour . ':00:00')); // Start of the hour
             $entityManager->persist($malfunction);
@@ -252,7 +254,7 @@ class WeatherController extends AbstractController
                 $errorCount[$stationId][$hour]++;
 
                 // Check if error count has reached 10
-                if ($errorCount[$stationId][$hour] >= 3) {
+                if ($errorCount[$stationId][$hour] >= 10) {
                     $malfunction = new Malfunction();
                     $station = $stationRepository->findOneBy(['name' => $stationId]);
                     $malfunction->setStation($station);
