@@ -1,14 +1,14 @@
 {% extends 'contract_beheer/index.html.twig' %}
 
-{% block title %}AddSubscription{% endblock %}
+{% block title %}Voeg abonnement toe{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h1 class="mb-4">Add Subscription</h1>
+    <div class="col-md-8">
+        <h1 class="mb-4">Voeg abonnement toe</h1>
 
         <div class="card">
             <div class="card-body">
@@ -16,15 +16,15 @@
 
                 {{ form_start(SubscriptionForm, {'attr': {'class': 'form'}}) }}
                 <div class="mb-3">
-                    {{ form_label(SubscriptionForm.name_holder, 'Subscription holder name', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(SubscriptionForm.name_holder, 'Naam abonnementshouder', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(SubscriptionForm.name_holder, {'attr': {'class': 'form-control'}, 'value': name}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(SubscriptionForm.date_start, 'Start date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(SubscriptionForm.date_start, 'Startdatum', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(SubscriptionForm.date_start, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(SubscriptionForm.date_end, 'Expiration date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(SubscriptionForm.date_end, 'Vervaldatum', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(SubscriptionForm.date_end, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
@@ -32,7 +32,7 @@
                     {{ form_widget(SubscriptionForm.station, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
-                <button type="submit" class="btn btn-primary">Add</button>
+                <button type="submit" class="btn btn-primary">Voeg toe</button>
                 {{ form_end(SubscriptionForm) }}
             </div>
         </div>

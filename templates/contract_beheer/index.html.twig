@@ -7,12 +7,12 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h2>Active Subscriptions</h2>
+    <div class="col-md-5">
+        <h2>Actieve abonnementen</h2>
         <table class="table">
             <thead>
             <tr>
-                <th>Name</th>
+                <th>Naam</th>
             </tr>
             </thead>
             <tbody>
@@ -24,16 +24,16 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="2">No subscriptions found</td>
+                    <td colspan="2">Geen abonnementen gevonden</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <a href="{{ path('app_add_subscription') }}" class="btn btn-outline-primary">Add new subscription</a>
+        <a href="{{ path('app_add_subscription') }}" class="btn btn-outline-primary">Voeg nieuw abonnement toe</a>
     </div>
 
-    <div class="container">
-        <h2>Active Contracts</h2>
+    <div class="col-md-5">
+        <h2>Actieve contracten</h2>
         <table class="table">
             <thead>
             <tr>
@@ -49,11 +49,11 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="2">No Contracts found</td>
+                    <td colspan="2">Geen contracten gevonden</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <a href="{{ path('app_add_contract') }}" class="btn btn-outline-primary">Add new contract</a>
+        <a href="{{ path('app_add_contract') }}" class="btn btn-outline-primary">Voeg nieuw contract toe</a>
     </div>
 {% endblock %}

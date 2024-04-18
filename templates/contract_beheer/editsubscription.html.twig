@@ -1,29 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Subscription{% endblock %}
+{% block title %}Abonnement bewerken{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1 class="my-4">Edit subscription for {{ name }}</h1>        
+    <div class="col-md-8">
+        <h1 class="my-4">Bewerk abonnement voor {{ name }}</h1>
         {{ form_start(editForm, {'attr': {'class': 'form'}}) }}
         <div class='mb-3'>
-            {{ form_label(editForm.name_holder, 'Name', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(editForm.name_holder, 'Naam abonnementshouder', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(editForm.name_holder, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class='mb-3'>
-            {{ form_label(editForm.date_start, 'Start date', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(editForm.date_start, 'Startdatum', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(editForm.date_start, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class='mb-3'>
-            {{ form_label(editForm.date_end, 'End date', {'label_attr': {'class': 'form-label'}}) }} 
+            {{ form_label(editForm.date_end, 'Vervaldatum', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(editForm.date_end, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class='mb-3'>
-            {{ form_label(editForm.station, 'station', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_label(editForm.station, 'Station', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(editForm.station, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class='mb-3'>

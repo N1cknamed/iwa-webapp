@@ -1,33 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Contract{% endblock %}
+{% block title %}Contract bewerken{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="col-md-8">
         <h1 class="my-4">Edit contract for {{ name }}</h1>        
         {{ form_start(editForm, {'attr': {'class': 'form'}}) }}
             <div class="mb-3">
-                {{ form_label(editForm.name_holder, 'Contract holder name', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_label(editForm.name_holder, 'Naam contracthouder', {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(editForm.name_holder, {'attr': {'class': 'form-control'}, 'value': name}) }}
             </div>
             <div class="mb-3">
-                {{ form_label(editForm.date_start, 'Start date', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_label(editForm.date_start, 'Startdatum', {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(editForm.date_start, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="mb-3">
-                {{ form_label(editForm.date_end, 'Expiration date', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_label(editForm.date_end, 'Vervaldatum', {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(editForm.date_end, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="mb-3">
-                {{ form_label(editForm.country_code, 'Country code', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_label(editForm.country_code, 'Landscode', {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(editForm.country_code, {'attr': {'class': 'form-control', 'novalidate': 'novalidate'}}) }}
             </div>
             <div class="mb-3">
-                {{ form_label(editForm.region, 'Region', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_label(editForm.region, 'Regio', {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(editForm.region, {'attr': {'class': 'form-control'}}) }}
             </div>
             <div class="mb-3">

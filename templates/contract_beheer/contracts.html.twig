@@ -1,21 +1,21 @@
 {% extends 'contract_beheer/index.html.twig' %}
 
-{% block title %}Contracts{% endblock %}
+{% block title %}Contracten{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
+    <div class="col-md-8">
         <h2>{{ name }}</h2>
         <table class="table">
             <thread>
                 <tr>
-                    <th>Start date</th>
-                    <th>End date</th>
-                    <th>Country code</th>
-                    <th>Region</th>
+                    <th>Startdatum</th>
+                    <th>Vervaldatum</th>
+                    <th>Landscode</th>
+                    <th>Regio</th>
                     <th>CoordinatesType</th>
                     <th>Longitude</th>
                     <th>Latitude</th>
@@ -31,6 +31,7 @@
                     <th>FRSHTT</th>
                     <th>CLDC</th>
                     <th>WNDDIR</th>
+                    <th>Acties</th>
                 </tr>
             </thread>
             <tbody>
@@ -50,26 +51,27 @@
                         <td>{{ contract.SLP }}</td>
                         <td>{{ contract.VISIB }}</td>
                         <td>{{ contract.WDSP }}</td>
+                        <td>{{ contract.PRCP }}</td>
                         <td>{{ contract.SNDP }}</td>
                         <td>{{ contract.FRSHTT }}</td>
                         <td>{{ contract.CLDC }}</td>
                         <td>{{ contract.WNDDIR }}</td>
                         <td>
-                            <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class:'btn btn-outline-primary'>
+                            <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class='btn btn-outline-primary'>
                                 <i class='bi bi-pencil-fill'></i>
                             </a>
-                            <a href='{{ path('app_remove_contract', {'id': contract.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Are you sure you want to remove the following contract?');'>
+                            <a href='{{ path('app_remove_contract', {'id': contract.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Weet je zeker dat je dit contract wil verwijderen?');'>
                                 <i class='bi bi-trash-fill'></i>
                             </a>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="2">No contracts found</td>
+                        <td colspan="2">Geen contracten gevonden</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{{ path('app_add_contract_to_name', {'name': name}) }}" class="btn btn-outline-primary">Add new contract</a>
+        <a href="{{ path('app_add_contract_to_name', {'name': name}) }}" class="btn btn-outline-primary">Voeg nieuw contract toe</a>
     </div>
 {% endblock %}
