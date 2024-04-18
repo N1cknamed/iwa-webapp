@@ -29,16 +29,27 @@ class DataAcquisitionController extends AbstractController
         $currentPage = $request->query->getInt('page', 1);
         $limit = 20; // how many results per page
 
-        $query = $this->entityManager
+        // Retrieve the country code from the request
+        $countryCode = $request->query->get('countryCode');
+
+        // Create the query builder
+        $queryBuilder = $this->entityManager
             ->getRepository(Station::class)
             ->createQueryBuilder('s')
             ->leftJoin('s.geolocation', 'g')
             ->leftJoin('g.countryEntity', 'c')
             ->select('s', 'g', 'c')
-            //->orderBy('c.country') //disable this for now
             ->addSelect('s.name+0 as HIDDEN int_name') //hack to convert name string to integers for more logical ordering, since doctrine does not support casting
-            ->orderBy('int_name')
-            ->getQuery();
+            ->orderBy('int_name');
+
+        // If a country code is provided, add a where clause to the query
+        if ($countryCode) {
+            $queryBuilder->andWhere('c.country_code = :countryCode')
+                ->setParameter('countryCode', $countryCode);
+        }
+
+        // Get the final query
+        $query = $queryBuilder->getQuery();
 
         $paginator = new Paginator($query);
         $paginator->getQuery()
