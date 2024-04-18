@@ -24,7 +24,7 @@ class HomeController extends AbstractController
             ->getRepository(Malfunction::class)
             ->findBy(['status' => ['unresolved', 'in progress']]);
 
-        return $this->render('home/index.html.twig', [
+        return $this->render('home/home.html.twig', [
             'malfunctions' => $malfunctions,
             'controller_name' => 'HomeController',
         ]);

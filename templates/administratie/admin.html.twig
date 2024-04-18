@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
+    <div class="col-md-8">
         <h1 class="mb-4">Bestaande accounts</h1>
         <table class="table">
             <thead>
@@ -24,7 +24,7 @@
                     <td>
                         {% set roleNames = [] %}
                         {% for role in user.roles %}
-                            {%  if role != 'ROLE_USER' %}
+                            {% if role != 'ROLE_USER' %}
                                 {% set roleName = role|replace({'ROLE_ADMIN': 'Administrator', 'ROLE_DATA': 'Data Acquisition', 'ROLE_CONTRACT': 'Contractbeheerder'}) %}
                                 {% set roleNames = roleNames|merge([roleName]) %}
                             {% endif %}
@@ -35,7 +35,8 @@
                         <a href="{{ path('app_edit_user', {'id': user.id}) }}" class="btn btn-outline-primary">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
-                        <a href="{{ path('app_remove_user', {'id': user.id}) }}" class="btn btn-outline-danger" onclick="return confirm('Weet je zeker dat je het volgende account wil verwijderen: {{ user.email }}');">
+                        <a href="{{ path('app_remove_user', {'id': user.id}) }}" class="btn btn-outline-danger"
+                           onclick="return confirm('Weet je zeker dat je het volgende account wil verwijderen: {{ user.email }}');">
                             <i class="bi bi-trash-fill"></i>
                         </a>
                     </td>

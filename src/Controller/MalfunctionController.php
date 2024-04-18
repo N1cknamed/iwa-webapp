@@ -20,20 +20,20 @@ class MalfunctionController extends AbstractController
     {
         $this->entityManager = $entityManager;
     }
-    #[Route('/malfunction', name: 'app_malfunction')]
+    #[Route('dataacquisition/malfunction', name: 'app_malfunction')]
     public function index(): Response
     {
         $malfunctions = $this->entityManager
         ->getRepository(Malfunction::class)
         ->findBy(['status' => ['unresolved', 'in progress']]);
 
-        return $this->render('malfunction/index.html.twig', [
+        return $this->render('malfunction/malfunction.html.twig', [
             'malfunctions' => $malfunctions,
             'controller_name' => 'MalfunctionController',
         ]);
     }
 
-    #[Route('/malfunction/{name}', name: 'malfunction_detail')]
+    #[Route('dataacquisition/malfunction/{name}', name: 'malfunction_detail')]
     public function detail(string $name): Response
     {
         $station = $this->entityManager->getRepository(Station::class)->findOneBy(['name' => $name]);

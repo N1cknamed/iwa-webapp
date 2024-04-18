@@ -30,7 +30,7 @@ class WeatherController extends AbstractController
         $weatherData = $this->doctrine
             ->getRepository(Weather::class)
             ->findAll();
-        return $this->render('weather/index.html.twig', [
+        return $this->render('weather/weather.html.twig', [
             'weatherData' => $weatherData,
         ]);
     }

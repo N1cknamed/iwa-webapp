@@ -53,7 +53,7 @@ class DataAcquisitionController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        return $this->render('data_acquisition/index.html.twig', [
+        return $this->render('data_acquisition/data.html.twig', [
             'malfunctions' => $malfunctions,
             'stations' => $paginator,
             'controller_name' => 'DataAcquisitionController',
