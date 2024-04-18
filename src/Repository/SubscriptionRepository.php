@@ -25,8 +25,8 @@ class SubscriptionRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s')
             ->where('s.date_end >= CURRENT_DATE()')
-            ->orderBy('s.name_holder', 'ASC');
-            # ->groupBy('s.name_holder');
+            ->orderBy('s.name_holder', 'ASC')
+            ->groupBy('s.name_holder');
 
         $query = $qb->getQuery();
 

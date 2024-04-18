@@ -1,26 +1,37 @@
 {% extends 'contract_beheer/index.html.twig' %}
 
-{% block title %}Contracts{% endblock %}
+{% block title %}Contracten{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
+    <div class="col-md-8">
         <h2>{{ name }}</h2>
         <table class="table">
             <thread>
                 <tr>
-                    <th>Start date</th>
-                    <th>End date</th>
-                    <th>Country code</th>
-                    <th>Region</th>
-                    <th>Coordinates</th>
+                    <th>Startdatum</th>
+                    <th>Vervaldatum</th>
+                    <th>Landscode</th>
+                    <th>Regio</th>
+                    <th>CoordinatesType</th>
                     <th>Longitude</th>
                     <th>Latitude</th>
                     <th>Elevation</th>
-                    <th>Data</th>
+                    <th>TEMP</th>
+                    <th>DEWP</th>
+                    <th>STP</th>
+                    <th>SLP</th>
+                    <th>VISIB</th>
+                    <th>WDSP</th>
+                    <th>PRCP</th>
+                    <th>SNDP</th>
+                    <th>FRSHTT</th>
+                    <th>CLDC</th>
+                    <th>WNDDIR</th>
+                    <th>Acties</th>
                 </tr>
             </thread>
             <tbody>
@@ -30,24 +41,37 @@
                         <td>{{ contract.dateend|date('Y-m-d') }}</td>
                         <td>{{ contract.countrycode }}</td>
                         <td>{{ contract.region }}</td>
-                        <td>{{ contract.coordinates }}</td>
+                        <td>{{ contract.coordinatesType }}</td>
                         <td>{{ contract.longitude }}</td>
                         <td>{{ contract.latitude }}</td>
                         <td>{{ contract.elevation }}</td>
+                        <td>{{ contract.TEMP }}</td>
+                        <td>{{ contract.DEWP }}</td>
+                        <td>{{ contract.STP }}</td>
+                        <td>{{ contract.SLP }}</td>
+                        <td>{{ contract.VISIB }}</td>
+                        <td>{{ contract.WDSP }}</td>
+                        <td>{{ contract.PRCP }}</td>
+                        <td>{{ contract.SNDP }}</td>
+                        <td>{{ contract.FRSHTT }}</td>
+                        <td>{{ contract.CLDC }}</td>
+                        <td>{{ contract.WNDDIR }}</td>
                         <td>
-                            {% set data = [] %}
-                            {% for d in contract.data %}
-                                {% set data = data|merge([d]) %}
-                            {% endfor %}
-                            {{ data|join(', ') }}
+                            <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class='btn btn-outline-primary'>
+                                <i class='bi bi-pencil-fill'></i>
+                            </a>
+                            <a href='{{ path('app_remove_contract', {'id': contract.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Weet je zeker dat je dit contract wil verwijderen?');'>
+                                <i class='bi bi-trash-fill'></i>
+                            </a>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="2">No contracts found</td>
+                        <td colspan="2">Geen contracten gevonden</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <a href="{{ path('app_add_contract_to_name', {'name': name}) }}" class="btn btn-outline-primary">Voeg nieuw contract toe</a>
     </div>
 {% endblock %}
