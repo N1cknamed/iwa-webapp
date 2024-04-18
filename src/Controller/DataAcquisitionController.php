@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Weather;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -83,4 +84,30 @@ class DataAcquisitionController extends AbstractController
             'controller_name' => 'DataAcquisitionController',
         ]);
     }
+
+    #[Route('/dataacquisition/data', name: 'app_data_acquisition_data')]
+    public function getAllData(Request $request): Response
+    {
+        $currentPage = $request->query->getInt('page', 1);
+        $limit = 10; // how many results per page
+
+        $query = $this->entityManager
+            ->getRepository(Weather::class)
+            ->createQueryBuilder('w')
+            ->orderBy('w.DATE', 'DESC')
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($currentPage - 1))
+            ->setMaxResults($limit);
+
+        return $this->render('data_acquisition/data.html.twig', [
+            'weatherData' => $paginator,
+            'current_page' => $currentPage,
+            'total_pages' => ceil(count($paginator) / $limit),
+            'controller_name' => 'DataAcquisitionController',
+        ]);
+    }
+
 }

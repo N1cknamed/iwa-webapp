@@ -1,0 +1,118 @@
+{# templates/weather/index.html.twig #}
+{% macro weatherIcons(frshtt) %}
+    {% set icons = [] %}
+    {% if frshtt|slice(0, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-thermometer-snow" title="Vorst"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(1, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-rain" title="Regen"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(2, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-snow" title="Sneeuw"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(3, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-hail" title="Hagel"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(4, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-lightning" title="Onweer"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(5, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-tornado" title="Tornado"></i>']) %}
+    {% endif %}
+    {{ icons|join(' ')|raw }}
+{% endmacro %}
+
+{% import _self as macros %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Weather Data{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-5">
+        <h1>Weather Data</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Station</th>
+                <th>Datum</th>
+                <th>Tijd</th>
+                <th>Temperatuur</th>
+                <th>Dauwpunt</th>
+                <th>Luchtdruk (Station / Zee)</th>
+                <th>Bewolking</th>
+                <th>Zicht</th>
+                <th>Wind</th>
+                <th>Windrichting</th>
+                <th>Neerslag</th>
+                <th>Sneeuw</th>
+                <th>Evenement</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for weather in weatherData %}
+                <tr>
+                    <td>{{ weather.id }}</td>
+                    <td>{{ weather.STN }}</td>
+                    {% set currentDate = '' %}
+                    <td>
+                        {% if currentDate != weather.DATE|date('Y-m-d') %}
+                            {% set currentDate = weather.DATE|date('Y-m-d') %}
+                            {{ currentDate }}
+                        {% endif %}
+                    </td>
+                    <td>{{ weather.TIME|date('H:i:s') }}</td>
+                    <td>{{ weather.TEMP }}℃</td>
+                    <td>{{ weather.DEWP }}℃</td>
+                    <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
+                    <td>{{ weather.CLDC }}%</td>
+                    <td>{{ weather.VISIB }}</td>
+                    <td>{{ weather.WDSP }}</td>
+                    <td>{{ weather.WNDDIR }}°</td>
+                    <td>{{ weather.PRCP != null ? weather.PRCP ~ 'cm' : '' }}</td>
+                    <td>{{ weather.SNDP != null ? weather.SNDP ~ 'cm' : '' }}</td>
+                    <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="12">No weather data available</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pagination">
+                {# "Previous" button #}
+                <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                    <a class="page-link" href="{{ path('app_data_acquisition_data', {'page': current_page - 1}) }}">Vorige</a>
+                </li>
+
+                {# Calculate start and end page numbers for the 5-page range #}
+                {% set start_page = max(1, current_page - 2) %}
+                {% set end_page = min(total_pages, start_page + 4) %}
+                {% set start_page = max(1, end_page - 4) %}
+
+                {# Page number buttons #}
+                {% for page in start_page..end_page %}
+                    <li class="page-item{% if page == current_page %} active{% endif %}">
+                        <a class="page-link"
+                           href="{{ path('app_data_acquisition_data', {'page': page}) }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+
+                {# "Next" button #}
+                <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                    <a class="page-link" href="{{ path('app_data_acquisition_data', {'page': current_page + 1}) }}">Volgende</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+{% endblock %}
