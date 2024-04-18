@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="col-md-8">
+    <div class="col">
         <h2>{{ name }}</h2>
         <table class="table">
             <thread>
@@ -45,17 +45,17 @@
                         <td>{{ contract.longitude }}</td>
                         <td>{{ contract.latitude }}</td>
                         <td>{{ contract.elevation }}</td>
-                        <td>{{ contract.TEMP }}</td>
-                        <td>{{ contract.DEWP }}</td>
-                        <td>{{ contract.STP }}</td>
-                        <td>{{ contract.SLP }}</td>
-                        <td>{{ contract.VISIB }}</td>
-                        <td>{{ contract.WDSP }}</td>
-                        <td>{{ contract.PRCP }}</td>
-                        <td>{{ contract.SNDP }}</td>
-                        <td>{{ contract.FRSHTT }}</td>
-                        <td>{{ contract.CLDC }}</td>
-                        <td>{{ contract.WNDDIR }}</td>
+                        <td>{% if contract.TEMP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.DEWP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.STP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.SLP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.VISIB == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.WDSP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.PRCP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.SNDP == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.FRSHTT == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.CLDC == 1 %}✔{% else %}❌{% endif %}</td>
+                        <td>{% if contract.WNDDIR == 1 %}✔{% else %}❌{% endif %}</td> 
                         <td>
                             <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class='btn btn-outline-primary'>
                                 <i class='bi bi-pencil-fill'></i>
