@@ -125,9 +125,9 @@
                                         {% if malfunction.getStatus() == 'unresolved' %}
                                             <span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span>
                                         {% elseif malfunction.getStatus() == 'in progress' %}
-                                            <span class="badge rounded-pill bg-warning">{{ malfunction.getStatus() }}</span>
+                                            <span class="badge rounded-pill bg-primary">{{ malfunction.getStatus() }}</span>
                                         {% else %}
-                                            <span class="badge rounded-pill bg-secondary">{{ malfunction.getStatus() }}</span>
+                                            <span class="badge rounded-pill bg-success">{{ malfunction.getStatus() }}</span>
                                         {% endif %}
                                     </p>
                                     <small>{{ malfunction.getDATE() }}</small>

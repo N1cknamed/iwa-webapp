@@ -12,10 +12,19 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Station {{ station.getName() }}</h2>
+    <h2>
+        Storing bij station <a href="{{ path('app_station_detail', {'name': station.name}) }}">{{ station.getName() }}</a> in {{ station.geolocation.countryEntity.getCountry}}
+        {% if malfunction.getStatus() == 'unresolved' %}
+            <span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span>
+        {% elseif malfunction.getStatus() == 'in progress' %}
+            <span class="badge rounded-pill bg-primary">{{ malfunction.getStatus() }}</span>
+        {% else %}
+            <span class="badge rounded-pill bg-success">{{ malfunction.getStatus() }}</span>
+        {% endif %}
+    </h2>
     <div class="row">
         <div class="col-md-8">
-            <h3>Missing value malfunctions</h3>
+            <h3>Missende waarden</h3>
             <table class="table table-sm table-borderless table-hover text-center">
                 <thead class="border-bottom">
                     <tr>
@@ -50,7 +59,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <h3>Temperature malfunctions</h3>
+            <h3>Temperatuurstoringen</h3>
             <table class="table table-sm table-borderless table-hover text-center">
                 <thead class="border-bottom">
                     <tr>
@@ -72,16 +81,14 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="row mt-4">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Status wijzigen</h3>
+                    <h5 class="card-title">Status wijzigen</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ path('malfunction_change_status', {'name': station.getName()}) }}" method="post">
-                        <div class="form-group">
+                        <div class="form-group py-3">
                             <label for="status">Nieuwe status</label>
                             <select class="form-control" id="status" name="status" required>
                                 <option value="unresolved">Unresolved</option>
@@ -94,21 +101,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Plaats een bericht</h3>
-                </div>
-                <div class="card-body">
-                    <form action="{{ path('malfunction_add_message', {'name': station.getName()}) }}" method="post">
-                        <div class="form-group">
-                            <label for="message">Bericht</label>
-                            <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+{#        <div class="col-md-4">#}
+{#            <div class="card">#}
+{#                <div class="card-header">#}
+{#                    <h3 class="card-title">Plaats een bericht</h3>#}
+{#                </div>#}
+{#                <div class="card-body">#}
+{#                    <form action="{{ path('malfunction_add_message', {'name': station.getName()}) }}" method="post">#}
+{#                        <div class="form-group">#}
+{#                            <label for="message">Bericht</label>#}
+{#                            <textarea class="form-control" id="message" name="message" rows="3" required></textarea>#}
+{#                        </div>#}
+{#                        <button type="submit" class="btn btn-primary">Submit</button>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
     </div>
 {% endblock %}

@@ -61,12 +61,18 @@ class MalfunctionController extends AbstractController
         if (!$station) {
             throw $this->createNotFoundException('Station not found');
         }
-    
+
+        $malfunction = $this->entityManager->getRepository(Malfunction::class)->findOneBy(['station' => $station]);
+        if (!$malfunction) {
+            throw $this->createNotFoundException('Malfunction not found');
+        }
+
         $missingValues = $this->entityManager->getRepository(MissingValues::class)->findBy(['STN' => $station->getName()]);
         $tempCorrections = $this->entityManager->getRepository(TempCorrection::class)->findBy(['STN' => $station->getName()]);
-    
+
         return $this->render('malfunction/detail.html.twig', [
             'station' => $station,
+            'malfunction' => $malfunction,
             'missingValues' => $missingValues,
             'tempCorrections' => $tempCorrections,
             'controller_name' => 'MalfunctionController',
