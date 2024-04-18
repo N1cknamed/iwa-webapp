@@ -79,5 +79,25 @@
             </div>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Status wijzigen</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ path('malfunction_change_status', {'name': station.getName()}) }}" method="post">
+                    <div class="form-group">
+                        <label for="status">Nieuwe status</label>
+                        <select class="form-control" id="status" name="status" required>
+                            <option value="unresolved">Unresolved</option>
+                            <option value="in progress">In progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

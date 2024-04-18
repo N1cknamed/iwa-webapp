@@ -76,4 +76,28 @@ class MalfunctionController extends AbstractController
         // Redirect naar de detailpagina
         return $this->redirectToRoute('malfunction_detail', ['name' => $name]);
     }
+
+    #[Route('dataacquisition/malfunction/{name}/change-status', name: 'malfunction_change_status')]
+    public function changeStatus(Request $request, string $name): Response
+    {
+        $station = $this->entityManager->getRepository(Station::class)->findOneBy(['name' => $name]);
+        if (!$station) {
+            throw $this->createNotFoundException('Station not found');
+        }
+
+        $status = $request->request->get('status');
+
+        // Haal de storing op bij het station
+        $malfunction = $this->entityManager->getRepository(Malfunction::class)->findOneBy(['station' => $station]);
+        if (!$malfunction) {
+            throw $this->createNotFoundException('Malfunction not found');
+        }
+
+        // Update de status van de storing
+        $malfunction->setStatus($status);
+        $this->entityManager->flush();
+
+        // Redirect naar de detailpagina
+        return $this->redirectToRoute('malfunction_detail', ['name' => $name]);
+    }
 }
