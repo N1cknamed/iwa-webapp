@@ -1,214 +1,156 @@
+{# templates/weather/index.html.twig #}
+{% macro weatherIcons(frshtt) %}
+    {% set icons = [] %}
+    {% if frshtt|slice(0, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-thermometer-snow" title="Vorst"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(1, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-rain" title="Regen"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(2, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-snow" title="Sneeuw"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(3, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-hail" title="Hagel"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(4, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-cloud-lightning" title="Onweer"></i>']) %}
+    {% endif %}
+    {% if frshtt|slice(5, 1) == '1' %}
+        {% set icons = icons|merge(['<i class="bi bi-tornado" title="Tornado"></i>']) %}
+    {% endif %}
+    {{ icons|join(' ')|raw }}
+{% endmacro %}
+
+{% import _self as macros %}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Data Acquisition{% endblock %}
+{% block title %}Weer Data{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' %}
 {% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"/>
-
-    <style>
-        tr[data-href]:hover {
-            cursor: pointer;
-        }
-    </style>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %}
-
 {% block body %}
-    <h2>Stations</h2>
-    <div class="col-md-6">
-        <table class="table table-sm">
-            <thead>
-            <tr>
-                <th class="col-md-2">ID</th>
-                <th class="col-md-4">Land</th>
-                <th class="col-md-6">Staat / Provincie</th>
-            </tr>
-            </thead>
-            <tbody id="station-table-body">
-            {% for station in stations %}
-                <tr>
-                    <td>
-                        <a href="{{ path('app_station_detail', {'name': station.name}) }}">{{ station.name }}</a>
-                    </td>
-                    <td>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}
-                        ({{ station.geolocation ? station.geolocation.countryEntity.getCountryCode : '' }})
-                    </td>
-                    <td>{{ station.geolocation ? station.geolocation.state : 'N/A' }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="6">No stations found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="container-fluid">
+    <div class="row mt-3 gx-5 justify-content-center">
+    <div class="col-md-3">
+    <div class="card text-center">
+        <div class="card-body">
+            <!-- Filter Form -->
+            <form method="get" action="{{ path('app_data_acquisition_data') }}">
+                <h2>Filter</h2>
 
-        <nav>
-            <ul class="pagination justify-content-center" id="pagination-links">
-                <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
-                    <a class="page-link" href="{{ path('app_data_acquisition', {'page': 1}) }}">Eerste</a>
-                </li>
+                <div class="form-group col-md-6">
+                    <label for="STN">Station ID</label>
+                    <input type="text" name="STN" placeholder="Station" value="{{ app.request.query.get('STN') }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="startDate">Begin Datum</label>
+                    <input type="date" name="startDate" value="{{ app.request.query.get('startDate') }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="endDate">Eind Datum</label>
+                    <input type="date" name="endDate" value="{{ app.request.query.get('endDate') }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="startTime">Begin Tijd</label>
+                    <input type="text" name="startTime" placeholder="HH:mm:ss"
+                           value="{{ app.request.query.get('startTime') }}"
+                           pattern="\d{2}:\d{2}:\d{2}" title="Enter start time in HH:mm:ss format">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="endTime">Eind Tijd</label>
+                    <input type="text" name="endTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('endTime') }}"
+                           pattern="\d{2}:\d{2}:\d{2}" title="Enter end time in HH:mm:ss format">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="limit">Aantal rijen</label>
+                    <input type="number" name="limit" placeholder="Limit" value="{{ app.request.query.get('limit', 10) }}">
+                </div>
 
-                <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
-                    <a class="page-link"
-                       href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
-                </li>
-
-                {% set start_page = max(1, current_page - 2) %}
-                {% set end_page = min(total_pages, start_page + 4) %}
-                {% set start_page = max(1, end_page - 4) %}
-
-                {% for page in start_page..end_page %}
-                    <li class="page-item{% if page == current_page %} active{% endif %}">
-                        <a class="page-link"
-                           href="{{ path('app_data_acquisition', {'page': page}) }}">{{ page }}</a>
-                    </li>
-                {% endfor %}
-
-                <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
-                    <a class="page-link"
-                       href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
-                </li>
-
-                <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
-                    <a class="page-link" href="{{ path('app_data_acquisition', {'page': total_pages}) }}">Laatste</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <div class="col-md-4">
-        <div id="map" style="height: 600px;"></div>
-    </div>
-    <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-header">
-                <h5 class="card-title">Actuele storingen</h5>
-            </div>
-            <div class="card-body">
-                {% if malfunctions is empty %}
-                    <p>Geen actieve storingen.</p>
-                {% else %}
-                    <table class="table table-sm table-hover">
-                        <tbody>
-                            {% for malfunction in malfunctions %}
-                                <tr data-href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">
-                                    <td>{{ malfunction.getStation().getName() }}</td>
-                                    <td>{{ malfunction.getDATE()|date('Y-m-d H:i') }}</td>
-                                    <td>
-                                        {% if malfunction.getStatus() == 'unresolved' %}
-                                            <span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span>
-                                        {% elseif malfunction.getStatus() == 'in progress' %}
-                                            <span class="badge rounded-pill bg-warning">{{ malfunction.getStatus() }}</span>
-                                        {% else %}
-                                            <span class="badge rounded-pill bg-secondary">{{ malfunction.getStatus() }}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="2">No malfunctions found</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
-                <ul class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action text-primary" href="{{ path('app_malfunction') }}">Alle storingen</a>
-                </ul>
-            </div>
+                <button type="submit" class="btn btn-primary">Data ophalen</button>
+            </form>
+            <!-- End of Filter Form -->
         </div>
     </div>
-{% endblock %}
+    </div>
+        <div class="col-md-8">
+            <h1>Weather Data</h1>
 
-{% block body_scripts %}
-    {{ parent() }}
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
-    <script> //clickable table rows
-        document.addEventListener('DOMContentLoaded', function() {
-            var rows = document.querySelectorAll('tr[data-href]');
-            rows.forEach(function(row) {
-                row.addEventListener('click', function() {
-                    window.location.href = row.getAttribute('data-href');
-                });
-            });
-        });
-    </script>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Station</th>
+                    <th>Datum</th>
+                    <th>Tijd</th>
+                    <th>Temperatuur</th>
+                    <th>Dauwpunt</th>
+                    <th>Luchtdruk (Station / Zee)</th>
+                    <th>Bewolking</th>
+                    <th>Zicht</th>
+                    <th>Wind</th>
+                    <th>Windrichting</th>
+                    <th>Neerslag</th>
+                    <th>Sneeuw</th>
+                    <th>Evenement</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for weather in weatherData %}
+                    <tr>
+                        <td>{{ weather.id }}</td>
+                        <td>{{ weather.station.getName }}</td>
+                        <td>{{ weather.DATE|date('Y-m-d') }}</td>
+                        <td>{{ weather.TIME|date('H:i:s') }}</td>
+                        <td>{{ weather.TEMP }}℃</td>
+                        <td>{{ weather.DEWP }}℃</td>
+                        <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
+                        <td>{{ weather.CLDC }}%</td>
+                        <td>{{ weather.VISIB }}</td>
+                        <td>{{ weather.WDSP }}</td>
+                        <td>{{ weather.WNDDIR }}°</td>
+                        <td>{{ weather.PRCP != null ? weather.PRCP ~ 'cm' : '' }}</td>
+                        <td>{{ weather.SNDP != null ? weather.SNDP ~ 'cm' : '' }}</td>
+                        <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="12">No weather data available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-    <script> // Leaflet map
-        var data = localStorage.getItem('stationData');
-        if (data) {
-            initializeMap(JSON.parse(data));
-        } else {
-            // If the data is not in local storage, fetch it
-            fetch('/dataacquisition/locations')
-                .then(response => response.json())
-                .then(data => {
-                    localStorage.setItem('stationData', JSON.stringify(data));
-                    initializeMap(data);
-                });
-        }
+            <nav>
+                <ul class="pagination">
+                    {# "Previous" button #}
+                    <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                        <a class="page-link" href="{{ path('app_data_acquisition_data', {'page': current_page - 1}) }}">Vorige</a>
+                    </li>
 
-        function initializeMap(data) {
-            var map = L.map('map').setView([0, 0], 2);
+                    {# Calculate start and end page numbers for the 5-page range #}
+                    {% set start_page = max(1, current_page - 2) %}
+                    {% set end_page = min(total_pages, start_page + 4) %}
+                    {% set start_page = max(1, end_page - 4) %}
 
-            // set bounds so you can't pan outside the world
-            var bounds = L.latLngBounds(
-                L.latLng(-90, -180),
-                L.latLng(90, 180)
-            );
-            var paddedBounds = bounds.pad(0.1);
-            map.setMaxBounds(paddedBounds);
+                    {# Page number buttons #}
+                    {% for page in start_page..end_page %}
+                        <li class="page-item{% if page == current_page %} active{% endif %}">
+                            <a class="page-link"
+                               href="{{ path('app_data_acquisition_data', {'page': page}) }}">{{ page }}</a>
+                        </li>
+                    {% endfor %}
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 15,
-                minZoom: 2,
-            }).addTo(map);
-
-            var markers = L.markerClusterGroup({
-                showCoverageOnHover: false,
-            });
-            data.forEach(station => {
-                var marker = L.marker([station.latitude, station.longitude])
-                    .bindPopup("<b><a href='/dataacquisition/station/" + station.name + "'>" + station.name + "</a></b>");
-                markers.addLayer(marker);
-            });
-            map.addLayer(markers);
-        }
-    </script>
-    <script> // Pagination AJAX
-        document.getElementById('pagination-links').addEventListener('click', function(event) {
-            event.preventDefault();
-
-            var target = event.target;
-            if (target.tagName.toLowerCase() === 'a') {
-                var url = target.getAttribute('href');
-
-                fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        var parser = new DOMParser();
-                        var doc = parser.parseFromString(html, 'text/html');
-
-                        var newTableBody = doc.getElementById('station-table-body');
-                        document.getElementById('station-table-body').innerHTML = newTableBody.innerHTML;
-
-                        var newPaginationLinks = doc.getElementById('pagination-links');
-                        document.getElementById('pagination-links').innerHTML = newPaginationLinks.innerHTML;
-                    });
-            }
-        });
-    </script>
+                    {# "Next" button #}
+                    <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                        <a class="page-link" href="{{ path('app_data_acquisition_data', {'page': current_page + 1}) }}">Volgende</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 {% endblock %}
