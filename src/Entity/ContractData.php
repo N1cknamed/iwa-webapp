@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Contract;
 use App\Repository\ContractDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 

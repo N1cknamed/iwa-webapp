@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Subscription;
 use App\Entity\Contract;
+use App\Entity\ContractCoordinates;
+Use App\Entity\ContractData;
 use App\Form\SubscriptionFormType;
 use App\Form\ContractFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -145,6 +147,12 @@ class ContractBeheerController extends AbstractController
     public function addContract(Request $request, EntityManagerInterface $entityManager): Response
     {
         $contract = new Contract();
+        $contractCoordinates = new ContractCoordinates();
+        $contractData = new ContractData();
+
+        $contract->setCoordinates($contractCoordinates);
+        $contract->setData($contractData);
+
         $form = $this->createForm(ContractFormType::class, $contract);
         $form->handleRequest($request);
 
