@@ -28,7 +28,7 @@ class ContractFormType extends AbstractType
 
     {
         $resolver->setDefaults([
-            'data_class' => null
+            'data_class' => Contract::class
         ]);
     }
 }
