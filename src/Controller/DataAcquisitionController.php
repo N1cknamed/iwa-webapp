@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Malfunction;
+use App\Entity\TempCorrection;
 use App\Entity\Weather;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,22 +27,46 @@ class DataAcquisitionController extends AbstractController
     public function index(Request $request): Response
     {
         $currentPage = $request->query->getInt('page', 1);
-        $limit = 15; // how many results per page
+        $limit = 20; // how many results per page
 
-        $query = $this->entityManager
+        // Retrieve the country code from the request
+        $countryCode = $request->query->get('countryCode');
+
+        // Create the query builder
+        $queryBuilder = $this->entityManager
             ->getRepository(Station::class)
             ->createQueryBuilder('s')
-            ->leftJoin('s.geolocation', 'g') // join with Geolocation entity
-            ->leftJoin('g.countryEntity', 'c') // join with Country entity
-            ->select('s', 'g', 'c') // select all fields from Station, Geolocation, and Country entities
-            ->getQuery();
+            ->leftJoin('s.geolocation', 'g')
+            ->leftJoin('g.countryEntity', 'c')
+            ->select('s', 'g', 'c')
+            ->addSelect('s.name+0 as HIDDEN int_name') //hack to convert name string to integers for more logical ordering, since doctrine does not support casting
+            ->orderBy('int_name');
+
+        // If a country code is provided, add a where clause to the query
+        if ($countryCode) {
+            $queryBuilder->andWhere('c.country_code = :countryCode')
+                ->setParameter('countryCode', $countryCode);
+        }
+
+        // Get the final query
+        $query = $queryBuilder->getQuery();
 
         $paginator = new Paginator($query);
         $paginator->getQuery()
             ->setFirstResult($limit * ($currentPage - 1))
             ->setMaxResults($limit);
 
-        return $this->render('data_acquisition/index.html.twig', [
+        $malfunctions = $this->entityManager
+            ->getRepository(Malfunction::class)
+            ->createQueryBuilder('m')
+            ->where('m.status IN (:statuses)')
+            ->setParameter('statuses', ['unresolved', 'in progress'])
+            ->setMaxResults(8)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('data_acquisition/dataacq.html.twig', [
+            'malfunctions' => $malfunctions,
             'stations' => $paginator,
             'controller_name' => 'DataAcquisitionController',
             'current_page' => $currentPage,
@@ -54,7 +80,7 @@ class DataAcquisitionController extends AbstractController
         $stations = $this->entityManager
             ->getRepository(Station::class)
             ->createQueryBuilder('s')
-            ->select('s.name', 's.latitude', 's.longitude') // select only necessary fields
+            ->select('s.name', 's.latitude', 's.longitude')
             ->getQuery()
             ->getResult();
 
@@ -79,8 +105,11 @@ class DataAcquisitionController extends AbstractController
             throw $this->createNotFoundException('The station does not exist');
         }
 
+        $correctedTemps = $this->entityManager->getRepository(TempCorrection::class)->findBy(['STN' => $name]);
+
         return $this->render('data_acquisition/station.html.twig', [
             'station' => $station,
+            'correctedTemps' => $correctedTemps,
             'controller_name' => 'DataAcquisitionController',
         ]);
     }
@@ -90,129 +119,46 @@ class DataAcquisitionController extends AbstractController
     {
         $currentPage = $request->query->getInt('page', 1);
 
-        $query = $this->entityManager
-            ->getRepository(Weather::class)
-            ->createQueryBuilder('w')
-            ->orderBy('w.DATE', 'DESC');
-//            ->getQuery();
-
-//        $paginator = new Paginator($query);
-//        $paginator->getQuery()
-//            ->setFirstResult($limit * ($currentPage - 1))
-//            ->setMaxResults($limit);
-
-        // Handle filtering
-        $STN = $request->query->get('STN');
-        $DATE = $request->query->get('DATE');
-        $TIME = $request->query->get('TIME');
-        $TEMP = $request->query->get('TEMP');
-        $DEWP = $request->query->get('DEWP');
-        $STP = $request->query->get('STP');
-        $SLP = $request->query->get('SLP');
-        $VISIB = $request->query->get('VISIB');
-        $WDSP = $request->query->get('WDSP');
-        $PRCP = $request->query->get('PRCP');
-        $SNDP = $request->query->get('SNDP');
-        $FRSHTTtt = $request->query->get('FRSHTTtt');
-        $CLDC = $request->query->get('CLDC');
-        $WNDDIR = $request->query->get('winddir');
-        $limit = $request->query->get('limit');
-        $timeStart = $request->query->get('startTime');
-        $timeEnd = $request->query->get('endTime');
-        $dateStart = $request->query->get('startDate');
-        $dateEnd = $request->query->get('endDate');
+        // Retrieve the form data
+        $stationName = $request->query->get('stationName');
+        $countryCode = $request->query->get('countryCode');
+        $startDateTime = $request->query->get('startDateTime');
+        $endDateTime = $request->query->get('endDateTime');
 
         // Create a query builder instance
         $queryBuilder = $this->entityManager
             ->getRepository(Weather::class)
-            ->createQueryBuilder('w');
-//        if ($limit) {
-//            $queryBuilder->setMaxResults($limit);
-//        }else{
-//            $limit = 10;
-//            $queryBuilder->setMaxResults(10);
-//
-//        }
+            ->createQueryBuilder('w')
+            ->leftJoin('w.station', 's')
+            ->leftJoin('s.geolocation', 'g')
+            ->leftJoin('g.countryEntity', 'c');
 
-        // Apply filters
-        if ($STN) {
-            $queryBuilder->andWhere('w.STN = :STN')
-                ->setParameter('STN', $STN);
-        }
-//        if ($DATE) {
-//            $queryBuilder->andWhere('w.DATE = :DATE')
-//                ->setParameter('DATE', new \DateTime($DATE));
-//        }
-        if ($dateStart && $dateEnd) {
-            $queryBuilder->andWhere('w.DATE BETWEEN :startDate AND :endDate')
-                ->setParameter('startDate', new \DateTime($dateStart))
-                ->setParameter('endDate', new \DateTime($dateEnd));
-        } elseif ($dateStart) {
-            $queryBuilder->andWhere('w.DATE >= :startDate')
-                ->setParameter('startDate', new \DateTime($dateStart));
-        } elseif ($dateEnd) {
-            $queryBuilder->andWhere('w.DATE <= :endDate')
-                ->setParameter('endDate', new \DateTime($dateEnd));
-        }
-        if ($timeStart && $timeEnd) {
-            $queryBuilder->andWhere('w.TIME BETWEEN :startTime AND :endTime')
-                ->setParameter('startTime', \DateTime::createFromFormat('H:i:s', $timeStart))
-                ->setParameter('endTime', \DateTime::createFromFormat('H:i:s', $timeEnd));
-        } elseif ($timeStart) {
-            $queryBuilder->andWhere('w.TIME >= :startTime')
-                ->setParameter('startTime', \DateTime::createFromFormat('H:i:s', $timeStart));
-        } elseif ($timeEnd) {
-            $queryBuilder->andWhere('w.TIME <= :endTime')
-                ->setParameter('endTime', \DateTime::createFromFormat('H:i:s', $timeEnd));
-        }
-        if ($TEMP) {
-            $queryBuilder->andWhere('w.TEMP = :TEMP')
-                ->setParameter('TEMP', $TEMP);
-        }
-        if ($DEWP) {
-            $queryBuilder->andWhere('w.DEWP = :DEWP')
-                ->setParameter('DEWP', $DEWP);
-        }
-        if ($STP) {
-            $queryBuilder->andWhere('w.STP = :STP')
-                ->setParameter('STP', $STP);
-        }
-        if ($SLP) {
-            $queryBuilder->andWhere('w.SLP = :SLP')
-                ->setParameter('SLP', $SLP);
-        }
-        if ($VISIB) {
-            $queryBuilder->andWhere('w.VISIB = :VISIB')
-                ->setParameter('VISIB', $VISIB);
-        }
-        if ($WDSP) {
-            $queryBuilder->andWhere('w.WDSP = :WDSP')
-                ->setParameter('WDSP', $WDSP);
-        }
-        if ($PRCP) {
-            $queryBuilder->andWhere('w.PRCP = :PRCP')
-                ->setParameter('PRCP', $PRCP);
-        }
-        if ($SNDP) {
-            $queryBuilder->andWhere('w.SNDP = :SNDP')
-                ->setParameter('SNDP', $SNDP);
-        }
-        if ($FRSHTTtt) {
-            $queryBuilder->andWhere('w.FRSHTT = :FRSHTTtt')
-                ->setParameter('FRSHTTtt', $FRSHTTtt);
-        }
-        if ($CLDC) {
-            $queryBuilder->andWhere('w.CLDC = :CLDC')
-                ->setParameter('CLDC', $CLDC);
-        }
-        if ($WNDDIR) {
-            $queryBuilder->andWhere('w.WNDDIR = :WNDDIR')
-                ->setParameter('WNDDIR', $WNDDIR);
+        // If a station name is provided, add a where clause to the query
+        if ($stationName) {
+            $queryBuilder->andWhere('s.name = :stationName')
+                ->setParameter('stationName', $stationName);
         }
 
-//        // Execute the filtered query
-//        $filteredQuery = $queryBuilder->getQuery();
-//        $filteredWeatherData = $filteredQuery->getResult();
+        // If a country code is provided, add a where clause to the query
+        if ($countryCode) {
+            $queryBuilder->andWhere('c.country_code = :countryCode')
+                ->setParameter('countryCode', $countryCode);
+        }
+
+        // If a start date and time is provided, add a where clause to the query
+        if ($startDateTime) {
+            $queryBuilder->andWhere('w.DATE >= :startDateTime')
+                ->setParameter('startDateTime', new \DateTime($startDateTime));
+        }
+
+        // If an end date and time is provided, add a where clause to the query
+        if ($endDateTime) {
+            $queryBuilder->andWhere('w.DATE <= :endDateTime')
+                ->setParameter('endDateTime', new \DateTime($endDateTime));
+        }
+
+        $queryBuilder->orderBy('w.DATE', 'DESC');
+
         $limit1 = 15;
 
         $paginator = new Paginator($queryBuilder->getQuery());
@@ -226,29 +172,6 @@ class DataAcquisitionController extends AbstractController
             'total_pages' => ceil(count($paginator) / $limit1),
             'limit' => $limit1,
             'controller_name' => 'DataAcquisitionController',
-            // Pass the filters to the view
-            'filters' => [
-                'STN' => $STN,
-                'DATE' => $DATE,
-                'TIME' => $TIME,
-                'TEMP' => $TEMP,
-                'DEWP' => $DEWP,
-                'STP' => $STP,
-                'SLP' => $SLP,
-                'VISIB' => $VISIB,
-                'WDSP' => $WDSP,
-                'PRCP' => $PRCP,
-                'SNDP' => $SNDP,
-                'FRSHTTtt' => $FRSHTTtt,
-                'CLDC' => $CLDC,
-                'WNDDIR' => $WNDDIR,
-                'limit' => $limit,
-                'startTime' => $timeStart,
-                'endTime' => $timeEnd,
-                'startDate' => $dateStart,
-                'endDate' => $dateEnd,
-                // Add other filters here...
-            ],
         ]);
     }
 }

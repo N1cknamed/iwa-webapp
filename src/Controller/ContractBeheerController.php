@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ContractBeheerController extends AbstractController
@@ -48,7 +51,8 @@ class ContractBeheerController extends AbstractController
 
     return $this->render('contract_beheer/addsubscription.html.twig', [
         'controller_name' => 'ContractBeheerController',
-        'SubscriptionForm' => $form
+        'SubscriptionForm' => $form,
+        'name' => ''
     ]);
     }
 
@@ -62,7 +66,10 @@ class ContractBeheerController extends AbstractController
         }
 
         $form = $this->createFormBuilder($subscription)
-            ->add('station', TextType::class)
+            ->add('name_holder', TextType::class, ['data' => $subscription->getNameHolder()])
+            ->add('date_start', DateType::class, ['data' => $subscription->getDateStart()])
+            ->add('date_end', DateType::class, ['data' => $subscription->getDateEnd()])
+            ->add('station', TextType::class, ['data' => $subscription->getStation()])
             ->add('save', SubmitType::class, ['label' => 'Update subscription'])
             ->getForm();
 
@@ -77,7 +84,7 @@ class ContractBeheerController extends AbstractController
         return $this->render('contract_beheer/editsubscription.html.twig', [
             'controller_name' => 'ContractBeheerController',
             'editForm' => $form->createView(),
-            'name' => $subscription->getHolderName()
+            'name' => $subscription->getNameHolder()
         ]);
     }
 
@@ -114,6 +121,28 @@ class ContractBeheerController extends AbstractController
     ]);
     }
 
+    #[Route('/contractbeheer/subscription/{name}/add', name: 'app_add_subscription_to_name')]
+    public function addSubscriptionToName(Request $request, EntityManagerInterface $entityManager, string $name): Response
+    {
+        $subscription = new Subscription();
+        $form = $this->createForm(SubscriptionFormType::class, $subscription);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($subscription);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+    return $this->render('contract_beheer/addsubscription.html.twig', [
+        'controller_name' => 'ContractBeheerController',
+        'SubscriptionForm' => $form,
+        'name' => $name
+    ]);
+    }
+
     #[Route('/contractbeheer/contract/add', name: 'app_add_contract')]
     public function addContract(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -131,8 +160,65 @@ class ContractBeheerController extends AbstractController
         
     return $this->render('contract_beheer/addcontract.html.twig', [
         'controller_name' => 'ContractBeheerController',
-        'ContractForm' => $form
+        'ContractForm' => $form,
+        'name' => ''
     ]);
+    }
+
+    #[Route('/contractbeheer/contract/edit/{id}', name: 'app_edit_contract')]
+    public function editContract($id, EntityManagerInterface $entityManager, Request $request)
+    {
+        $contract = $entityManager->getRepository(Contract::class)->find($id);
+
+        if (!$contract) {
+            throw $this->createNotFoundException('No contract found for id '.$id);
+        }
+
+        $form = $this->createFormBuilder($contract)
+            ->add('name_holder', TextType::class, ['data' => $contract->getNameHolder()])
+            ->add('date_start', DateType::class, ['data' => $contract->getDateStart()])
+            ->add('date_end', DateType::class, ['data' => $contract->getDateEnd()])
+            ->add('country_code', TextType::class, ['required' => false, 'data' => $contract->getCountryCode()])
+            ->add('region', TextType::class, ['required' => false, 'data' => $contract->getRegion()])
+            ->add('coordinatesType', ChoiceType::class, [
+                'choices' => [
+                    '' => null,
+                    'Above' => 'ABOVE',
+                    'Below' => 'BELOW',
+                    'Between' => 'BETWEEN',
+                    'Radius' => 'RADIUS'
+                ]
+            ])
+            ->add('longitude', NumberType::class, ['required' => false, 'data' => $contract->getLongitude()])
+            ->add('latitude', NumberType::class, ['required' => false, 'data' => $contract->getLatitude()])
+            ->add('elevation', NumberType::class, ['required' => false, 'data' => $contract->getElevation()])
+            ->add('TEMP', CheckboxType::class, ['required' => false, 'data' => $contract->isTEMP()])
+            ->add('DEWP', CheckboxType::class, ['required' => false, 'data' => $contract->isDEWP()])
+            ->add('STP', CheckboxType::class, ['required' => false, 'data' => $contract->isSTP()])
+            ->add('SLP', CheckboxType::class, ['required' => false, 'data' => $contract->isSLP()])
+            ->add('VISIB', CheckboxType::class, ['required' => false, 'data' => $contract->isVISIB()])
+            ->add('WDSP', CheckboxType::class, ['required' => false, 'data' => $contract->isWDSP()])
+            ->add('PRCP', CheckboxType::class, ['required' => false, 'data' => $contract->isPRCP()])
+            ->add('SNDP', CheckboxType::class, ['required' => false, 'data' => $contract->isSNDP()])
+            ->add('FRSHTT', CheckboxType::class, ['required' => false, 'data' => $contract->isFRSHTT()])
+            ->add('CLDC', CheckboxType::class, ['required' => false, 'data' => $contract->isCLDC()])
+            ->add('WNDDIR', CheckboxType::class, ['required' => false, 'data' => $contract->isWNDDIR()])
+            ->add('save', SubmitType::class, ['label' => 'Update Contract']) 
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+        return $this->render('contract_beheer/editcontract.html.twig', [
+            'controller_name' => 'ContractBeheerController',
+            'editForm' => $form->createView(),
+            'name' => $contract->getNameHolder()
+        ]);
     }
 
     #[Route('/contractbeheer/contract/remove/{id}', name: 'app_remove_contract')]
@@ -165,6 +251,28 @@ class ContractBeheerController extends AbstractController
             'controller_name' => 'ConractBeheerController',
             'name' => $name,
             'contracts' => $contracts
+    ]);
+    }
+    
+    #[Route('/contractbeheer/contract/{name}/add', name: 'app_add_contract_to_name')]
+    public function addContractToName(Request $request, EntityManagerInterface $entityManager, string $name): Response
+    {
+        $contract = new Contract();
+        $form = $this->createForm(ContractFormType::class, $contract);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($contract);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_contract_beheer');
+        }
+
+    return $this->render('contract_beheer/addcontract.html.twig', [
+        'controller_name' => 'ContractBeheerController',
+        'ContractForm' => $form,
+        'name' => $name
     ]);
     }
 

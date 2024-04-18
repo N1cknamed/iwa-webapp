@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Storing bij {{ station.getName() }}{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+{% endblock %}
+
+{% block body %}
+    <h2>
+        Storing bij station <a href="{{ path('app_station_detail', {'name': station.name}) }}">{{ station.getName() }}</a> in {{ station.geolocation.countryEntity.getCountry}}
+        {% if malfunction.getStatus() == 'unresolved' %}
+            <span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span>
+        {% elseif malfunction.getStatus() == 'in progress' %}
+            <span class="badge rounded-pill bg-primary">{{ malfunction.getStatus() }}</span>
+        {% else %}
+            <span class="badge rounded-pill bg-success">{{ malfunction.getStatus() }}</span>
+        {% endif %}
+    </h2>
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Missende waarden</h3>
+            <table class="table table-sm table-borderless table-hover text-center">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>Datum</th>
+                        <th>Tijd</th>
+                        <th>Temperatuur</th>
+                        <th>Dauwpunt</th>
+                        <th>Luchtdruk (Station / Zee)</th>
+                        <th>Zicht</th>
+                        <th>Windsnelheid</th>
+                        <th>Neerslag</th>
+                        <th>Sneeuwdiepte</th>
+                        <th>Bewolking</th>
+                        <th>Windrichting</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for missingValue in missingValues %}
+                        <tr>
+                            <td>{{ missingValue.getDATE|date('Y-m-d') }}</td>
+                            <td>{{missingValue.getTIME|date('H:i:s') }}</td>
+                            <td>{{ missingValue.getTEMP() }}</td>
+                            <td>{{ missingValue.getDEWP() }}</td>
+                            <td>{{ missingValue.getSTP() }} / {{ missingValue.SLP() }} </td>
+                            <td>{{ missingValue.getVISIB() }}</td>
+                            <td>{{ missingValue.getWDSP() }}</td>
+                            <td>{{ missingValue.getPRCP() }}</td>
+                            <td>{{ missingValue.getSNDP() }}</td>
+                            <td>{{ missingValue.getCLDC() }}</td>
+                            <td>{{ missingValue.getWNDDIR() }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Temperatuurstoringen</h3>
+            <table class="table table-sm table-borderless table-hover text-center">
+                <thead class="border-bottom">
+                    <tr>
+                        <th>Datum</th>
+                        <th>Tijd</th>
+                        <th>Temperatuur Correctie</th>
+                        <th>Temperatuur Origineel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tempCorrection in tempCorrections %}
+                        <tr>
+                            <td>{{ tempCorrection.getDATE|date('Y-m-d') }}</td>
+                            <td>{{tempCorrection.getTIME|date('H:i:s') }}</td>
+                            <td>{{ tempCorrection.getCorrectedTEMP() }}</td>
+                            <td>{{ tempCorrection.getOriginalTEMP() }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Status wijzigen</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ path('malfunction_change_status', {'name': station.getName()}) }}" method="post">
+                        <div class="form-group py-3">
+                            <label for="status">Nieuwe status</label>
+                            <select class="form-control" id="status" name="status" required>
+                                <option value="unresolved">Unresolved</option>
+                                <option value="in progress">In progress</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Opslaan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+{#        <div class="col-md-4">#}
+{#            <div class="card">#}
+{#                <div class="card-header">#}
+{#                    <h3 class="card-title">Plaats een bericht</h3>#}
+{#                </div>#}
+{#                <div class="card-body">#}
+{#                    <form action="{{ path('malfunction_add_message', {'name': station.getName()}) }}" method="post">#}
+{#                        <div class="form-group">#}
+{#                            <label for="message">Bericht</label>#}
+{#                            <textarea class="form-control" id="message" name="message" rows="3" required></textarea>#}
+{#                        </div>#}
+{#                        <button type="submit" class="btn btn-primary">Submit</button>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+    </div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contract bewerken{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="col-md-8">
+        <h1 class="my-4">Edit contract for {{ name }}</h1>
+        <div class='card'>
+            <div class='card-body'>
+                {{ form_start(editForm, {'attr': {'class': 'form'}}) }}
+                <div class="mb-3">
+                    {{ form_label(editForm.name_holder, 'Naam contracthouder', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.name_holder, {'attr': {'class': 'form-control'}, 'value': name}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.date_start, 'Startdatum', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.date_start, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.date_end, 'Vervaldatum', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.date_end, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.country_code, 'Landscode', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.country_code, {'attr': {'class': 'form-control', 'novalidate': 'novalidate'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.region, 'Regio', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.region, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.coordinatesType, 'Coordinates', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.coordinatesType, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.longitude, 'longitude', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.longitude, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.latitude, 'latitude', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.latitude, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(editForm.elevation, 'elevation', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(editForm.elevation, {'attr': {'class': 'form-control'}}) }}
+                </div> 
+                <div class='card'>
+                    <div class='card-body'>
+                        <div class="form-check">
+                            {{ form_label(editForm.TEMP, 'TEMP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.TEMP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.DEWP, 'DEWP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.DEWP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.STP, 'STP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.STP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.SLP, 'SLP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.SLP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.VISIB, 'VISIB', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.VISIB, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.WDSP, 'WDSP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.WDSP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.PRCP, 'PRCP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.PRCP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.SNDP, 'SNDP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.SNDP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.FRSHTT, 'FRSHTT', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.FRSHTT, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.CLDC, 'CLDC', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.CLDC, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(editForm.WNDDIR, 'WNDDIR', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(editForm.WNDDIR, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class='mb-3'>
+                    {{ form_widget(editForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                </div>
+                {{ form_end(editForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

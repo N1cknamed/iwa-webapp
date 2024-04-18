@@ -2,25 +2,21 @@
 
 namespace App\Entity;
 
+use App\Repository\MissingValuesRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\WeatherRepository;
 
-#[ORM\Entity(repositoryClass: WeatherRepository::class)]
-
-class Weather
+#[ORM\Entity(repositoryClass: MissingValuesRepository::class)]
+class MissingValues
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id;
+    #[ORM\Column]
+    private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Station::class, inversedBy: "weather")]
-    #[ORM\JoinColumn(name: "STN", referencedColumnName: "name", nullable: false)]
-    private ?Station $station;
-
-
-    //#[ORM\Column(type: "integer", nullable: true)]
-    //private ?int $STN;
+    #[ORM\ManyToOne(targetEntity: Station::class)]
+    #[ORM\JoinColumn(name: "STN", referencedColumnName: "name", nullable: true)]
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    private ?string $STN;
 
     #[ORM\Column(type: "date", nullable: true)]
     private ?\DateTimeInterface $DATE;
@@ -67,26 +63,14 @@ class Weather
         return $this->id;
     }
 
-//    public function getSTN(): ?int
-//    {
-//        return $this->STN;
-//    }
-
-//    public function setSTN(?int $STN): self
-//    {
-//        $this->STN = $STN;
-//        return $this;
-//    }
-
-    public function getStation(): ?Station
+    public function getSTN(): ?int
     {
-        return $this->station;
+        return $this->STN;
     }
 
-    public function setStation(?Station $station): self
+    public function setSTN(?int $STN): self
     {
-        $this->station = $station;
-
+        $this->STN = $STN;
         return $this;
     }
 
@@ -232,4 +216,5 @@ class Weather
         $this->WNDDIR = $WNDDIR;
         return $this;
     }
+    
 }

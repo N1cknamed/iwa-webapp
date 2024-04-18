@@ -20,7 +20,7 @@ class AdministratieController extends AbstractController
     {
         $users = $entityManager->getRepository(User::class)->findAll();
 
-        return $this->render('administratie/index.html.twig', [
+        return $this->render('administratie/admin.html.twig', [
             'controller_name' => 'AdministratieController',
             'users' => $users,
         ]);

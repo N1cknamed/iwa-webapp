@@ -31,104 +31,114 @@
     {% include 'header.html.twig' %}
 {% endblock %}
 
-{% block body %}
-    <div class="container-fluid">
-        <div class="row mt-3 gx-5 justify-content-center">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div id="mapid" class="card-img-top" style="height: 300px;"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">
-                        {% if station.geolocation and station.geolocation.state %}
-                            {{ station.geolocation.state }},
-                        {% endif %}
-                            {{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}
-                            ({{ station.geolocation.countryEntity.getCountryCode}})
-                        </h3>
-                        <p class="card-text">Station ID: {{ station.name }}</p>
-                        <p class="card-text">Hoogte: {{ station.elevation }}</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <a href="#" id="switchToTableViewButton" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
-                            <i class="bi bi-caret-right-fill invisible"></i>
-                            Tabelweergave
-                            <i class="bi bi-caret-right-fill"></i>
-                        </a>
-                        <a href="#" id="switchToChartViewButton" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                            <i class="bi bi-caret-right-fill invisible"></i>
-                            Grafiekweergave
-                            <i class="bi bi-caret-right-fill"></i>
-                        </a>
-                    </ul>
-                </div>
-            </div>
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css"/>
+{% endblock %}
 
-            <div class="col-md-8">
-                <div id="chartView" style="display: none;">
-                    <canvas id="weatherChart"></canvas>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-sm table-borderless table-hover text-center">
-                        <thead class="border-bottom">
-                        <tr>
-                            <th>Datum</th>
-                            <th>Tijd</th>
-                            <th>Temperatuur</th>
-                            <th>Dauwpunt</th>
-                            <th>Luchtdruk (Station / Zee)</th>
-                            <th>Bewolking</th>
-                            <th>Zicht</th>
-                            <th>Wind</th>
-                            <th>Windrichting</th>
-                            <th>Neerslag</th>
-                            <th>Sneeuw</th>
-                            <th>Evenement</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% set currentDate = '' %}
-                        {% for weather in station.weather %}
-                            <tr>
-                                <td>
-                                    {% if currentDate != weather.DATE|date('Y-m-d') %}
-                                        {% set currentDate = weather.DATE|date('Y-m-d') %}
-                                        {{ currentDate }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ weather.TIME|date('H:i:s') }}</td>
-                                <td>{{ weather.TEMP }}℃</td>
-                                <td>{{ weather.DEWP }}℃</td>
-                                <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
-                                <td>{{ weather.CLDC }}%</td>
-                                <td>{{ weather.VISIB }}</td>
-                                <td>{{ weather.WDSP }}</td>
-                                <td>{{ weather.WNDDIR }}°</td>
-                                {% if weather.PRCP is null %}
-                                    <td></td>
-                                {% else %}
-                                    <td>{{ weather.PRCP }}cm</td>
-                                {% endif %}
-                                {% if weather.SNDP is null %}
-                                    <td></td>
-                                {% else %}
-                                    <td>{{ weather.SNDP }}cm</td>
-                                {% endif %}
-                                <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
-                            </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+{% block body %}
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div id="mapid" class="card-img-top" style="height: 300px;"></div>
+            <div class="card-body">
+                <h3 class="card-title">
+                {% if station.geolocation and station.geolocation.state %}
+                    {{ station.geolocation.state }},
+                {% endif %}
+                    {{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}
+                    ({{ station.geolocation.countryEntity.getCountryCode}})
+                </h3>
+                <p class="card-text">Station ID: {{ station.name }}</p>
+                <p class="card-text">Hoogte: {{ station.elevation }}</p>
             </div>
+            <ul class="list-group list-group-flush">
+                <a href="#" id="switchToTableViewButton" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+                    <i class="bi bi-caret-right-fill invisible"></i>
+                    Tabelweergave
+                    <i class="bi bi-caret-right-fill"></i>
+                </a>
+                <a href="#" id="switchToChartViewButton" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <i class="bi bi-caret-right-fill invisible"></i>
+                    Grafiekweergave
+                    <i class="bi bi-caret-right-fill"></i>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div id="chartView" style="display: none;">
+            <canvas id="weatherChart"></canvas>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-borderless table-hover text-center">
+                <thead class="border-bottom">
+                <tr>
+                    <th>Datum</th>
+                    <th>Tijd</th>
+                    <th>Temperatuur</th>
+                    <th>Dauwpunt</th>
+                    <th>Luchtdruk (Station / Zee)</th>
+                    <th>Bewolking</th>
+                    <th>Zicht</th>
+                    <th>Wind</th>
+                    <th>Windrichting</th>
+                    <th>Neerslag</th>
+                    <th>Sneeuw</th>
+                    <th>Evenement</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% set currentDate = '' %}
+                {% for weather in station.weather %}
+                    {% set isCorrected = false %}
+                    {% set originalTemp = '' %}
+                    {% for correctedTemp in correctedTemps %}
+                        {% if correctedTemp.DATE == weather.DATE and correctedTemp.TIME == weather.TIME %}
+                            {% set isCorrected = true %}
+                            {% set originalTemp = correctedTemp.getOriginalTEMP() %}
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        <td>
+                            {% if currentDate != weather.DATE|date('Y-m-d') %}
+                                {% set currentDate = weather.DATE|date('Y-m-d') %}
+                                {{ currentDate }}
+                            {% endif %}
+                        </td>
+                        <td>{{ weather.TIME|date('H:i:s') }}</td>
+                        <td class="{{ isCorrected ? 'text-success' : '' }}" title="{{ isCorrected ? 'Originele waarde: ' ~ originalTemp ~ '℃' : '' }}">{{ weather.TEMP }}℃</td>
+                        <td>{{ weather.DEWP }}℃</td>
+                        <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
+                        <td>{{ weather.CLDC }}%</td>
+                        <td>{{ weather.VISIB }}</td>
+                        <td>{{ weather.WDSP }}</td>
+                        <td>{{ weather.WNDDIR }}°</td>
+                        {% if weather.PRCP is null %}
+                            <td></td>
+                        {% else %}
+                            <td>{{ weather.PRCP }}cm</td>
+                        {% endif %}
+                        {% if weather.SNDP is null %}
+                            <td></td>
+                        {% else %}
+                            <td>{{ weather.SNDP }}cm</td>
+                        {% endif %}
+                        <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
+                    </tr>
+                {% else %}
+                <tr>
+                    <td colspan="14">Geen weerdata beschikbaar voor dit station.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}
 
 {% block body_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var mymap = L.map('mapid').setView([{{ station.latitude }}, {{ station.longitude }}], 5);
@@ -139,7 +149,8 @@
 
         L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(mymap)
             .bindPopup("<b>" + "{{ station.name }}" + "</b><br />" + "{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}").openPopup();
-
+    </script>
+    <script>
         var labels = [];
         var tempData = [];
         var dauwpuntData = [];
@@ -153,17 +164,17 @@
         var bewolkingData = [];
 
         {% for weather in station.weather %}
-        labels.push('{{ weather.DATE|date('Y-m-d') }}');
-        tempData.push({{ weather.TEMP }});
-        dauwpuntData.push({{ weather.DEWP }});
-        luchtdrukData.push({{ weather.STP }});
-        luchtdrukZeeData.push({{ weather.SLP }});
-        zichtData.push({{ weather.VISIB }});
-        windData.push({{ weather.WDSP }});
-        richtingData.push({{ weather.WNDDIR }});
-        neerslagData.push({{ weather.PRCP }});
-        sneeuwData.push({{ weather.SNDP }});
-        bewolkingData.push({{ weather.CLDC }});
+            labels.push('{{ weather.DATE|date('Y-m-d') }}');
+            tempData.push({{ weather.TEMP }});
+            dauwpuntData.push({{ weather.DEWP }});
+            luchtdrukData.push({{ weather.STP }});
+            luchtdrukZeeData.push({{ weather.SLP }});
+            zichtData.push({{ weather.VISIB }});
+            windData.push({{ weather.WDSP }});
+            richtingData.push({{ weather.WNDDIR }});
+            neerslagData.push({{ weather.PRCP }});
+            sneeuwData.push({{ weather.SNDP }});
+            bewolkingData.push({{ weather.CLDC }});
         {% endfor %}
 
         document.getElementById('switchToTableViewButton').addEventListener('click', function(event) {
@@ -174,7 +185,6 @@
             tableView.style.display = 'block';
             chartView.style.display = 'none';
 
-            // Add active class to table view button and remove from chart view button
             this.classList.add('active');
             document.getElementById('switchToChartViewButton').classList.remove('active');
         });
@@ -187,7 +197,6 @@
             tableView.style.display = 'none';
             chartView.style.display = 'block';
 
-            // Add active class to chart view button and remove from table view button
             this.classList.add('active');
             document.getElementById('switchToTableViewButton').classList.remove('active');
 
@@ -203,69 +212,69 @@
                         tension: 0.1,
                         yAxisID: 'y2'
                     },
-                        {
-                            label: 'Dauwpunt',
-                            data: dauwpuntData,
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1,
-                            yAxisID: 'y2'
-                        },
-                        {
-                            label: 'Luchtdruk',
-                            data: luchtdrukData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        },
-                        {
-                            label: 'Luchtdruk op zeeniveau',
-                            data: luchtdrukZeeData,
-                            borderColor: 'rgb(255, 159, 64)',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        },
-                        {
-                            label: 'Zicht',
-                            data: zichtData,
-                            borderColor: 'rgb(255, 205, 86)',
-                            tension: 0.1,
-                            yAxisID: 'y5'
-                        },
-                        {
-                            label: 'Windsnelheid',
-                            data: windData,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.1,
-                            yAxisID: 'y4'
-                        },
-                        // {
-                        //     label: 'Windrichting', //TODO; windrichting op slimmere manier weergeven
-                        //     data: richtingData,
-                        //     borderColor: 'rgb(54, 162, 235)',
-                        //     tension: 0.1,
-                        //     yAxisID: 'y1'
-                        // },
-                        {
-                            label: 'Neerslag',
-                            data: neerslagData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.1,
-                            yAxisID: 'y3'
-                        },
-                        {
-                            label: 'Sneeuw',
-                            data: sneeuwData,
-                            borderColor: 'rgb(201, 203, 207)',
-                            tension: 0.1,
-                            yAxisID: 'y3'
-                        },
-                        {
-                            label: 'Bewolking',
-                            data: bewolkingData,
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1,
-                            yAxisID: 'y0'
-                        }]
+                    {
+                        label: 'Dauwpunt',
+                        data: dauwpuntData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1,
+                        yAxisID: 'y2'
+                    },
+                    {
+                        label: 'Luchtdruk',
+                        data: luchtdrukData,
+                        borderColor: 'rgb(153, 102, 255)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Luchtdruk op zeeniveau',
+                        data: luchtdrukZeeData,
+                        borderColor: 'rgb(255, 159, 64)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Zicht',
+                        data: zichtData,
+                        borderColor: 'rgb(255, 205, 86)',
+                        tension: 0.1,
+                        yAxisID: 'y5'
+                    },
+                    {
+                        label: 'Windsnelheid',
+                        data: windData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        yAxisID: 'y4'
+                    },
+                    // {
+                        // label: 'Windrichting', //TODO; windrichting op slimmere manier weergeven
+                        // data: richtingData,
+                        // borderColor: 'rgb(54, 162, 235)',
+                        // tension: 0.1,
+                        // yAxisID: 'y1'
+                    // },
+                    {
+                        label: 'Neerslag',
+                        data: neerslagData,
+                        borderColor: 'rgb(153, 102, 255)',
+                        tension: 0.1,
+                        yAxisID: 'y3'
+                    },
+                    {
+                        label: 'Sneeuw',
+                        data: sneeuwData,
+                        borderColor: 'rgb(201, 203, 207)',
+                        tension: 0.1,
+                        yAxisID: 'y3'
+                    },
+                    {
+                        label: 'Bewolking',
+                        data: bewolkingData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1,
+                        yAxisID: 'y0'
+                    }]
                 },
                 options: {
                     animation: false,
@@ -358,7 +367,6 @@
                         }
                     }
                 }
-
             });
         });
         function getChartLegendConfig() {

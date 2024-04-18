@@ -7,53 +7,61 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h2>Active Subscriptions</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for subscription in subscriptions %}
-                <tr>
-                    <td>
-                        <a href='{{ path('app_subscriptions', {'name': subscription.nameholder}) }}'>{{ subscription.nameholder }}</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="2">No subscriptions found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <a href="{{ path('app_add_subscription') }}" class="btn btn-outline-primary">Add new subscription</a>
+    <div class="col-md-5">
+        <h2>Actieve abonnementen</h2>
+        <div class='card'>
+            <div class='card-body'>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Naam</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for subscription in subscriptions %}
+                        <tr>
+                            <td>
+                                <a href='{{ path('app_subscriptions', {'name': subscription.nameholder}) }}'>{{ subscription.nameholder }}</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2">Geen abonnementen gevonden</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ path('app_add_subscription') }}" class="btn btn-outline-primary">Voeg nieuw abonnement toe</a>
+            </div>
+        </div>
     </div>
 
-    <div class="container">
-        <h2>Active Contracts</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Naam</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for contract in contracts %}
-                <tr>
-                    <td>
-                        <a href='{{ path('app_contracts', {'name': contract.nameholder}) }}'>{{ contract.nameholder }}</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="2">No Contracts found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <a href="{{ path('app_add_contract') }}" class="btn btn-outline-primary">Add new contract</a>
+    <div class="col-md-5">
+        <h2>Actieve contracten</h2>
+        <div class='card'>
+            <div class='card-body'>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Naam</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for contract in contracts %}
+                        <tr>
+                            <td>
+                                <a href='{{ path('app_contracts', {'name': contract.nameholder}) }}'>{{ contract.nameholder }}</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2">Geen contracten gevonden</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ path('app_add_contract') }}" class="btn btn-outline-primary">Voeg nieuw contract toe</a>
+            </div>
+        </div>
     </div>
 {% endblock %}

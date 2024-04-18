@@ -25,8 +25,8 @@ class ContractRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c')
             ->where('c.date_end >= CURRENT_DATE()')
-            ->orderBy('c.name_holder', 'ASC');
-            # ->groupBy('c.name_hodler');
+            ->orderBy('c.name_holder', 'ASC')
+            ->groupBy('c.name_holder');
 
         $query = $qb->getQuery();
 
