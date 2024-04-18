@@ -178,8 +178,8 @@ class ContractBeheerController extends AbstractController
             ->add('name_holder', TextType::class, ['data' => $contract->getNameHolder()])
             ->add('date_start', DateType::class, ['data' => $contract->getDateStart()])
             ->add('date_end', DateType::class, ['data' => $contract->getDateEnd()])
-            ->add('country_code', TextType::class, ['data' => $contract->getCountryCode()])
-            ->add('region', TextType::class, ['data' => $contract->getRegion()])
+            ->add('country_code', TextType::class, ['required' => false, 'data' => $contract->getCountryCode()])
+            ->add('region', TextType::class, ['required' => false, 'data' => $contract->getRegion()])
             ->add('coordinatesType', ChoiceType::class, [
                 'choices' => [
                     '' => null,
@@ -189,20 +189,21 @@ class ContractBeheerController extends AbstractController
                     'Radius' => 'RADIUS'
                 ]
             ])
-            ->add('longitude', NumberType::class, ['data' => $contract->getLongitude()])
-            ->add('latitude', NumberType::class, ['data' => $contract->getLatitude()])
-            ->add('elevation', NumberType::class, ['data' => $contract->getElevation()])
-            ->add('TEMP', CheckboxType::class, ['data' => $contract->getTEMP()])
-            ->add('DEWP', CheckboxType::class, ['data' => $contract->getDEWP()])
-            ->add('STP', CheckboxType::class, ['data' => $contract->getSTP()])
-            ->add('SLP', CheckboxType::class, ['data' => $contract->getSLP()])
-            ->add('VISIB', CheckboxType::class, ['data' => $contract->getVISIB()])
-            ->add('WDSP', CheckboxType::class, ['data' => $contract->getWDSP()])
-            ->add('PRCP', CheckboxType::class, ['data' => $contract->getPRCP()])
-            ->add('SNDP', CheckboxType::class, ['data' => $contract->getSNDP()])
-            ->add('FRSHTT', CheckboxType::class, ['data' => $contract->getFRSHTT()])
-            ->add('CLDC', CheckboxType::class, ['data' => $contract->getCLDC()])
-            ->add('WNDDIR', CheckboxType::class, ['data' => $contract->getWNDDIR()]) 
+            ->add('longitude', NumberType::class, ['required' => false, 'data' => $contract->getLongitude()])
+            ->add('latitude', NumberType::class, ['required' => false, 'data' => $contract->getLatitude()])
+            ->add('elevation', NumberType::class, ['required' => false, 'data' => $contract->getElevation()])
+            ->add('TEMP', CheckboxType::class, ['required' => false, 'data' => $contract->isTEMP()])
+            ->add('DEWP', CheckboxType::class, ['required' => false, 'data' => $contract->isDEWP()])
+            ->add('STP', CheckboxType::class, ['required' => false, 'data' => $contract->isSTP()])
+            ->add('SLP', CheckboxType::class, ['required' => false, 'data' => $contract->isSLP()])
+            ->add('VISIB', CheckboxType::class, ['required' => false, 'data' => $contract->isVISIB()])
+            ->add('WDSP', CheckboxType::class, ['required' => false, 'data' => $contract->isWDSP()])
+            ->add('PRCP', CheckboxType::class, ['required' => false, 'data' => $contract->isPRCP()])
+            ->add('SNDP', CheckboxType::class, ['required' => false, 'data' => $contract->isSNDP()])
+            ->add('FRSHTT', CheckboxType::class, ['required' => false, 'data' => $contract->isFRSHTT()])
+            ->add('CLDC', CheckboxType::class, ['required' => false, 'data' => $contract->isCLDC()])
+            ->add('WNDDIR', CheckboxType::class, ['required' => false, 'data' => $contract->isWNDDIR()])
+            ->add('save', SubmitType::class, ['label' => 'Update Contract']) 
             ->getForm();
 
         $form->handleRequest($request);

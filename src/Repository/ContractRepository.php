@@ -24,7 +24,6 @@ class ContractRepository extends ServiceEntityRepository
     public function getActiveContracts():array
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c.name_holder')
             ->where('c.date_end >= CURRENT_DATE()')
             ->orderBy('c.name_holder', 'ASC')
             ->groupBy('c.name_holder');

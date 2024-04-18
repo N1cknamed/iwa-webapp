@@ -16,11 +16,21 @@
                     <th>End date</th>
                     <th>Country code</th>
                     <th>Region</th>
-                    <th>Coordinates</th>
+                    <th>CoordinatesType</th>
                     <th>Longitude</th>
                     <th>Latitude</th>
                     <th>Elevation</th>
-                    <th>Data</th>
+                    <th>TEMP</th>
+                    <th>DEWP</th>
+                    <th>STP</th>
+                    <th>SLP</th>
+                    <th>VISIB</th>
+                    <th>WDSP</th>
+                    <th>PRCP</th>
+                    <th>SNDP</th>
+                    <th>FRSHTT</th>
+                    <th>CLDC</th>
+                    <th>WNDDIR</th>
                 </tr>
             </thread>
             <tbody>
@@ -30,17 +40,20 @@
                         <td>{{ contract.dateend|date('Y-m-d') }}</td>
                         <td>{{ contract.countrycode }}</td>
                         <td>{{ contract.region }}</td>
-                        <td>{{ contract.coordinates }}</td>
+                        <td>{{ contract.coordinatesType }}</td>
                         <td>{{ contract.longitude }}</td>
                         <td>{{ contract.latitude }}</td>
                         <td>{{ contract.elevation }}</td>
-                        <td>
-                            {% set data = [] %}
-                            {% for d in contract.data %}
-                                {% set data = data|merge([d]) %}
-                            {% endfor %}
-                            {{ data|join(', ') }}
-                        </td>
+                        <td>{{ contract.TEMP }}</td>
+                        <td>{{ contract.DEWP }}</td>
+                        <td>{{ contract.STP }}</td>
+                        <td>{{ contract.SLP }}</td>
+                        <td>{{ contract.VISIB }}</td>
+                        <td>{{ contract.WDSP }}</td>
+                        <td>{{ contract.SNDP }}</td>
+                        <td>{{ contract.FRSHTT }}</td>
+                        <td>{{ contract.CLDC }}</td>
+                        <td>{{ contract.WNDDIR }}</td>
                         <td>
                             <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class:'btn btn-outline-primary'>
                                 <i class='bi bi-pencil-fill'></i>
