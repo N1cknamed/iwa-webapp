@@ -11,7 +11,7 @@ doctrine:
         mapping_types:
             enum: string
         types:
-            coordinates_enum: Doctrine\DBAL\Types\CoordinatesEnumType
+            coordinates_enum: App\Types\CoordinatesEnumType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
