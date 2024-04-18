@@ -46,7 +46,12 @@ class DataAcquisitionController extends AbstractController
 
         $malfunctions = $this->entityManager
             ->getRepository(Malfunction::class)
-            ->findBy(['status' => ['unresolved', 'in progress']]);
+            ->createQueryBuilder('m')
+            ->where('m.status IN (:statuses)')
+            ->setParameter('statuses', ['unresolved', 'in progress'])
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
 
         return $this->render('data_acquisition/index.html.twig', [
             'malfunctions' => $malfunctions,

@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
     <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+
+    <style>
+        tr[data-href]:hover {
+            cursor: pointer;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -21,7 +27,7 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row mt-3 gx-5 justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-11">
                 <div class="row">
                     <h1 class="mb-4">Stations</h1>
                     <div class="col-md-6">
@@ -85,43 +91,47 @@
                             </ul>
                         </nav>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div id="map" style="height: 600px;"></div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Actuele storingen</h3>
-                    </div>
-                    <div class="card-body">
-                        {% if malfunctions is empty %}
-                            <p>Geen actieve storingen.</p>
-                        {% else %}
-                            <table class="table table-sm">
-                                <thead>
-                                <tr>
-                                    <th class="col-md-2">Station</th>
-                                    <th class="col-md-4">Date</th>
-                                    <th class="col-md-4">Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for malfunction in malfunctions %}
-                                    <tr>
-                                        <td><a href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">{{ malfunction.getStation().getName() }}</a></td>
-                                        <td>{{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</td>
-                                        <td>{{ malfunction.getStatus() }}</td>
-                                    </tr>
+                    <div class="col-md-2">
+                        <div class="card text-center">
+                            <div class="card-header">
+                                <h3 class="card-title">Actuele storingen</h3>
+                            </div>
+                            <div class="card-body">
+                                {% if malfunctions is empty %}
+                                    <p>Geen actieve storingen.</p>
                                 {% else %}
-                                    <tr>
-                                        <td colspan="2">No malfunctions found</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        {% endif %}
+                                    <table class="table table-sm table-hover">
+                                        <tbody>
+                                            {% for malfunction in malfunctions %}
+                                                <tr data-href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">
+                                                    <td>{{ malfunction.getStation().getName() }}</td>
+                                                    <td>{{ malfunction.getDATE()|date('Y-m-d H:i') }}</td>
+                                                    <td>
+                                                        {% if malfunction.getStatus() == 'unresolved' %}
+                                                            <span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span>
+                                                        {% elseif malfunction.getStatus() == 'in progress' %}
+                                                            <span class="badge rounded-pill bg-warning">{{ malfunction.getStatus() }}</span>
+                                                        {% else %}
+                                                            <span class="badge rounded-pill bg-secondary">{{ malfunction.getStatus() }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="2">No malfunctions found</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                                <ul class="list-group list-group-flush">
+                                    <a class="list-group-item list-group-item-action text-primary" href="{{ path('app_malfunction') }}">Alle storingen</a>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -133,6 +143,18 @@
     {{ parent() }}
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <script> //clickable table rows
+        document.addEventListener('DOMContentLoaded', function() {
+            var rows = document.querySelectorAll('tr[data-href]');
+            rows.forEach(function(row) {
+                row.addEventListener('click', function() {
+                    window.location.href = row.getAttribute('data-href');
+                });
+            });
+        });
+    </script>
+
     <script> // Leaflet map
         var data = localStorage.getItem('stationData');
         if (data) {
