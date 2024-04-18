@@ -33,6 +33,7 @@
                 <th class="col-md-2">ID</th>
                 <th class="col-md-4">Land</th>
                 <th class="col-md-6">Staat / Provincie</th>
+                <th class="col-md-4">Plaats</th>
             </tr>
             </thead>
             <tbody id="station-table-body">
@@ -45,6 +46,7 @@
                         ({{ station.geolocation ? station.geolocation.countryEntity.getCountryCode : '' }})
                     </td>
                     <td>{{ station.geolocation ? station.geolocation.state : 'N/A' }}</td>
+                    <td>{{ station.geolocation ? (station.geolocation.city ? station.geolocation.city : station.geolocation.village) : 'N/A' }}</td>
                 </tr>
             {% else %}
                 <tr>

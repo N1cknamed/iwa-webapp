@@ -50,7 +50,7 @@ class DataAcquisitionController extends AbstractController
             ->createQueryBuilder('m')
             ->where('m.status IN (:statuses)')
             ->setParameter('statuses', ['unresolved', 'in progress'])
-            ->setMaxResults(10)
+            ->setMaxResults(8)
             ->getQuery()
             ->getResult();
 

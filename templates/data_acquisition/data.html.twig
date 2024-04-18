@@ -37,42 +37,39 @@
     <div class="row mt-3 gx-5 justify-content-center">
     <div class="col-md-3">
     <div class="card text-center">
-        <div class="card-body">
-            <!-- Filter Form -->
-            <form method="get" action="{{ path('app_data_acquisition_data') }}">
-                <h2>Filter</h2>
-
-                <div class="form-group col-md-6">
-                    <label for="STN">Station ID</label>
-                    <input type="text" name="STN" placeholder="Station" value="{{ app.request.query.get('STN') }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="startDate">Begin Datum</label>
-                    <input type="date" name="startDate" value="{{ app.request.query.get('startDate') }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="endDate">Eind Datum</label>
-                    <input type="date" name="endDate" value="{{ app.request.query.get('endDate') }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="startTime">Begin Tijd</label>
-                    <input type="text" name="startTime" placeholder="HH:mm:ss"
-                           value="{{ app.request.query.get('startTime') }}"
-                           pattern="\d{2}:\d{2}:\d{2}" title="Enter start time in HH:mm:ss format">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="endTime">Eind Tijd</label>
-                    <input type="text" name="endTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('endTime') }}"
-                           pattern="\d{2}:\d{2}:\d{2}" title="Enter end time in HH:mm:ss format">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="limit">Aantal rijen</label>
-                    <input type="number" name="limit" placeholder="Limit" value="{{ app.request.query.get('limit', 10) }}">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Data ophalen</button>
-            </form>
-            <!-- End of Filter Form -->
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center">Filter</h2>
+                <form method="get" action="{{ path('app_data_acquisition_data') }}" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="STN" class="form-label">Station ID</label>
+                        <input type="text" name="STN" placeholder="Station" value="{{ app.request.query.get('STN') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="startDate" class="form-label">Begin Datum</label>
+                        <input type="date" name="startDate" value="{{ app.request.query.get('startDate') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endDate" class="form-label">Eind Datum</label>
+                        <input type="date" name="endDate" value="{{ app.request.query.get('endDate') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="startTime" class="form-label">Begin Tijd</label>
+                        <input type="text" name="startTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('startTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter start time in HH:mm:ss format" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endTime" class="form-label">Eind Tijd</label>
+                        <input type="text" name="endTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('endTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter end time in HH:mm:ss format" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="limit" class="form-label">Aantal rijen</label>
+                        <input type="number" name="limit" placeholder="Limit" value="{{ app.request.query.get('limit', 10) }}" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Data ophalen</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     </div>
