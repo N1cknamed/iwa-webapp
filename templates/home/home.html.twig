@@ -13,30 +13,82 @@
 {#        .image-container { margin-bottom: 50px; }#}
 {#    </style>#}
 
-    <div class="col-md-5">
-        <div class="card text-center">
-            <div class="card-header">
-                <h3 class="card-title">Actuele storingen</h3>
-            </div>
-            <div class="card-body">
-                {% set unresolvedMalfunctions = malfunctions|filter(malfunction => malfunction.getStatus() == 'unresolved') %}
-                {% set inProgressMalfunctions = malfunctions|filter(malfunction => malfunction.getStatus() == 'in progress') %}
-                {% set resolvedMalfunctions = malfunctions|filter(malfunction => malfunction.getStatus() == 'resolved') %}
-                <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Unresolved
-                        <span class="badge rounded-pill bg-danger">{{ unresolvedMalfunctions|length }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        In Progress
-                        <span class="badge rounded-pill bg-primary">{{ inProgressMalfunctions|length }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Resolved
-                        <span class="badge rounded-pill bg-success">{{ resolvedMalfunctions|length }}</span>
-                    </li>
-                </ul>
+    <div class="col-md-6">
+        <h1>Welkom, {% set roleNames = [] %}
+            {% for role in app.user.roles %}
+                {%  if role != 'ROLE_USER' %}
+                    {% set roleName = role|replace({'ROLE_ADMIN': 'Administrator', 'ROLE_DATA': 'Data Acquisition', 'ROLE_CONTRACT': 'Contractbeheerder'}) %}
+                    {% set roleNames = roleNames|merge([roleName]) %}
+                {% endif %}
+            {% endfor %}
+            {{ roleNames|join(' / ') }}</h1>
+    </div>
+    <div class="col-md-3">
+        {% if is_granted('ROLE_DATA') %}
+        <div class="col">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h5 class="card-title">Storing overzicht</h5>
+                </div>
+                <div class="card-body">
+                    {% set unresolvedMalfunctions = malfunctions|filter(malfunction => malfunction.getStatus() == 'unresolved') %}
+                    {% set inProgressMalfunctions = malfunctions|filter(malfunction => malfunction.getStatus() == 'in progress') %}
+                    {% set resolvedMalfunctions = malfunctions|filter(malfunction => malfunction.getStatus() == 'resolved') %}
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Unresolved
+                            <span class="badge rounded-pill bg-danger">{{ unresolvedMalfunctions|length }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            In Progress
+                            <span class="badge rounded-pill bg-primary">{{ inProgressMalfunctions|length }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Resolved
+                            <span class="badge rounded-pill bg-success">{{ resolvedMalfunctions|length }}</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
+        {% endif %}
+        {% if is_granted('ROLE_CONTRACT') %}
+        <div class="col py-3">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h5 class="card-title">Contracten overzicht</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Lopende abonnementen
+                            <span class="badge rounded-pill bg-primary">{{ subscriptionCount }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Lopende contracten
+                            <span class="badge rounded-pill bg-primary">{{ contractCount }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+        <div class="col">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h5 class="card-title">Administratie</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Geregistreerde gebruikers
+                            <span class="badge rounded-pill bg-primary">{{ userCount }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
