@@ -42,28 +42,28 @@
                 <h2 class="card-title text-center">Filter</h2>
                 <form method="get" action="{{ path('app_data_acquisition_data') }}" class="row g-3">
                     <div class="col-md-6">
-                        <label for="STN" class="form-label">Station ID</label>
+                        <label for="STN" class="form-label">Station</label>
                         <input type="text" name="STN" placeholder="Station" value="{{ app.request.query.get('STN') }}" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="startDate" class="form-label">Begin Datum</label>
-                        <input type="date" name="startDate" value="{{ app.request.query.get('startDate') }}" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="endDate" class="form-label">Eind Datum</label>
-                        <input type="date" name="endDate" value="{{ app.request.query.get('endDate') }}" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="startTime" class="form-label">Begin Tijd</label>
-                        <input type="text" name="startTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('startTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter start time in HH:mm:ss format" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="endTime" class="form-label">Eind Tijd</label>
-                        <input type="text" name="endTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('endTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter end time in HH:mm:ss format" class="form-control">
                     </div>
                     <div class="col-md-6">
                         <label for="limit" class="form-label">Aantal rijen</label>
                         <input type="number" name="limit" placeholder="Limit" value="{{ app.request.query.get('limit', 10) }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="startDate" class="form-label">Begindatum</label>
+                        <input type="date" name="startDate" value="{{ app.request.query.get('startDate') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endDate" class="form-label">Einddatum</label>
+                        <input type="date" name="endDate" value="{{ app.request.query.get('endDate') }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="startTime" class="form-label">Begintijd</label>
+                        <input type="text" name="startTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('startTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter start time in HH:mm:ss format" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endTime" class="form-label">Eindtijd</label>
+                        <input type="text" name="endTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('endTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter end time in HH:mm:ss format" class="form-control">
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary">Data ophalen</button>
@@ -74,7 +74,7 @@
     </div>
     </div>
         <div class="col-md-8">
-            <h1>Weather Data</h1>
+            <h1>Weerdata</h1>
 
 
             <table class="table">

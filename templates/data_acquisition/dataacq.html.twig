@@ -56,49 +56,54 @@
             </tbody>
         </table>
         <div class="row">
-            <div class="col-md-3">
-                <form method="get" action="{{ path('app_data_acquisition') }}">
-                    <div class="input-group">
-                        <input type="text" id="countryCode" name="countryCode" class="form-control" aria-describedby="countryCodeLabel" placeholder="Landscode">
-                        <button type="submit" class="btn btn-primary">Filter per land</button>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-6">
-                <nav>
-                    <ul class="pagination justify-content-center" id="pagination-links">
-                        <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
-                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': 1}) }}">Eerste</a>
-                        </li>
-
-                        <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
-                            <a class="page-link"
-                               href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
-                        </li>
-
-                        {% set start_page = max(1, current_page - 2) %}
-                        {% set end_page = min(total_pages, start_page + 4) %}
-                        {% set start_page = max(1, end_page - 4) %}
-
-                        {% for page in start_page..end_page %}
-                            <li class="page-item{% if page == current_page %} active{% endif %}">
-                                <a class="page-link"
-                                   href="{{ path('app_data_acquisition', {'page': page}) }}">{{ page }}</a>
+            <div class="d-flex justify-content-between">
+                <div class="p-2">
+                    <form method="get" action="{{ path('app_data_acquisition') }}">
+                        <div class="input-group">
+                            <input type="text" id="countryCode" name="countryCode" class="form-control"
+                                   aria-describedby="countryCodeLabel" placeholder="Landscode">
+                            <button type="submit" class="btn btn-primary">Filter per land</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="p-2 px-5">
+                    <nav>
+                        <ul class="pagination justify-content-center" id="pagination-links">
+                            <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                                <a class="page-link" href="{{ path('app_data_acquisition', {'page': 1}) }}">Eerste</a>
                             </li>
-                        {% endfor %}
 
-                        <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
-                            <a class="page-link"
-                               href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
-                        </li>
+                            <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                                <a class="page-link"
+                                   href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
+                            </li>
 
-                        <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
-                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': total_pages}) }}">Laatste</a>
-                        </li>
-                    </ul>
-                </nav>
+                            {% set start_page = max(1, current_page - 2) %}
+                            {% set end_page = min(total_pages, start_page + 4) %}
+                            {% set start_page = max(1, end_page - 4) %}
+
+                            {% for page in start_page..end_page %}
+                                <li class="page-item{% if page == current_page %} active{% endif %}">
+                                    <a class="page-link"
+                                       href="{{ path('app_data_acquisition', {'page': page}) }}">{{ page }}</a>
+                                </li>
+                            {% endfor %}
+
+                            <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                                <a class="page-link"
+                                   href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
+                            </li>
+
+                            <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                                <a class="page-link" href="{{ path('app_data_acquisition', {'page': total_pages}) }}">Laatste</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="p-2">
+                    <a href="{{ path('app_data_acquisition_data') }}" class="btn btn-primary text-nowrap">Data overzicht</a>
+                </div>
             </div>
-            <div class="col-md-3"></div>
         </div>
     </div>
     <div class="col-md-4">
