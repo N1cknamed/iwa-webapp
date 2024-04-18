@@ -22,21 +22,39 @@ class MalfunctionController extends AbstractController
     {
         $this->entityManager = $entityManager;
     }
-    
-    #[Route('dataacquisition/malfunction', name: 'app_malfunction')]
-    public function index(): Response
+
+    #[Route('dataacquisition/malfunction/{page<\d+>?1}', name: 'app_malfunction')]
+    public function index(Request $request, $page = 1): Response
     {
-        $malfunctions = $this->entityManager
-        ->getRepository(Malfunction::class)
-        ->findBy(['status' => ['unresolved', 'in progress']]);
+        $limit = 20; // Number of malfunctions per page
+        $start = ($page - 1) * $limit;
+
+        // Get the repository
+        $repository = $this->entityManager->getRepository(Malfunction::class);
+
+        // Find the malfunctions for the current page
+        $malfunctions = $repository->findBy(
+            ['status' => ['unresolved', 'in progress', 'resolved']],
+            null,
+            $limit,
+            $start
+        );
+
+        // Count the total number of malfunctions
+        $count = $repository->count(['status' => ['unresolved', 'in progress', 'resolved']]);
+
+        // Calculate the total number of pages
+        $totalPages = ceil($count / $limit);
 
         return $this->render('malfunction/malfunction.html.twig', [
             'malfunctions' => $malfunctions,
+            'current_page' => $page,
+            'total_pages' => $totalPages,
             'controller_name' => 'MalfunctionController',
         ]);
     }
 
-    #[Route('dataacquisition/malfunction/{name}', name: 'malfunction_detail')]
+    #[Route('dataacquisition/malfunction/detail/{name}', name: 'malfunction_detail')]
     public function detail(string $name): Response
     {
         $station = $this->entityManager->getRepository(Station::class)->findOneBy(['name' => $name]);

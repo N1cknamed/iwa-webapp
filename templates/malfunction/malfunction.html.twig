@@ -12,12 +12,13 @@
 {% endblock %}
 
 {% block body %}
+    <div class="col-md-8">
     <h2>Storingen</h2>
-    <div class="col-md-5">
-        <table class="table table-sm">
+        <table class="table table-sm text-center">
             <thead>
             <tr>
                 <th class="col-md-2">Station</th>
+                <th class="col-md-4">Land</th>
                 <th class="col-md-4">Datum</th>
                 <th class="col-md-4">Status</th>
             </tr>
@@ -26,8 +27,15 @@
             {% for malfunction in malfunctions %}
                 <tr>
                     <td><a href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">{{ malfunction.getStation().getName() }}</a></td>
+                    <td>{{ malfunction.getStation().geolocation.countryEntity.country }}</td>
                     <td>{{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</td>
-                    <td>{{ malfunction.getStatus() }}</td>
+                    {% if malfunction.getStatus() == 'unresolved' %}
+                        <td><span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span></td>
+                    {% elseif malfunction.getStatus() == 'in progress' %}
+                        <td><span class="badge rounded-pill bg-warning">{{ malfunction.getStatus() }}</span></td>
+                    {% else %}
+                        <td><span class="badge rounded-pill bg-primary">{{ malfunction.getStatus() }}</span></td>
+                    {% endif %}
                 </tr>
             {% else %}
                 <tr>
@@ -36,8 +44,46 @@
             {% endfor %}
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="{{ path('app_detect_malfunctions') }}" class="btn btn-danger">Scan oudere data op storingen</a>
+                </div>
+                <div class="col-md-6">
+                    <nav>
+                        <ul class="pagination justify-content-center" id="pagination-links">
+                            <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                                <a class="page-link" href="{{ path('app_malfunction', {'page': 1}) }}">Eerste</a>
+                            </li>
+
+                            <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                                <a class="page-link"
+                                   href="{{ path('app_malfunction', {'page': current_page - 1}) }}">Vorige</a>
+                            </li>
+
+                            {% set start_page = max(1, current_page - 2) %}
+                            {% set end_page = min(total_pages, start_page + 4) %}
+                            {% set start_page = max(1, end_page - 4) %}
+
+                            {% for page in start_page..end_page %}
+                                <li class="page-item{% if page == current_page %} active{% endif %}">
+                                    <a class="page-link" href="{{ path('app_malfunction', {'page': page}) }}">{{ page }}</a>
+                                </li>
+                            {% endfor %}
+
+                            <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                                <a class="page-link"
+                                   href="{{ path('app_malfunction', {'page': current_page + 1}) }}">Volgende</a>
+                            </li>
+
+                            <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                                <a class="page-link" href="{{ path('app_malfunction', {'page': total_pages}) }}">Laatste</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
         </div>
     </div>
-    <a href="{{ path('app_detect_malfunctions') }}" class="btn btn-danger">Detect Malfunctions in Old Data</a>
 </div>
 {% endblock %}
