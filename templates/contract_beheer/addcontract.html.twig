@@ -17,10 +17,10 @@
                 {{ form_start(ContractForm, {'attr': {'class': 'form'}}) }}
                 <div class="mb-3">
                     {{ form_label(ContractForm.name_holder, 'Contract holder name', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.name_holder, {'attr': {'class': 'form-control'} }) }}
+                    {{ form_widget(ContractForm.name_holder, {'attr': {'class': 'form-control'}, 'value': name}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(ContractForm.date_end, 'Activation date', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(ContractForm.date_start, 'Start date', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(ContractForm.date_start, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
@@ -36,26 +36,65 @@
                     {{ form_widget(ContractForm.region, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(ContractForm.coordinates, 'Coordinates', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.coordinates, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_label(ContractForm.coordinatesType, 'Coordinates', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.coordinatesType, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(ContractForm.longitude, 'Longitude', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(ContractForm.longitude, 'longitude', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(ContractForm.longitude, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(ContractForm.latitude, 'Latitude', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(ContractForm.latitude, 'latitude', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(ContractForm.latitude, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(ContractForm.elevation, 'Elevation', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_label(ContractForm.elevation, 'elevation', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(ContractForm.elevation, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    {{ form_label(ContractForm.data, 'Data', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.data, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_label(ContractForm.TEMP, 'TEMP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.TEMP, {'attr': {'class': 'form-control'}}) }}
                 </div>
-
+                <div class="mb-3">
+                    {{ form_label(ContractForm.DEWP, 'DEWP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.DEWP, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.STP, 'STP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.STP, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.SLP, 'SLP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.SLP, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.VISIB, 'VISIB', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.VISIB, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.WDSP, 'WDSP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.WDSP, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.PRCP, 'PRCP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.PRCP, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.SNDP, 'SNDP', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.SNDP, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.FRSHTT, 'FRSHTT', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.FRSHTT, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.CLDC, 'CLDC', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.CLDC, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(ContractForm.WNDDIR, 'WNDDIR', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(ContractForm.WNDDIR, {'attr': {'class': 'form-control'}}) }}
+                </div>
                 <button type="submit" class="btn btn-primary">Add</button>
                 {{ form_end(ContractForm) }}
             </div>

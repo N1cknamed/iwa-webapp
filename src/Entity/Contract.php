@@ -12,25 +12,25 @@ class Contract
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date_start = null;
+    private ?\DateTimeInterface $date_start;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date_end = null;
+    private ?\DateTimeInterface $date_end;
 
     #[ORM\Column(length: 255)]
-    private ?string $name_holder = null;
+    private ?string $name_holder;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $country_code = null;
+    private ?string $country_code;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $region = null;
+    private ?string $region;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $coordinates = null;
+    private ?string $CoordinatesType;
 
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
@@ -41,8 +41,38 @@ class Contract
     #[ORM\Column(nullable: true)]
     private ?float $elevation = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private ?array $data = null;
+    #[ORM\Column]
+    private ?bool $TEMP = false;
+
+    #[ORM\Column]
+    private ?bool $DEWP = false;
+
+    #[ORM\Column]
+    private ?bool $STP = false;
+
+    #[ORM\Column]
+    private ?bool $SLP = false;
+
+    #[ORM\Column]
+    private ?bool $VISIB = false;
+
+    #[ORM\Column]
+    private ?bool $WDSP = false;
+
+    #[ORM\Column]
+    private ?bool $PRCP = false;
+
+    #[ORM\Column]
+    private ?bool $SNDP = false;
+
+    #[ORM\Column]
+    private ?bool $FRSHTT = false;
+
+    #[ORM\Column]
+    private ?bool $CLDC = false;
+
+    #[ORM\Column]
+    private ?bool $WNDDIR = false;
 
     public function getId(): ?int
     {
@@ -116,14 +146,14 @@ class Contract
         return $this;
     }
 
-    public function getCoordinates(): ?string
+    public function getCoordinatesType()
     {
-        return $this->coordinates;
+        return $this->CoordinatesType;
     }
 
-    public function setCoordinates(?string $coordinates): static
+    public function setCoordinatesType(?string $CoordinatesType): static
     {
-        $this->coordinates = $coordinates;
+        $this->CoordinatesType = $CoordinatesType;
 
         return $this;
     }
@@ -164,14 +194,134 @@ class Contract
         return $this;
     }
 
-    public function getData(): ?array
+    public function isTEMP(): ?bool
     {
-        return $this->data;
+        return $this->TEMP;
     }
 
-    public function setData(?array $data): static
+    public function setTEMP(?bool $TEMP): static
     {
-        $this->data = $data;
+        $this->TEMP = $TEMP;
+
+        return $this;
+    }
+
+    public function isDEWP(): ?bool
+    {
+        return $this->DEWP;
+    }
+
+    public function setDEWP(?bool $DEWP): static
+    {
+        $this->DEWP = $DEWP;
+
+        return $this;
+    }
+
+    public function isSTP(): ?bool
+    {
+        return $this->STP;
+    }
+
+    public function setSTP(?bool $STP): static
+    {
+        $this->STP = $STP;
+
+        return $this;
+    }
+
+    public function isSLP(): ?bool
+    {
+        return $this->SLP;
+    }
+
+    public function setSLP(?bool $SLP): static
+    {
+        $this->SLP = $SLP;
+
+        return $this;
+    }
+
+    public function isVISIB(): ?bool
+    {
+        return $this->VISIB;
+    }
+
+    public function setVISIB(?bool $VISIB): static
+    {
+        $this->VISIB = $VISIB;
+
+        return $this;
+    }
+
+    public function isWDSP(): ?bool
+    {
+        return $this->WDSP;
+    }
+
+    public function setWDSP(?bool $WDSP): static
+    {
+        $this->WDSP = $WDSP;
+
+        return $this;
+    }
+
+    public function isPRCP(): ?bool
+    {
+        return $this->PRCP;
+    }
+
+    public function setPRCP(?bool $PRCP): static
+    {
+        $this->PRCP = $PRCP;
+
+        return $this;
+    }
+
+    public function isSNDP(): ?bool
+    {
+        return $this->SNDP;
+    }
+
+    public function setSNDP(?bool $SNDP): static
+    {
+        $this->SNDP = $SNDP;
+
+        return $this;
+    }
+
+    public function isFRSHTT(): ?bool
+    {
+        return $this->FRSHTT;
+    }
+
+    public function setFRSHTT(?bool $FRSHTT): static
+    {
+        $this->FRSHTT = $FRSHTT;
+
+        return $this;
+    }
+
+    public function isCLDC(): ?bool
+    {
+        return $this->CLDC;
+    }
+
+    public function setCLDC(?bool $CLDC): static
+    {
+        $this->CLDC = $CLDC;
+
+        return $this;
+    }
+
+    public function isWNDDIR(): ?bool
+    {
+        return $this->WNDDIR;
+    }
+
+    public function setWNDDIR(?bool $WNDDIR): static
+    {
+        $this->WNDDIR = $WNDDIR;
 
         return $this;
     }

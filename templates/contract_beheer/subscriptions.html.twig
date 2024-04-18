@@ -30,6 +30,7 @@
                             <a href='{{ path('app_remove_subscription', {'id': subscription.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Are you sure you want to remove the following subscription?');'>
                                 <i class='bi bi-trash-fill'></i>
                             </a>
+                        </td>
                     </tr>
                 {% else %}
                     <tr>
@@ -38,5 +39,6 @@
                 {% endfor %}
             </tbody>
         </table>
+        <a href="{{ path('app_add_subscription_to_name', {'name': name}) }}" class="btn btn-outline-primary">Add new subscription</a>
     </div>
 {% endblock %}
