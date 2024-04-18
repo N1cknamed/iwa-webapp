@@ -38,56 +38,118 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center">Filter</h2>
-                <form method="get" action="{{ path('app_data_acquisition_data') }}" class="row g-3">
-                    <div class="col-md-6">
-                        <label for="STN" class="form-label">Station</label>
-                        <input type="text" name="STN" placeholder="Station" value="{{ app.request.query.get('STN') }}" class="form-control">
+                <form method="get" action="{{ path('app_data_acquisition_data') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="stationName">Station ID</label>
+                                <input type="text" id="stationName" name="stationName" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="countryCode">Landscode</label>
+                                <input type="text" id="countryCode" name="countryCode" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="startDateTime">Starttijd</label>
+                                <input type="datetime-local" id="startDateTime" name="startDateTime" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="endDateTime">Eindtijd</label>
+                                <input type="datetime-local" id="endDateTime" name="endDateTime" class="form-control">
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="limit" class="form-label">Aantal rijen</label>
-                        <input type="number" name="limit" placeholder="Limit" value="{{ app.request.query.get('limit', 10) }}" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="startDate" class="form-label">Begindatum</label>
-                        <input type="date" name="startDate" value="{{ app.request.query.get('startDate') }}" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="endDate" class="form-label">Einddatum</label>
-                        <input type="date" name="endDate" value="{{ app.request.query.get('endDate') }}" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="startTime" class="form-label">Begintijd</label>
-                        <input type="text" name="startTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('startTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter start time in HH:mm:ss format" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="endTime" class="form-label">Eindtijd</label>
-                        <input type="text" name="endTime" placeholder="HH:mm:ss" value="{{ app.request.query.get('endTime') }}" pattern="\d{2}:\d{2}:\d{2}" title="Enter end time in HH:mm:ss format" class="form-control">
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Data ophalen</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
                 </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Kolommen</h2>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="tempColumn">
+                            Temperature
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="tempColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="dauwpuntColumn">
+                            Dauwpunt
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="dauwpuntColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="luchtdrukColumn">
+                            Luchtdruk
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="luchtdrukColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="bewolkingColumn">
+                            Bewolking
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="bewolkingColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="zichtColumn">
+                            Zicht
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="zichtColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="windColumn">
+                            Wind
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="windColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="windrichtingColumn">
+                            Windrichting
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="windrichtingColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="neerslagColumn">
+                            Neerslag
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="neerslagColumn" checked>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="sneeuwColumn">
+                            Sneeuw
+                        </label>
+                        <input class="form-check-input column-toggle" type="checkbox" value="" id="sneeuwColumn" checked>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <div class="col-md-8">
     <h1>Weerdata</h1>
-    <table class="table">
-        <thead>
+    <table class="table table-sm table-borderless table-hover text-center">
+        <thead class="border-bottom">
         <tr>
             <th>Datum</th>
             <th>Tijd</th>
             <th>Station</th>
-            <th>Temperatuur</th>
-            <th>Dauwpunt</th>
-            <th>Luchtdruk (Station / Zee)</th>
-            <th>Bewolking</th>
-            <th>Zicht</th>
-            <th>Wind</th>
-            <th>Windrichting</th>
-            <th>Neerslag</th>
-            <th>Sneeuw</th>
+            <th>Land</th>
+            <th class="tempColumn">Temperatuur</th>
+            <th class="dauwpuntColumn">Dauwpunt</th>
+            <th class="luchtdrukColumn">Luchtdruk (Station / Zee)</th>
+            <th class="bewolkingColumn">Bewolking</th>
+            <th class="zichtColumn">Zicht</th>
+            <th class="windColumn">Wind</th>
+            <th class="windrichtingColumn">Windrichting</th>
+            <th class="neerslagColumn">Neerslag</th>
+            <th class="sneeuwColumn">Sneeuw</th>
             <th>Evenement</th>
         </tr>
         </thead>
@@ -97,15 +159,16 @@
                 <td>{{ weather.DATE|date('Y-m-d') }}</td>
                 <td>{{ weather.TIME|date('H:i:s') }}</td>
                 <td>{{ weather.station.getName }}</td>
-                <td>{{ weather.TEMP }}℃</td>
-                <td>{{ weather.DEWP }}℃</td>
-                <td>{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
-                <td>{{ weather.CLDC }}%</td>
-                <td>{{ weather.VISIB }}</td>
-                <td>{{ weather.WDSP }}</td>
-                <td>{{ weather.WNDDIR }}°</td>
-                <td>{{ weather.PRCP != null ? weather.PRCP ~ 'cm' : '' }}</td>
-                <td>{{ weather.SNDP != null ? weather.SNDP ~ 'cm' : '' }}</td>
+                <td>{{ weather.station.geolocation.countryEntity.getCountryCode }}</td>
+                <td class="tempColumn">{{ weather.TEMP }}℃</td>
+                <td class="dauwpuntColumn">{{ weather.DEWP }}℃</td>
+                <td class="luchtdrukColumn">{{ weather.STP }}hPa / {{ weather.SLP }}hPa</td>
+                <td class="bewolkingColumn">{{ weather.CLDC }}%</td>
+                <td class="zichtColumn">{{ weather.VISIB }}</td>
+                <td class="windColumn">{{ weather.WDSP }}</td>
+                <td class="windrichtingColumn">{{ weather.WNDDIR }}°</td>
+                <td class="neerslagColumn">{{ weather.PRCP != null ? weather.PRCP ~ 'cm' : '' }}</td>
+                <td class="sneeuwColumn">{{ weather.SNDP != null ? weather.SNDP ~ 'cm' : '' }}</td>
                 <td>{{ macros.weatherIcons(weather.FRSHTT) }}</td>
             </tr>
         {% else %}
@@ -153,4 +216,23 @@
         </ul>
     </nav>
 </div>
+{% endblock %}
+{% block body_scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var checkboxes = document.querySelectorAll('.column-toggle');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    var columns = document.querySelectorAll('.' + checkbox.id);
+                    columns.forEach(function(column) {
+                        if (checkbox.checked) {
+                            column.style.display = '';
+                        } else {
+                            column.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 {% endblock %}
