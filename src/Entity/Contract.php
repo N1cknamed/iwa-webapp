@@ -29,8 +29,8 @@ class Contract
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $region;
 
-    #[ORM\Column(type: 'coordinates_enum')]
-    private $CoordinatesType;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $CoordinatesType;
 
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
@@ -151,7 +151,7 @@ class Contract
         return $this->CoordinatesType;
     }
 
-    public function setCoordinatesType($CoordinatesType): static
+    public function setCoordinatesType(?string $CoordinatesType): static
     {
         $this->CoordinatesType = $CoordinatesType;
 
