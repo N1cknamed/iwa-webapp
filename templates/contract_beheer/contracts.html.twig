@@ -9,69 +9,73 @@
 {% block body %}
     <div class="col">
         <h2>{{ name }}</h2>
-        <table class="table">
-            <thread>
-                <tr>
-                    <th>Startdatum</th>
-                    <th>Vervaldatum</th>
-                    <th>Landscode</th>
-                    <th>Regio</th>
-                    <th>CoordinatesType</th>
-                    <th>Longitude</th>
-                    <th>Latitude</th>
-                    <th>Elevation</th>
-                    <th>TEMP</th>
-                    <th>DEWP</th>
-                    <th>STP</th>
-                    <th>SLP</th>
-                    <th>VISIB</th>
-                    <th>WDSP</th>
-                    <th>PRCP</th>
-                    <th>SNDP</th>
-                    <th>FRSHTT</th>
-                    <th>CLDC</th>
-                    <th>WNDDIR</th>
-                    <th>Acties</th>
-                </tr>
-            </thread>
-            <tbody>
-                {% for contract in contracts %}
-                    <tr>
-                        <td>{{ contract.datestart|date('Y-m-d') }}</td>
-                        <td>{{ contract.dateend|date('Y-m-d') }}</td>
-                        <td>{{ contract.countrycode }}</td>
-                        <td>{{ contract.region }}</td>
-                        <td>{{ contract.coordinatesType }}</td>
-                        <td>{{ contract.longitude }}</td>
-                        <td>{{ contract.latitude }}</td>
-                        <td>{{ contract.elevation }}</td>
-                        <td>{% if contract.TEMP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.DEWP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.STP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.SLP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.VISIB == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.WDSP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.PRCP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.SNDP == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.FRSHTT == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.CLDC == 1 %}✔{% else %}❌{% endif %}</td>
-                        <td>{% if contract.WNDDIR == 1 %}✔{% else %}❌{% endif %}</td> 
-                        <td>
-                            <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class='btn btn-outline-primary'>
-                                <i class='bi bi-pencil-fill'></i>
-                            </a>
-                            <a href='{{ path('app_remove_contract', {'id': contract.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Weet je zeker dat je dit contract wil verwijderen?');'>
-                                <i class='bi bi-trash-fill'></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="2">Geen contracten gevonden</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <a href="{{ path('app_add_contract_to_name', {'name': name}) }}" class="btn btn-outline-primary">Voeg nieuw contract toe</a>
+        <div class='card'>
+            <div class='card-body'>
+                <table class="table">
+                    <thread>
+                        <tr>
+                            <th>Startdatum</th>
+                            <th>Vervaldatum</th>
+                            <th>Landscode</th>
+                            <th>Regio</th>
+                            <th>CoordinatesType</th>
+                            <th>Longitude</th>
+                            <th>Latitude</th>
+                            <th>Elevation</th>
+                            <th>TEMP</th>
+                            <th>DEWP</th>
+                            <th>STP</th>
+                            <th>SLP</th>
+                            <th>VISIB</th>
+                            <th>WDSP</th>
+                            <th>PRCP</th>
+                            <th>SNDP</th>
+                            <th>FRSHTT</th>
+                            <th>CLDC</th>
+                            <th>WNDDIR</th>
+                            <th>Acties</th>
+                        </tr>
+                    </thread>
+                    <tbody>
+                        {% for contract in contracts %}
+                            <tr>
+                                <td>{{ contract.datestart|date('Y-m-d') }}</td>
+                                <td>{{ contract.dateend|date('Y-m-d') }}</td>
+                                <td>{{ contract.countrycode }}</td>
+                                <td>{{ contract.region }}</td>
+                                <td>{{ contract.coordinatesType }}</td>
+                                <td>{{ contract.longitude }}</td>
+                                <td>{{ contract.latitude }}</td>
+                                <td>{{ contract.elevation }}</td>
+                                <td>{% if contract.TEMP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.DEWP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.STP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.SLP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.VISIB == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.WDSP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.PRCP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.SNDP == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.FRSHTT == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.CLDC == 1 %}✔{% else %}❌{% endif %}</td>
+                                <td>{% if contract.WNDDIR == 1 %}✔{% else %}❌{% endif %}</td> 
+                                <td>
+                                    <a href='{{ path('app_edit_contract', {'id': contract.id}) }}' class='btn btn-outline-primary'>
+                                        <i class='bi bi-pencil-fill'></i>
+                                    </a>
+                                    <a href='{{ path('app_remove_contract', {'id': contract.id}) }}' class='btn btn-outline-danger' onclick='return confirm('Weet je zeker dat je dit contract wil verwijderen?');'>
+                                        <i class='bi bi-trash-fill'></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="2">Geen contracten gevonden</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ path('app_add_contract_to_name', {'name': name}) }}" class="btn btn-outline-primary">Voeg nieuw contract toe</a>
+            </div>
+        </div>
     </div>
 {% endblock %}
