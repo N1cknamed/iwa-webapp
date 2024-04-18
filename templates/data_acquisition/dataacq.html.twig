@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Stations</h2>
+    <h1>Stations</h1>
     <div class="col-md-6">
         <table class="table table-sm">
             <thead>
@@ -50,7 +50,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="6">No stations found</td>
+                    <td colspan="6">Geen stations gevonden</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -201,6 +201,14 @@
             var target = event.target;
             if (target.tagName.toLowerCase() === 'a') {
                 var url = target.getAttribute('href');
+
+                // check of er een land filter is
+                var countryCode = document.getElementById('countryCode').value;
+                if (countryCode) {
+                    // zoja, voeg die toe aan request url
+                    url += url.includes('?') ? '&' : '?';
+                    url += 'countryCode=' + encodeURIComponent(countryCode);
+                }
 
                 fetch(url)
                     .then(response => response.text())
