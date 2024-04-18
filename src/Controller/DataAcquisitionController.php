@@ -89,25 +89,166 @@ class DataAcquisitionController extends AbstractController
     public function getAllData(Request $request): Response
     {
         $currentPage = $request->query->getInt('page', 1);
-        $limit = 10; // how many results per page
 
         $query = $this->entityManager
             ->getRepository(Weather::class)
             ->createQueryBuilder('w')
-            ->orderBy('w.DATE', 'DESC')
-            ->getQuery();
+            ->orderBy('w.DATE', 'DESC');
+//            ->getQuery();
 
-        $paginator = new Paginator($query);
+//        $paginator = new Paginator($query);
+//        $paginator->getQuery()
+//            ->setFirstResult($limit * ($currentPage - 1))
+//            ->setMaxResults($limit);
+
+        // Handle filtering
+        $STN = $request->query->get('STN');
+        $DATE = $request->query->get('DATE');
+        $TIME = $request->query->get('TIME');
+        $TEMP = $request->query->get('TEMP');
+        $DEWP = $request->query->get('DEWP');
+        $STP = $request->query->get('STP');
+        $SLP = $request->query->get('SLP');
+        $VISIB = $request->query->get('VISIB');
+        $WDSP = $request->query->get('WDSP');
+        $PRCP = $request->query->get('PRCP');
+        $SNDP = $request->query->get('SNDP');
+        $FRSHTTtt = $request->query->get('FRSHTTtt');
+        $CLDC = $request->query->get('CLDC');
+        $WNDDIR = $request->query->get('winddir');
+        $limit = $request->query->get('limit');
+        $timeStart = $request->query->get('startTime');
+        $timeEnd = $request->query->get('endTime');
+        $dateStart = $request->query->get('startDate');
+        $dateEnd = $request->query->get('endDate');
+
+        // Create a query builder instance
+        $queryBuilder = $this->entityManager
+            ->getRepository(Weather::class)
+            ->createQueryBuilder('w');
+//        if ($limit) {
+//            $queryBuilder->setMaxResults($limit);
+//        }else{
+//            $limit = 10;
+//            $queryBuilder->setMaxResults(10);
+//
+//        }
+
+        // Apply filters
+        if ($STN) {
+            $queryBuilder->andWhere('w.STN = :STN')
+                ->setParameter('STN', $STN);
+        }
+//        if ($DATE) {
+//            $queryBuilder->andWhere('w.DATE = :DATE')
+//                ->setParameter('DATE', new \DateTime($DATE));
+//        }
+        if ($dateStart && $dateEnd) {
+            $queryBuilder->andWhere('w.DATE BETWEEN :startDate AND :endDate')
+                ->setParameter('startDate', new \DateTime($dateStart))
+                ->setParameter('endDate', new \DateTime($dateEnd));
+        } elseif ($dateStart) {
+            $queryBuilder->andWhere('w.DATE >= :startDate')
+                ->setParameter('startDate', new \DateTime($dateStart));
+        } elseif ($dateEnd) {
+            $queryBuilder->andWhere('w.DATE <= :endDate')
+                ->setParameter('endDate', new \DateTime($dateEnd));
+        }
+        if ($timeStart && $timeEnd) {
+            $queryBuilder->andWhere('w.TIME BETWEEN :startTime AND :endTime')
+                ->setParameter('startTime', \DateTime::createFromFormat('H:i:s', $timeStart))
+                ->setParameter('endTime', \DateTime::createFromFormat('H:i:s', $timeEnd));
+        } elseif ($timeStart) {
+            $queryBuilder->andWhere('w.TIME >= :startTime')
+                ->setParameter('startTime', \DateTime::createFromFormat('H:i:s', $timeStart));
+        } elseif ($timeEnd) {
+            $queryBuilder->andWhere('w.TIME <= :endTime')
+                ->setParameter('endTime', \DateTime::createFromFormat('H:i:s', $timeEnd));
+        }
+        if ($TEMP) {
+            $queryBuilder->andWhere('w.TEMP = :TEMP')
+                ->setParameter('TEMP', $TEMP);
+        }
+        if ($DEWP) {
+            $queryBuilder->andWhere('w.DEWP = :DEWP')
+                ->setParameter('DEWP', $DEWP);
+        }
+        if ($STP) {
+            $queryBuilder->andWhere('w.STP = :STP')
+                ->setParameter('STP', $STP);
+        }
+        if ($SLP) {
+            $queryBuilder->andWhere('w.SLP = :SLP')
+                ->setParameter('SLP', $SLP);
+        }
+        if ($VISIB) {
+            $queryBuilder->andWhere('w.VISIB = :VISIB')
+                ->setParameter('VISIB', $VISIB);
+        }
+        if ($WDSP) {
+            $queryBuilder->andWhere('w.WDSP = :WDSP')
+                ->setParameter('WDSP', $WDSP);
+        }
+        if ($PRCP) {
+            $queryBuilder->andWhere('w.PRCP = :PRCP')
+                ->setParameter('PRCP', $PRCP);
+        }
+        if ($SNDP) {
+            $queryBuilder->andWhere('w.SNDP = :SNDP')
+                ->setParameter('SNDP', $SNDP);
+        }
+        if ($FRSHTTtt) {
+            $queryBuilder->andWhere('w.FRSHTT = :FRSHTTtt')
+                ->setParameter('FRSHTTtt', $FRSHTTtt);
+        }
+        if ($CLDC) {
+            $queryBuilder->andWhere('w.CLDC = :CLDC')
+                ->setParameter('CLDC', $CLDC);
+        }
+        if ($WNDDIR) {
+            $queryBuilder->andWhere('w.WNDDIR = :WNDDIR')
+                ->setParameter('WNDDIR', $WNDDIR);
+        }
+
+//        // Execute the filtered query
+//        $filteredQuery = $queryBuilder->getQuery();
+//        $filteredWeatherData = $filteredQuery->getResult();
+        $limit1 = 15;
+
+        $paginator = new Paginator($queryBuilder->getQuery());
         $paginator->getQuery()
-            ->setFirstResult($limit * ($currentPage - 1))
-            ->setMaxResults($limit);
+            ->setFirstResult($limit1 * ($currentPage - 1))
+            ->setMaxResults($limit1);
 
         return $this->render('data_acquisition/data.html.twig', [
             'weatherData' => $paginator,
             'current_page' => $currentPage,
-            'total_pages' => ceil(count($paginator) / $limit),
+            'total_pages' => ceil(count($paginator) / $limit1),
+            'limit' => $limit1,
             'controller_name' => 'DataAcquisitionController',
+            // Pass the filters to the view
+            'filters' => [
+                'STN' => $STN,
+                'DATE' => $DATE,
+                'TIME' => $TIME,
+                'TEMP' => $TEMP,
+                'DEWP' => $DEWP,
+                'STP' => $STP,
+                'SLP' => $SLP,
+                'VISIB' => $VISIB,
+                'WDSP' => $WDSP,
+                'PRCP' => $PRCP,
+                'SNDP' => $SNDP,
+                'FRSHTTtt' => $FRSHTTtt,
+                'CLDC' => $CLDC,
+                'WNDDIR' => $WNDDIR,
+                'limit' => $limit,
+                'startTime' => $timeStart,
+                'endTime' => $timeEnd,
+                'startDate' => $dateStart,
+                'endDate' => $dateEnd,
+                // Add other filters here...
+            ],
         ]);
     }
-
 }
