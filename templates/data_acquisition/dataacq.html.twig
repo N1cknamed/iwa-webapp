@@ -91,21 +91,18 @@
         <div id="map" style="height: 600px;"></div>
     </div>
     <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-header">
+        <div class="card">
+            <div class="card-header text-center">
                 <h5 class="card-title">Actuele storingen</h5>
             </div>
-            <div class="card-body">
                 {% if malfunctions is empty %}
                     <p>Geen actieve storingen.</p>
                 {% else %}
-                    <table class="table table-sm table-hover">
-                        <tbody>
-                            {% for malfunction in malfunctions %}
-                                <tr data-href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">
-                                    <td>{{ malfunction.getStation().getName() }}</td>
-                                    <td>{{ malfunction.getDATE()|date('Y-m-d H:i') }}</td>
-                                    <td>
+                    <div class="list-group list-group-flush">
+                        {% for malfunction in malfunctions %}
+                            <a href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <p class="mb-1">
                                         {% if malfunction.getStatus() == 'unresolved' %}
                                             <span class="badge rounded-pill bg-danger">{{ malfunction.getStatus() }}</span>
                                         {% elseif malfunction.getStatus() == 'in progress' %}
@@ -113,20 +110,15 @@
                                         {% else %}
                                             <span class="badge rounded-pill bg-secondary">{{ malfunction.getStatus() }}</span>
                                         {% endif %}
-                                    </td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="2">No malfunctions found</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    </p>
+                                    <small>{{ malfunction.getDATE() }}</small>
+                                </div>
+                                <p class="mb-1">{{ malfunction.getStation().getName() }}, {{ malfunction.getStation().geolocation.countryEntity.country }}</p>
+                            </a>
+                        {% endfor %}
+                        <a class="list-group-item list-group-item-action text-primary text-center" href="{{ path('app_malfunction') }}">Alle storingen</a>
+                    </div>
                 {% endif %}
-                <ul class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action text-primary" href="{{ path('app_malfunction') }}">Alle storingen</a>
-                </ul>
-            </div>
         </div>
     </div>
 {% endblock %}
