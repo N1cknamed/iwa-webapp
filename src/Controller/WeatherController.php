@@ -2,6 +2,7 @@
 // src/Controller/WeatherController.php
 namespace App\Controller;
 
+use App\Entity\Malfunction;
 use App\Entity\Station;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ use App\Entity\TempCorrection;
 class WeatherController extends AbstractController
 {
     private $doctrine;
+    private $errorCount = [];
 
     public function __construct(ManagerRegistry $doctrine)
     {
@@ -28,7 +30,7 @@ class WeatherController extends AbstractController
         $weatherData = $this->doctrine
             ->getRepository(Weather::class)
             ->findAll();
-        return $this->render('weather/index.html.twig', [
+        return $this->render('weather/weather.html.twig', [
             'weatherData' => $weatherData,
         ]);
     }
@@ -129,11 +131,15 @@ class WeatherController extends AbstractController
                     $entityManager->persist($missingValue);
                     $extrapolations++;
 
+                    // Increment error count
+                    $stationId = $weather->getStation()?->getName();
+                    $hour = $weather->getDATE()->format('Y-m-d H');
+                    $this->incrementErrorCount($stationId, $hour, $entityManager);
                 }
             }
         }
         if ($extrapolations > 0) {
-            $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+            $stationId = $weather->getStation()?->getName();
             $missingValue->setSTN($stationId);
             $missingValue->setDATE($weather->getDATE());
             $missingValue->setTIME($weather->getTIME());
@@ -172,12 +178,16 @@ class WeatherController extends AbstractController
             }
             if ($validCount > 0) {
                 $averageTemp = $sum / $validCount;
-                if ($weather->getTEMP() < 0.8 * $averageTemp) {
-                    $correctedTemp = 0.8 * $averageTemp;
+                $averageTempLowerBound = 0.8 * $averageTemp;
+                $averageTempUpperBound = 1.2 * $averageTemp;
+
+                if ($weather->getTEMP() < $averageTempLowerBound || $weather->getTEMP() > $averageTempUpperBound) {
+                    $correctedTemp = $weather->getTEMP() < $averageTempLowerBound ? $averageTempLowerBound : $averageTempUpperBound;
+                    $correctedTemp = round($correctedTemp, 1); // rond resultaat af op 1 decimaal
                     $weather->setTEMP($correctedTemp);
 
                     $tempcorrection = new TempCorrection();
-                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
+                    $stationId = $weather->getStation()?->getName();
                     $tempcorrection->setSTN($stationId);
                     $tempcorrection->setDATE($weather->getDATE());
                     $tempcorrection->setTIME($weather->getTIME());
@@ -185,21 +195,84 @@ class WeatherController extends AbstractController
                     $tempcorrection->setOriginalTEMP($originalTemp);
                     $entityManager->persist($tempcorrection);
 
-
-                } elseif ($weather->getTEMP() > 1.2 * $averageTemp) {
-                    $correctedTemp = 1.2 * $averageTemp;
-                    $weather->setTEMP($correctedTemp);
-
-                    $tempcorrection = new TempCorrection();
-                    $stationId = $weather->getStation() ? $weather->getStation()->getName() : null;
-                    $tempcorrection->setSTN($stationId);
-                    $tempcorrection->setDATE($weather->getDATE());
-                    $tempcorrection->setTIME($weather->getTIME());
-                    $tempcorrection->setCorrectedTEMP($weather->getTEMP());
-                    $tempcorrection->setOriginalTEMP($originalTemp);
-                    $entityManager->persist($tempcorrection);
+                    // Increment error count
+                    $stationId = $weather->getStation()?->getName();
+                    $hour = $weather->getDATE()->format('Y-m-d H');
+                    $this->incrementErrorCount($stationId, $hour, $entityManager);
                 }
             }
         }
+    }
+
+    private function incrementErrorCount(string $stationId, string $hour, $entityManager)
+    {
+        $stationRepository = $entityManager->getRepository(Station::class);
+        // Increment error count
+        if (!isset($this->errorCount[$stationId])) {
+            $this->errorCount[$stationId] = [];
+        }
+        if (!isset($this->errorCount[$stationId][$hour])) {
+            $this->errorCount[$stationId][$hour] = 0;
+        }
+        $this->errorCount[$stationId][$hour]++;
+
+        // Check if error count has reached 10
+        if ($this->errorCount[$stationId][$hour] >= 10) {
+            $malfunction = new Malfunction();
+            $station = $stationRepository->findOneBy(['name' => $stationId]);
+            $malfunction->setStation($station);
+            $malfunction->setStatus('unresolved');
+            $malfunction->setDATE(new \DateTime($hour . ':00:00')); // Start of the hour
+            $entityManager->persist($malfunction);
+        }
+    }
+
+    #[Route('/weather/detect-malfunctions', name: 'app_detect_malfunctions')]
+    public function detectMalfunctionsInOldData(): Response
+    {
+        $entityManager = $this->doctrine->getManager();
+        $weatherRepository = $entityManager->getRepository(Weather::class);
+        $stationRepository = $entityManager->getRepository(Station::class);
+
+        $batchSize = 500; // Adjust this value based on your server's capabilities
+        $offset = 0;
+
+        while (($weatherData = $weatherRepository->findBy([], ['DATE' => 'DESC', 'TIME' => 'DESC'], $batchSize, $offset)) !== [] && $offset < 10000) {
+            $errorCount = [];
+
+            foreach ($weatherData as $weather) {
+                $stationId = $weather->getStation()?->getName();
+                $hour = $weather->getDATE()->format('Y-m-d H');
+
+                // Increment error count
+                if (!isset($errorCount[$stationId])) {
+                    $errorCount[$stationId] = [];
+                }
+                if (!isset($errorCount[$stationId][$hour])) {
+                    $errorCount[$stationId][$hour] = 0;
+                }
+                $errorCount[$stationId][$hour]++;
+
+                // Check if error count has reached 10
+                if ($errorCount[$stationId][$hour] >= 10) {
+                    $malfunction = new Malfunction();
+                    $station = $stationRepository->findOneBy(['name' => $stationId]);
+                    $malfunction->setStation($station);
+                    $malfunction->setStatus('unresolved');
+                    $malfunction->setDATE(new \DateTime($hour . ':00:00')); // Start of the hour
+                    $entityManager->persist($malfunction);
+
+                    // Reset error count for this station and hour
+                    $errorCount[$stationId][$hour] = 0;
+                }
+            }
+
+            $entityManager->flush(); // Persist changes to the database
+            $entityManager->clear(); // Detach all entities from the entity manager
+
+            $offset += $batchSize; // Move the offset for the next batch
+        }
+
+        return new Response('Malfunction detection in old data completed.', Response::HTTP_OK);
     }
 }

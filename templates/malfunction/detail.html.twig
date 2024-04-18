@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Storing bij {{ station.getName() }}{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+{#<style>#}
+{#    .card { margin-bottom: 20px; }#}
+{#    .card-header { background-color: #F5F5F5; }#}
+{#    .card-body { padding: 15px; }#}
+{#    .card-title { margin-bottom: 0; }#}
+{#    .list-group-item { padding: 10px 15px; border-bottom: 1px solid #dee2e6; }#}
+{#    .list-group-item:last-child { border-bottom: none; }#}
+{#</style>#}
+
+<div class="col-md-8">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Ontbrekende waarden</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for missingValue in missingValues %}
+                        <li class="list-group-item">
+                            <strong>Datum:</strong> {{ missingValue.getDATE|date('Y-m-d') }}<br>
+                            <strong>Tijd:</strong> {{missingValue.getTIME|date('H:i:s') }}<br>
+                            <strong>Temperatuur:</strong> {{ missingValue.getTEMP() }}<br>
+                            <strong>Dew Point:</strong> {{ missingValue.getDEWP() }}<br>
+                            <strong>SLP:</strong> {{ missingValue.getSLP() }}<br>
+                            <strong>VISIB:</strong> {{ missingValue.getVISIB() }}<br>
+                            <strong>WDSP:</strong> {{ missingValue.getWDSP() }}<br>
+                            <strong>PRCP:</strong> {{ missingValue.getPRCP() }}<br>
+                            <strong>SNDP:</strong> {{ missingValue.getSNDP() }}<br>
+                            <strong>FRSHTT:</strong> {{ missingValue.getFRSHTT() }}<br>
+                            <strong>CLDC:</strong> {{ missingValue.getCLDC() }}<br>
+                            <strong>WNDDIR:</strong> {{ missingValue.getWNDDIR() }}<br>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Temperatuurcorrecties</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for tempCorrection in tempCorrections %}
+                        <li class="list-group-item">
+                            <strong>Datum:</strong> {{ tempCorrection.getDATE|date('Y-m-d') }}<br>
+                            <strong>Tijd:</strong> {{tempCorrection.getTIME|date('H:i:s') }}<br>
+                            <strong>Gecorrigeerde Temperatuur:</strong> {{ tempCorrection.getCorrectedTEMP() }}<br>
+                            <strong>Originele Temperatuur:</strong> {{ tempCorrection.getOriginalTEMP() }}<br>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

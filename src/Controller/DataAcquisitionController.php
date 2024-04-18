@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Malfunction;
+use App\Entity\TempCorrection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,7 +35,7 @@ class DataAcquisitionController extends AbstractController
             ->leftJoin('g.countryEntity', 'c')
             ->select('s', 'g', 'c')
             //->orderBy('c.country') //disable this for now
-            ->addSelect('s.name+0 as HIDDEN int_name') //hack to convert name string to integers, since doctrine does not support casting
+            ->addSelect('s.name+0 as HIDDEN int_name') //hack to convert name string to integers for more logical ordering, since doctrine does not support casting
             ->orderBy('int_name')
             ->getQuery();
 
@@ -42,7 +44,17 @@ class DataAcquisitionController extends AbstractController
             ->setFirstResult($limit * ($currentPage - 1))
             ->setMaxResults($limit);
 
-        return $this->render('data_acquisition/index.html.twig', [
+        $malfunctions = $this->entityManager
+            ->getRepository(Malfunction::class)
+            ->createQueryBuilder('m')
+            ->where('m.status IN (:statuses)')
+            ->setParameter('statuses', ['unresolved', 'in progress'])
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('data_acquisition/data.html.twig', [
+            'malfunctions' => $malfunctions,
             'stations' => $paginator,
             'controller_name' => 'DataAcquisitionController',
             'current_page' => $currentPage,
@@ -81,8 +93,11 @@ class DataAcquisitionController extends AbstractController
             throw $this->createNotFoundException('The station does not exist');
         }
 
+        $correctedTemps = $this->entityManager->getRepository(TempCorrection::class)->findBy(['STN' => $name]);
+
         return $this->render('data_acquisition/station.html.twig', [
             'station' => $station,
+            'correctedTemps' => $correctedTemps,
             'controller_name' => 'DataAcquisitionController',
         ]);
     }
