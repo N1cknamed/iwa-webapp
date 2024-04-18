@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Malfunction;
 use App\Entity\TempCorrection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,7 +44,12 @@ class DataAcquisitionController extends AbstractController
             ->setFirstResult($limit * ($currentPage - 1))
             ->setMaxResults($limit);
 
+        $malfunctions = $this->entityManager
+            ->getRepository(Malfunction::class)
+            ->findBy(['status' => ['unresolved', 'in progress']]);
+
         return $this->render('data_acquisition/index.html.twig', [
+            'malfunctions' => $malfunctions,
             'stations' => $paginator,
             'controller_name' => 'DataAcquisitionController',
             'current_page' => $currentPage,

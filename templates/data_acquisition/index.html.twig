@@ -19,68 +19,111 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h1 class="mb-4">Stations</h1>
-        <div class="row">
-            <div class="col-md-5">
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th class="col-md-2">ID</th>
-                        <th class="col-md-4">Land</th>
-                        <th class="col-md-6">Staat / Provincie</th>
-                    </tr>
-                    </thead>
-                    <tbody id="station-table-body">
-                    {% for station in stations %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('app_station_detail', {'name': station.name}) }}">{{ station.name }}</a>
-                            </td>
-                            <td>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }} ({{ station.geolocation ? station.geolocation.countryEntity.getCountryCode : '' }})</td>
-                            <td>{{ station.geolocation ? station.geolocation.state : 'N/A' }}</td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="6">No stations found</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+    <div class="container-fluid">
+        <div class="row mt-3 gx-5 justify-content-center">
+            <div class="col-md-8">
+                <div class="row">
+                    <h1 class="mb-4">Stations</h1>
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th class="col-md-2">ID</th>
+                                <th class="col-md-4">Land</th>
+                                <th class="col-md-6">Staat / Provincie</th>
+                            </tr>
+                            </thead>
+                            <tbody id="station-table-body">
+                            {% for station in stations %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ path('app_station_detail', {'name': station.name}) }}">{{ station.name }}</a>
+                                    </td>
+                                    <td>{{ station.geolocation ? station.geolocation.countryEntity.country : 'N/A' }}
+                                        ({{ station.geolocation ? station.geolocation.countryEntity.getCountryCode : '' }})
+                                    </td>
+                                    <td>{{ station.geolocation ? station.geolocation.state : 'N/A' }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">No stations found</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
 
-                <nav>
-                    <ul class="pagination justify-content-center" id="pagination-links">
-                        <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
-                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': 1}) }}">Eerste</a>
-                        </li>
+                        <nav>
+                            <ul class="pagination justify-content-center" id="pagination-links">
+                                <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                                    <a class="page-link" href="{{ path('app_data_acquisition', {'page': 1}) }}">Eerste</a>
+                                </li>
 
-                        <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
-                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
-                        </li>
+                                <li class="page-item{% if current_page == 1 %} disabled{% endif %}">
+                                    <a class="page-link"
+                                       href="{{ path('app_data_acquisition', {'page': current_page - 1}) }}">Vorige</a>
+                                </li>
 
-                        {% set start_page = max(1, current_page - 2) %}
-                        {% set end_page = min(total_pages, start_page + 4) %}
-                        {% set start_page = max(1, end_page - 4) %}
+                                {% set start_page = max(1, current_page - 2) %}
+                                {% set end_page = min(total_pages, start_page + 4) %}
+                                {% set start_page = max(1, end_page - 4) %}
 
-                        {% for page in start_page..end_page %}
-                            <li class="page-item{% if page == current_page %} active{% endif %}">
-                                <a class="page-link"
-                                   href="{{ path('app_data_acquisition', {'page': page}) }}">{{ page }}</a>
-                            </li>
-                        {% endfor %}
+                                {% for page in start_page..end_page %}
+                                    <li class="page-item{% if page == current_page %} active{% endif %}">
+                                        <a class="page-link"
+                                           href="{{ path('app_data_acquisition', {'page': page}) }}">{{ page }}</a>
+                                    </li>
+                                {% endfor %}
 
-                        <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
-                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
-                        </li>
+                                <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                                    <a class="page-link"
+                                       href="{{ path('app_data_acquisition', {'page': current_page + 1}) }}">Volgende</a>
+                                </li>
 
-                        <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
-                            <a class="page-link" href="{{ path('app_data_acquisition', {'page': total_pages}) }}">Laatste</a>
-                        </li>
-                    </ul>
-                </nav>
+                                <li class="page-item{% if current_page == total_pages %} disabled{% endif %}">
+                                    <a class="page-link" href="{{ path('app_data_acquisition', {'page': total_pages}) }}">Laatste</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="map" style="height: 600px;"></div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-7">
-                <div id="map" style="height: 600px;"></div>
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Actuele storingen</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if malfunctions is empty %}
+                            <p>Geen actieve storingen.</p>
+                        {% else %}
+                            <table class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th class="col-md-2">Station</th>
+                                    <th class="col-md-4">Date</th>
+                                    <th class="col-md-4">Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for malfunction in malfunctions %}
+                                    <tr>
+                                        <td><a href="{{ path('malfunction_detail', {'name': malfunction.getStation().getName()}) }}">{{ malfunction.getStation().getName() }}</a></td>
+                                        <td>{{ malfunction.getDATE()|date('Y-m-d H:i:s') }}</td>
+                                        <td>{{ malfunction.getStatus() }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No malfunctions found</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
