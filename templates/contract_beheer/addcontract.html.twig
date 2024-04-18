@@ -6,6 +6,15 @@
     {% include 'header.html.twig' %}
 {% endblock %}
 
+{% block stylesheets %}
+    <style>
+        .checkbox-vertical .form-check {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="col-md-8">
         <h1 class="mb-4">Voeg contract toe</h1>
@@ -51,49 +60,53 @@
                     {{ form_label(ContractForm.elevation, 'elevation', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(ContractForm.elevation, {'attr': {'class': 'form-control'}}) }}
                 </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.TEMP, 'TEMP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.TEMP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.DEWP, 'DEWP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.DEWP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.STP, 'STP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.STP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.SLP, 'SLP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.SLP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.VISIB, 'VISIB', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.VISIB, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.WDSP, 'WDSP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.WDSP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.PRCP, 'PRCP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.PRCP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.SNDP, 'SNDP', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.SNDP, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.FRSHTT, 'FRSHTT', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.FRSHTT, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.CLDC, 'CLDC', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.CLDC, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-3">
-                    {{ form_label(ContractForm.WNDDIR, 'WNDDIR', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(ContractForm.WNDDIR, {'attr': {'class': 'form-control'}}) }}
+                <div class='card'>
+                    <div class='card-body'>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.TEMP, 'TEMP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.TEMP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.DEWP, 'DEWP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.DEWP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.STP, 'STP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.STP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.SLP, 'SLP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.SLP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.VISIB, 'VISIB', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.VISIB, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.WDSP, 'WDSP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.WDSP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.PRCP, 'PRCP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.PRCP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.SNDP, 'SNDP', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.SNDP, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.FRSHTT, 'FRSHTT', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.FRSHTT, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.CLDC, 'CLDC', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.CLDC, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        <div class="form-check">
+                            {{ form_label(ContractForm.WNDDIR, 'WNDDIR', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_widget(ContractForm.WNDDIR, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Voeg toe</button>
                 {{ form_end(ContractForm) }}
