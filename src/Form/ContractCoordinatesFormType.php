@@ -16,6 +16,7 @@ class ContractCoordinatesFormType extends AbstractType
         $builder
             ->add('coordinatesType', ChoiceType::class, [
                 'choices' => [
+                    '' => null,
                     'Above' => 'ABOVE',
                     'Below' => 'BELOW',
                     'Between' => 'BETWEEN',
