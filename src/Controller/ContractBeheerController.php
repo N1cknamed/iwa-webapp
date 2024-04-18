@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Subscription;
 use App\Entity\Contract;
-use App\Entity\ContractCoordinates;
-Use App\Entity\ContractData;
 use App\Form\SubscriptionFormType;
 use App\Form\ContractFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ContractBeheerController extends AbstractController
@@ -147,12 +147,6 @@ class ContractBeheerController extends AbstractController
     public function addContract(Request $request, EntityManagerInterface $entityManager): Response
     {
         $contract = new Contract();
-        $contractCoordinates = new ContractCoordinates();
-        $contractData = new ContractData();
-
-        $contract->setCoordinates($contractCoordinates);
-        $contract->setData($contractData);
-
         $form = $this->createForm(ContractFormType::class, $contract);
         $form->handleRequest($request);
 
@@ -182,13 +176,33 @@ class ContractBeheerController extends AbstractController
 
         $form = $this->createFormBuilder($contract)
             ->add('name_holder', TextType::class, ['data' => $contract->getNameHolder()])
-            ->add('date_start', DateType::class, ['data' => $contract->getStartDate()])
+            ->add('date_start', DateType::class, ['data' => $contract->getDateStart()])
             ->add('date_end', DateType::class, ['data' => $contract->getDateEnd()])
-            ->add('country_code', TextType::class, ['data' => $contract->getCountrycode()])
+            ->add('country_code', TextType::class, ['data' => $contract->getCountryCode()])
             ->add('region', TextType::class, ['data' => $contract->getRegion()])
-            ->add('coordinates', CollectionType::class, ['data' => $contract->getCoordinates()])
-            ->add('data', CollectionType::class, ['data' => $contract->getData()])
-            ->add('save', SubmitType::class, ['label' => 'Update contract'])
+            ->add('coordinatesType', ChoiceType::class, [
+                'choices' => [
+                    '' => null,
+                    'Above' => 'ABOVE',
+                    'Below' => 'BELOW',
+                    'Between' => 'BETWEEN',
+                    'Radius' => 'RADIUS'
+                ]
+            ])
+            ->add('longitude', NumberType::class, ['data' => $contract->getLongitude()])
+            ->add('latitude', NumberType::class, ['data' => $contract->getLatitude()])
+            ->add('elevation', NumberType::class, ['data' => $contract->getElevation()])
+            ->add('TEMP', CheckboxType::class, ['data' => $contract->getTEMP()])
+            ->add('DEWP', CheckboxType::class, ['data' => $contract->getDEWP()])
+            ->add('STP', CheckboxType::class, ['data' => $contract->getSTP()])
+            ->add('SLP', CheckboxType::class, ['data' => $contract->getSLP()])
+            ->add('VISIB', CheckboxType::class, ['data' => $contract->getVISIB()])
+            ->add('WDSP', CheckboxType::class, ['data' => $contract->getWDSP()])
+            ->add('PRCP', CheckboxType::class, ['data' => $contract->getPRCP()])
+            ->add('SNDP', CheckboxType::class, ['data' => $contract->getSNDP()])
+            ->add('FRSHTT', CheckboxType::class, ['data' => $contract->getFRSHTT()])
+            ->add('CLDC', CheckboxType::class, ['data' => $contract->getCLDC()])
+            ->add('WNDDIR', CheckboxType::class, ['data' => $contract->getWNDDIR()]) 
             ->getForm();
 
         $form->handleRequest($request);
