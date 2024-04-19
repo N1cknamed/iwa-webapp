@@ -29,10 +29,8 @@ class MalfunctionController extends AbstractController
         $limit = 20; // Number of malfunctions per page
         $start = ($page - 1) * $limit;
 
-        // Get the repository
         $repository = $this->entityManager->getRepository(Malfunction::class);
 
-        // Find the malfunctions for the current page
         $malfunctions = $repository->findBy(
             ['status' => ['unresolved', 'in progress', 'resolved']],
             null,
@@ -40,10 +38,8 @@ class MalfunctionController extends AbstractController
             $start
         );
 
-        // Count the total number of malfunctions
         $count = $repository->count(['status' => ['unresolved', 'in progress', 'resolved']]);
 
-        // Calculate the total number of pages
         $totalPages = ceil($count / $limit);
 
         return $this->render('malfunction/malfunction.html.twig', [
@@ -89,15 +85,12 @@ class MalfunctionController extends AbstractController
 
         $message = $request->request->get('message');
 
-        // Voeg de logica toe om het bericht op te slaan in de database, bijvoorbeeld:
-
         $messageEntity = new Message();
         $messageEntity->setStation($station);
         $messageEntity->setMessage($message);
         $entityManager->persist($messageEntity);
         $entityManager->flush();
 
-        // Redirect naar de detailpagina
         return $this->redirectToRoute('malfunction_detail', ['name' => $name]);
     }
 
@@ -111,17 +104,14 @@ class MalfunctionController extends AbstractController
 
         $status = $request->request->get('status');
 
-        // Haal de storing op bij het station
         $malfunction = $this->entityManager->getRepository(Malfunction::class)->findOneBy(['station' => $station]);
         if (!$malfunction) {
             throw $this->createNotFoundException('Malfunction not found');
         }
 
-        // Update de status van de storing
         $malfunction->setStatus($status);
         $this->entityManager->flush();
 
-        // Redirect naar de detailpagina
         return $this->redirectToRoute('malfunction_detail', ['name' => $name]);
     }
 }

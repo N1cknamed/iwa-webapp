@@ -26,7 +26,6 @@ class WeatherController extends AbstractController
     #[Route('/weather', name: 'app_weather')]
     public function index()
     {
-        // Haal de opgeslagen gegevens op uit de database
         $weatherData = $this->doctrine
             ->getRepository(Weather::class)
             ->findAll();
@@ -152,7 +151,7 @@ class WeatherController extends AbstractController
 
     private function correctTemperature(Weather $weather, $entityManager): void
     {
-        $station = $weather->getStation(); // Het station waarvoor we gegevens willen extrapoleren
+        $station = $weather->getStation();
 
         $historicalData = $entityManager
             ->getRepository(Weather::class)
@@ -161,7 +160,7 @@ class WeatherController extends AbstractController
             ->setParameter('station', $station)
             ->orderBy('w.DATE', 'DESC')
             ->orderBy('w.TIME', 'DESC')
-            ->setMaxResults(30) // Laatste 30 records
+            ->setMaxResults(30)
             ->getQuery()
             ->getResult();
 
@@ -207,7 +206,6 @@ class WeatherController extends AbstractController
     private function incrementErrorCount(string $stationId, string $hour, $entityManager)
     {
         $stationRepository = $entityManager->getRepository(Station::class);
-        // Increment error count
         if (!isset($this->errorCount[$stationId])) {
             $this->errorCount[$stationId] = [];
         }
@@ -234,7 +232,7 @@ class WeatherController extends AbstractController
         $weatherRepository = $entityManager->getRepository(Weather::class);
         $stationRepository = $entityManager->getRepository(Station::class);
 
-        $batchSize = 500; // Adjust this value based on your server's capabilities
+        $batchSize = 500;
         $offset = 0;
 
         while (($weatherData = $weatherRepository->findBy([], ['DATE' => 'DESC', 'TIME' => 'DESC'], $batchSize, $offset)) !== [] && $offset < 10000) {
@@ -244,7 +242,6 @@ class WeatherController extends AbstractController
                 $stationId = $weather->getStation()?->getName();
                 $hour = $weather->getDATE()->format('Y-m-d H');
 
-                // Increment error count
                 if (!isset($errorCount[$stationId])) {
                     $errorCount[$stationId] = [];
                 }
@@ -253,13 +250,12 @@ class WeatherController extends AbstractController
                 }
                 $errorCount[$stationId][$hour]++;
 
-                // Check if error count has reached 10
                 if ($errorCount[$stationId][$hour] >= 10) {
                     $malfunction = new Malfunction();
                     $station = $stationRepository->findOneBy(['name' => $stationId]);
                     $malfunction->setStation($station);
                     $malfunction->setStatus('unresolved');
-                    $malfunction->setDATE(new \DateTime($hour . ':00:00')); // Start of the hour
+                    $malfunction->setDATE(new \DateTime($hour . ':00:00'));
                     $entityManager->persist($malfunction);
 
                     // Reset error count for this station and hour
@@ -267,10 +263,10 @@ class WeatherController extends AbstractController
                 }
             }
 
-            $entityManager->flush(); // Persist changes to the database
-            $entityManager->clear(); // Detach all entities from the entity manager
+            $entityManager->flush();
+            $entityManager->clear();
 
-            $offset += $batchSize; // Move the offset for the next batch
+            $offset += $batchSize;
         }
 
         return new Response('Malfunction detection in old data completed.', Response::HTTP_OK);

@@ -18,10 +18,6 @@ class Weather
     #[ORM\JoinColumn(name: "STN", referencedColumnName: "name", nullable: false)]
     private ?Station $station;
 
-
-    //#[ORM\Column(type: "integer", nullable: true)]
-    //private ?int $STN;
-
     #[ORM\Column(type: "date", nullable: true)]
     private ?\DateTimeInterface $DATE;
 
@@ -66,17 +62,6 @@ class Weather
     {
         return $this->id;
     }
-
-//    public function getSTN(): ?int
-//    {
-//        return $this->STN;
-//    }
-
-//    public function setSTN(?int $STN): self
-//    {
-//        $this->STN = $STN;
-//        return $this;
-//    }
 
     public function getStation(): ?Station
     {

@@ -29,10 +29,8 @@ class DataAcquisitionController extends AbstractController
         $currentPage = $request->query->getInt('page', 1);
         $limit = 20; // how many results per page
 
-        // Retrieve the country code from the request
         $countryCode = $request->query->get('countryCode');
 
-        // Create the query builder
         $queryBuilder = $this->entityManager
             ->getRepository(Station::class)
             ->createQueryBuilder('s')
@@ -42,13 +40,13 @@ class DataAcquisitionController extends AbstractController
             ->addSelect('s.name+0 as HIDDEN int_name') //hack to convert name string to integers for more logical ordering, since doctrine does not support casting
             ->orderBy('int_name');
 
-        // If a country code is provided, add a where clause to the query
+        // if a country code is provided, add a where clause to the query
         if ($countryCode) {
             $queryBuilder->andWhere('c.country_code = :countryCode')
                 ->setParameter('countryCode', $countryCode);
         }
 
-        // Get the final query
+        //get the final query
         $query = $queryBuilder->getQuery();
 
         $paginator = new Paginator($query);
@@ -119,13 +117,11 @@ class DataAcquisitionController extends AbstractController
     {
         $currentPage = $request->query->getInt('page', 1);
 
-        // Retrieve the form data
         $stationName = $request->query->get('stationName');
         $countryCode = $request->query->get('countryCode');
         $startDateTime = $request->query->get('startDateTime');
         $endDateTime = $request->query->get('endDateTime');
 
-        // Create a query builder instance
         $queryBuilder = $this->entityManager
             ->getRepository(Weather::class)
             ->createQueryBuilder('w')
@@ -133,25 +129,21 @@ class DataAcquisitionController extends AbstractController
             ->leftJoin('s.geolocation', 'g')
             ->leftJoin('g.countryEntity', 'c');
 
-        // If a station name is provided, add a where clause to the query
         if ($stationName) {
             $queryBuilder->andWhere('s.name = :stationName')
                 ->setParameter('stationName', $stationName);
         }
 
-        // If a country code is provided, add a where clause to the query
         if ($countryCode) {
             $queryBuilder->andWhere('c.country_code = :countryCode')
                 ->setParameter('countryCode', $countryCode);
         }
 
-        // If a start date and time is provided, add a where clause to the query
         if ($startDateTime) {
             $queryBuilder->andWhere('w.DATE >= :startDateTime')
                 ->setParameter('startDateTime', new \DateTime($startDateTime));
         }
 
-        // If an end date and time is provided, add a where clause to the query
         if ($endDateTime) {
             $queryBuilder->andWhere('w.DATE <= :endDateTime')
                 ->setParameter('endDateTime', new \DateTime($endDateTime));
