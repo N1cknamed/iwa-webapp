@@ -6,9 +6,13 @@ use App\Repository\StationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: StationRepository::class)]
 #[ORM\Table(name: "station")]
+#[ApiResource]
+#[Get]
 class Station
 {
     #[ORM\Id]
