@@ -7,11 +7,13 @@ use App\Entity\Station;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Weather;
 use App\Entity\MissingValues;
 use App\Entity\TempCorrection;
+use App\Repository\WeatherRepository;
 
 class WeatherController extends AbstractController
 {
@@ -21,6 +23,20 @@ class WeatherController extends AbstractController
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
+    }
+
+    #[Route('/api/weather/rain', name: 'get_rain', methods: ['GET'])]
+    public function getRain(WeatherRepository $weatherRepository): JsonResponse
+    {
+        $rain = $weatherRepository->findRain();
+        return $this->json($rain);
+    }
+
+    #[Route('/api/weather/wind', name: 'get_wind', methods: ['GET'])]
+    public function getWind(WeatherRepository $weatherRepository): JsonResponse
+    {
+        $wind = $weatherRepository->findWind();
+        return $this->json($wind);
     }
 
     #[Route('/weather', name: 'app_weather')]

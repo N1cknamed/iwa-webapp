@@ -12,4 +12,38 @@ class WeatherRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Weather::class);
     }
+
+    public function findWind()
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        
+        $sql = '
+            SELECT w.id, w.STN, w.DATE, w.TIME, w.WDSP, w.WNDDIR
+            FROM weather w
+            JOIN geolocation g ON w.STN = g.station_name
+            WHERE g.country_code = \'JP\'
+            ORDER BY w.DATE DESC, w.TIME DESC
+            ';
+
+        $resultSet = $conn->executeQuery($sql);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    public function findRain()
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT w.id, w.STN, w.DATE, w.TIME, w.PRCP
+            FROM weather w
+            JOIN geolocation g ON w.STN = g.station_name
+            WHERE g.country_code = \'JP\' AND w.FRSHTT LIKE \'_1____\'
+            ORDER BY w.DATE DESC, w.TIME DESC
+            ';
+
+        $resultSet = $conn->executeQuery($sql);
+
+        return $resultSet->fetchAllAssociative(); 
+    }
 }
