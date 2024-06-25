@@ -38,7 +38,7 @@ class WeatherRepository extends ServiceEntityRepository
             SELECT w.id, w.STN, w.DATE, w.TIME, w.PRCP
             FROM weather w
             JOIN geolocation g ON w.STN = g.station_name
-            WHERE g.country_code = \'JP\' AND w.FRSHTT LIKE \'_1____\'
+            WHERE (g.country_code IN (SELECT r.country_code FROM region r) OR \'JP\') AND w.FRSHTT LIKE \'_1____\'
             ORDER BY w.DATE DESC, w.TIME DESC
             ';
 

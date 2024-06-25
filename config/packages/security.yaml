@@ -10,6 +10,12 @@ security:
                 class: App\Entity\User
                 property: email
     firewalls:
+        rainapi:
+            pattern: ^/api/weather/rain
+            security: false
+        windapi:
+            pattern: ^/api/weather/wind
+            security: false
         weather:
             pattern: ^/weather
             security: false
