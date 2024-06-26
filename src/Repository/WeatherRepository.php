@@ -18,9 +18,10 @@ class WeatherRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         
         $sql = '
-            SELECT w.id, w.STN, w.DATE, w.TIME, w.WDSP, w.WNDDIR
+            SELECT w.id, w.STN, s.longitude, s.latitude, s.elevation, w.DATE, w.TIME, w.WDSP, w.WNDDIR
             FROM weather w
             JOIN geolocation g ON w.STN = g.station_name
+            JOIN station s ON w.STN = s.name
             WHERE g.country_code = \'JP\'
             ORDER BY w.DATE DESC, w.TIME DESC
             ';
@@ -35,9 +36,10 @@ class WeatherRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT w.id, w.STN, w.DATE, w.TIME, w.PRCP
+            SELECT w.id, w.STN, s.longitude, s.latitude, s.elevation, w.DATE, w.TIME, w.PRCP
             FROM weather w
             JOIN geolocation g ON w.STN = g.station_name
+            JOIN station s ON w.STN = s.name
             WHERE (g.country_code IN (SELECT r.country_code FROM region r) OR g.country_code = \'JP\') AND w.FRSHTT LIKE \'_1____\' AND w.TEMP < 13.9
             ORDER BY w.DATE DESC, w.TIME DESC
             ';
