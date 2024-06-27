@@ -18,7 +18,7 @@ class WeatherRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         
         $sql = '
-            SELECT w.id, w.STN, s.longitude, s.latitude, s.elevation, w.DATE, w.TIME, w.WDSP, w.WNDDIR
+            SELECT w.id, w.STN, g.country, g.city, s.longitude, s.latitude, s.elevation, w.DATE, w.TIME, w.WDSP, w.WNDDIR
             FROM weather w
             JOIN geolocation g ON w.STN = g.station_name
             JOIN station s ON w.STN = s.name
@@ -36,7 +36,7 @@ class WeatherRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT w.id, w.STN, s.longitude, s.latitude, s.elevation, w.DATE, w.TIME, w.PRCP
+            SELECT w.id, w.STN, g.country, g.city, s.longitude, s.latitude, s.elevation, w.DATE, w.TIME, w.PRCP
             FROM weather w
             JOIN geolocation g ON w.STN = g.station_name
             JOIN station s ON w.STN = s.name
